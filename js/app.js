@@ -4,7 +4,7 @@
 
 var src, source, splitter, audio, fc,flen;
 var xv, yv, zv, vol, rv, tv,tvv, cv, bv, cf,cn2 ,tfile,gl,mf;
- vol = 0.5; ctlvol = 0.7; cv = 1.0; rv =-0.4; cf = 0;   //***
+ vol = 0.7; ctlvol = 0.7; cv = 1.0; rv =-0.4; cf = 0;   //***
 var obj= {};
 
 var touchSX,touchSY, touchEX,touchEY, touchDX, touchDY, diffSX, diffEX, el,ctx;
@@ -22,75 +22,48 @@ gainR.gain.setValueAtTime(vol, 0); gainBR.gain.setValueAtTime(rv, 0);
 splitter = audioCtx.createChannelSplitter(2);
 
 xv = 6.0; yv = 2.0; zv = -6.0; rv = 0.0; tv = 0; bv = 0; gl=0;
-//var vxyz = [4.0, 2.0, -4.0];	// +++++++++++++++++++++++++++++++++++++++
+/*--------------------------------------------------------------------
+function Panner() {
+	panningModel = 'HRTF';
+ 	distanceModel = 'linear';
+ 	refDistance = 1;
+ 	maxDistance = 1000;
+ 	rolloffFactor = 1;
+ 	coneInnerAngle = 360; //120;
+ 	coneOuterAngle = 360; // 180;
+ 	coneOuterGain = 0;
+ 	
+	this.setOrientation = function(x,y,z) { this.setOrientation(x,y,z); }
+}
+*/
+var pannerL  = audioCtx.createPanner(); 
+    pannerL.panningModel = 'HRTF'; pannerL.distanceModel = 'linear'; pannerL.setOrientation(0,0,1); pannerL.maxDistance = 1000;
+var pannerR  = audioCtx.createPanner(); 
+    pannerR.panningModel = 'HRTF'; pannerR.distanceModel = 'linear'; pannerR.setOrientation(0,0,1); pannerR.maxDistance = 1000;
+var pannerBL = audioCtx.createPanner(); 
+    pannerBL.panningModel = 'HRTF'; pannerBL.distanceModel = 'linear'; pannerBL.setOrientation(0,0,1);pannerBL.maxDistance = 1000;
+var pannerBR = audioCtx.createPanner();
+    pannerBR.panningModel = 'HRTF'; pannerBR.distanceModel = 'linear'; pannerBR.setOrientation(0,0,1);pannerBR.maxDistance = 1000;
+//var pannerSL = audioCtx.createPanner();
+//var pannerSR = audioCtx.createPanner();
 
-var pannerL = audioCtx.createPanner(); 
- pannerL.panningModel = 'HRTF';
- pannerL.distanceModel = 'linear';
- pannerL.refDistance = 1;
- pannerL.maxDistance = 1000;
- pannerL.rolloffFactor = 1;
- pannerL.coneInnerAngle = 360; //120;
- pannerL.coneOuterAngle = 360; // 180;
- pannerL.coneOuterGain = 0;
- pannerL.setOrientation(0,0,1);
-var pannerBL = audioCtx.createPanner();
- pannerBL.panningModel = 'HRTF';
- pannerBL.distanceModel = 'inverse';
- pannerBL.refDistance = 1;
- pannerBL.maxDistance = 1000;
- pannerBL.rolloffFactor = 4;
- pannerBL.coneInnerAngle = 360;
- pannerBL.coneOuterAngle = 360;
- pannerBL.coneOuterGain = 0;
- pannerBL.setOrientation(0,0,1);
-var pannerSL = pannerBL;               //***
-var pannerUL = pannerBL; 
 var delaySL = audioCtx.createDelay(); delaySL.delayTime.setValueAtTime(0.01, 0);
-
-var pannerR = audioCtx.createPanner();
- pannerR.panningModel = 'HRTF';
- pannerR.distanceModel = 'linear';
- pannerR.refDistance = 1;
- pannerR.maxDistance = 1000;
- pannerR.rolloffFactor = 1;
- pannerR.coneInnerAngle = 360; // 120;
- pannerR.coneOuterAngle = 360; // 180;
- pannerR.coneOuterGain = 0;
- pannerR.setOrientation(0,0,1); 
-
-var pannerBR = audioCtx.createPanner(); 
- pannerBR.panningModel = 'HRTF'; 
- pannerBR.distanceModel = 'inverse';
- pannerBR.refDistance = 10;
- pannerBR.maxDistance = 1000;
- pannerBR.rolloffFactor = 4;
- pannerBR.coneInnerAngle = 360;
- pannerBR.coneOuterAngle = 360;
- pannerBR.coneOuterGain = 0;
- pannerBR.setOrientation(0,0,1);
-var pannerSR = pannerBR;               //***
-var pannerUR = pannerBR;
 var delaySR = audioCtx.createDelay(); delaySR.delayTime.setValueAtTime(0.01, 0);
+//----------------------------------------------------------------------
 
-//var listener = audioCtx.listener;
 var listener = audioCtx.Spationallistener; 
 
-var bassL   = audioCtx.createBiquadFilter();
- bassL.type   = 'lowshelf';
- bassL.frequency.setValueAtTime(100, 0);
+var bassL   = audioCtx.createBiquadFilter(); bassL.type   = 'lowshelf';
+ bassL.frequency.setValueAtTime(100, 0); 
  bassL.gain.setValueAtTime(rv, 0);
-var trebleL   = audioCtx.createBiquadFilter();
- trebleL.type   = 'highshelf';
+var trebleL = audioCtx.createBiquadFilter(); trebleL.type   = 'highshelf';
  trebleL.frequency.setValueAtTime(12000, 0);
  trebleL.gain.setValueAtTime(20, 0);
 
-var bassR   = audioCtx.createBiquadFilter();
- bassR.type   = 'lowshelf';
+var bassR   = audioCtx.createBiquadFilter(); bassR.type   = 'lowshelf';
  bassR.frequency.setValueAtTime(100, 0);
  bassR.gain.setValueAtTime(rv, 0);
-var trebleR   = audioCtx.createBiquadFilter();
- trebleR.type   = 'highshelf';
+var trebleR = audioCtx.createBiquadFilter(); trebleR.type   = 'highshelf';
  trebleR.frequency.setValueAtTime(12000, 0);
  trebleR.gain.setValueAtTime(20, 0);
 
@@ -102,12 +75,9 @@ var wX = 400;
 var wY = 400;   
 var meshL,meshR,cubeL, cubeR;
  
-
-//window.onload = function() { 
 function ini() {
   audio = new Audio(src); audio.controls = true; document.body.appendChild(audio); 
   source = audioCtx.createMediaElementSource(audio);
-  //var x = document.createElement("INPUT"); x.setAttribute("type", "checkbox");
 
   loadxyz();
    window.onbeforeunload = function() { savexyz();}
@@ -118,16 +88,9 @@ function ini() {
   document.querySelector("#loop").addEventListener("click",
 	function () { chkLoop(); } );
   
-/*
-  document.querySelector("#numZ").addEventListener("change",
-        function () { changeValueZ(document.querySelector("#numZ").value); });
-  document.querySelector("#numY").addEventListener("change",
-        function () { changeValueY(document.querySelector("#numY").value); });
-  document.querySelector("#numX").addEventListener("change",
-        function () { changeValueX(document.querySelector("#numX").value); });
-*/
-  document.querySelector("#rSp").addEventListener("change",
-        function () { changeVolRear(document.querySelector("#rSp").value); });
+
+  //document.querySelector("#rSp").addEventListener("change",
+  //      function () { changeVolRear(document.querySelector("#rSp").value); });
   document.querySelector("#bass").addEventListener("change",
         function () { changeBass(document.querySelector("#bass").value); });
   document.querySelector("#treble").addEventListener("change",
@@ -157,7 +120,6 @@ if ( document.getElementById('loop').checked ) { lp = true;  }
  else { lp = false;}
 }
 
-var cube = []; var dragControls;
 function initgls() {
 
 renderer = new THREE.WebGLRenderer({ canvas: tCanvas , alpha: true }); //******
@@ -216,36 +178,22 @@ var geometry_cube = new THREE.CubeGeometry (2, 3, 1.5);
    renderer.render( scene, camera ); 
     document.getElementById("fn").innerHTML= "Drag/Swipe(xy) & Wheel/Pinch(z) to move Speakers";
 
-  //audio = new Audio(src); audio.controls = true; document.body.appendChild(audio); 
     audio.autoplay = true; //audio.volume = 0.5;
   setPos(xv,yv,zv); 
  gl=gl+1;
 
  el = document.getElementById("tCanvas");
- //ctx = el.getContext("experimental-webgl");
- //ctx = renderer;
+
 //
  el.addEventListener("touchstart", handleStart, false);
 	el.addEventListener("mousedown", handleStartm, false);
  el.addEventListener("touchmove", handleMove, false);
-	//ctx.canvas.addEventListener("mousemove", handleMovem, false);
 	el.addEventListener("wheel", handlewheelm,false);
 	el.addEventListener("mousemove", handlMovem,false);
  el.addEventListener("touchend", handleEnd, false);
 	el.addEventListener("mouseup", handleEndm, false);
 //
-//
-cube.push(cubeR);cube.push(cubeL); 
-/*dragControls = new THREE.DragControls( cube, camera, el ); //renderer.domElement tCanvas
 
-				dragControls.addEventListener( 'dragstart', function ( event ) { 
-				//document.body.style.cursor = "move"; //controls.enabled = false; 
-				} );
-				dragControls.addEventListener( 'dragend', function ( event ) { 
-				 //document.body.style.cursor = "default"; //controls.enabled = true; 
-				} );
-*/
-//
 } // -- end of initgl --
 
 
@@ -255,11 +203,10 @@ function movsp() {
     cubeL.rotation.x=Math.atan(-yv/zv)/2; cubeR.rotation.x=Math.atan(-yv/zv)/2;
     cubeL.rotation.y=Math.atan(-xv/zv); cubeR.rotation.y=Math.atan(xv/zv); 
  renderer.render( scene, camera ); 
-chkLoop();  // for chrome 57 bug !! 
+chkLoop();   
 }
 
-function startPlay() {  			
-	//source = audioCtx.createMediaElementSource(audio); 
+function startPlay() {  			 
         playGain(); setPos( xv, yv, zv ); 
 } 
    
@@ -282,9 +229,9 @@ function loadnext() {
 
 function loadsrc() {
  var fname;
-    src = URL.createObjectURL(document.getElementsByTagName('input')[4].files[fc]); 
-    fname = document.getElementsByTagName('input')[4].files[fc].name; 
-    showMetaData(document.getElementsByTagName('input')[4].files[fc]);  // ****************************
+    src = URL.createObjectURL(document.getElementsByTagName('input')[3].files[fc]); 
+    fname = document.getElementsByTagName('input')[3].files[fc].name; 
+    showMetaData(document.getElementsByTagName('input')[3].files[fc]);  // ********
 	//tfile=fname;
 						
     audio.src=src;	audio.autoplay = true;
@@ -306,18 +253,16 @@ function loadsrc() {
 
 function playGain() {
   source.connect(splitter); 
-  splitter.connect(gainL, 0).connect(pannerL).connect(bassL).connect(trebleL).connect(audioCtx.destination);
-  //splitter.connect(pannerL, 0).connect(bassL).connect(trebleL).connect(audioCtx.destination);
-    splitter.connect(gainBL, 0).connect(pannerBL).connect(delaySL).connect(audioCtx.destination);
-    splitter.connect(gainBL, 0).connect(pannerSL).connect(delaySL).connect(audioCtx.destination); 
-    splitter.connect(gainBL, 0).connect(pannerUL).connect(delaySL).connect(audioCtx.destination);
-	//var pannerUR = pannerBR;    
-  splitter.connect(gainR, 1).connect(pannerR).connect(bassR).connect(trebleR).connect(audioCtx.destination);
-  //splitter.connect(pannerR, 1).connect(bassR).connect(trebleR).connect(audioCtx.destination);
-    splitter.connect(gainBR, 1).connect(pannerBR).connect(delaySR).connect(audioCtx.destination);
-    splitter.connect(gainBR, 1).connect(pannerSR).connect(delaySR).connect(audioCtx.destination);  
-    splitter.connect(gainBR, 1).connect(pannerUR).connect(delaySR).connect(audioCtx.destination);
-  //source.start(0);
+  //splitter.connect(gainL, 0).connect(pannerL).connect(bassL).connect(trebleL).connect(audioCtx.destination);
+  splitter.connect(pannerL, 0).connect(audioCtx.destination); //**
+  splitter.connect(gainBL, 0).connect(pannerBL).connect(bassL).connect(trebleL).connect(delaySL).connect(audioCtx.destination);
+    //splitter.connect(gainBL, 0).connect(pannerSL).connect(delaySL).connect(audioCtx.destination); 
+      
+  //splitter.connect(gainR, 0).connect(pannerR).connect(bassR).connect(trebleR).connect(audioCtx.destination);
+  splitter.connect(pannerR, 1).connect(audioCtx.destination); //**
+  splitter.connect(gainBR, 1).connect(pannerBR).connect(bassR).connect(trebleR).connect(delaySR).connect(audioCtx.destination);
+    //splitter.connect(gainBR, 1).connect(pannerSR).connect(delaySR).connect(audioCtx.destination);  
+   
  audio.play();
 }
 
@@ -326,49 +271,24 @@ function defpos() {
 }
 
 function setPos(x,y,z) { 
- pannerL.setPosition( -x, y*4, z*3); //pannerL.setOrientation(x,-y*2,-z*3);  
-  pannerBL.setPosition(-x,y*2, -z*3); pannerSL.setPosition(-x*4,y*2, 3*z/2); pannerUL.setPosition(-x/2,y*4, 3*z/2);
- pannerR.setPosition( x,y*4, z*3); //pannerR.setOrientation(-x,-y*2,-z*3); 
-  pannerBR.setPosition( x,y*2, -z*3); pannerSR.setPosition( x*4,y*2, 3*z/2); pannerUR.setPosition( x/2,y*4, 3*z/2);
- //listener.setPosition( 0, -y*6, -z*8 );
+ pannerL.setPosition( -x*0.8, y*2, z*3); 
+  pannerBL.setPosition(-x,y*2, -z*6); //pannerSL.setPosition(-x*4,y*2, 3*z/2); 
+ pannerR.setPosition( x,y*2, z*3);  
+  pannerBR.setPosition( x*0,8,y*2, -z*6); //pannerSR.setPosition( x*4,y*2, 3*z/2); 
+ 
  movsp();    
 //audio.currentTime=audio.currentTime-0.1; 
 }
-/*
-function changeValueZ(zvalue) {
- zv = zvalue; //document.getElementById("panValueZ").innerHTML="pos_Z = "+zv;
- //document.querySelector("#numZ").value = zv;
- //localStorage.setItem('numZ', document.getElementById('#numZ').value);
- setPos( xv, yv, zv );  
-}
-
-function changeValueY(yvalue) {  
- yv = yvalue; //document.getElementById("panValueY").innerHTML="pos_Y = "+yv; 
- //document.querySelector("#numY").value = yv;
- setPos( xv, yv, zv );  
-}
-
-function changeValueX(xvalue) {  
- xv = xvalue; //document.getElementById("panValueX").innerHTML="dist_X = "+xv; 
- //document.querySelector("#numX").value = xv;
- setPos( xv, yv, zv ); 
-}
-*/
-function changeVolRear(rSpVol) {  
- rv = rSpVol; document.getElementById("rspVol").innerHTML="surround = " + rv; 
- document.querySelector("#rSp").value = rv; 
- gainBL.gain.value = -rv; gainBR.gain.value = -rv; 
-}
 
 function changeBass(bvalue) {
-  bassL.gain.value = bvalue; bassR.gain.value = bvalue; 
+  bassL.gain.setValueAtTime(bvalue,0); bassR.gain.setValueAtTime(bvalue,0); 
   bv = bvalue;  //bv = bvalue*3 + 45;
   //bass.frequency.value   =  bv;
     document.getElementById("bassValue").innerHTML="bass = "+ bv;
     document.querySelector("#bass").value = bvalue;
 }
 function changeTreble(tvalue) {
-  trebleL.gain.value = tvalue ; trebleR.gain.value = tvalue ; 
+  trebleL.gain.setValueAtTime(tvalue,0); trebleR.gain.setValueAtTime(tvalue,0); 
   tv = tvalue; tvv = -tvalue*500 + 12000;
   //treble.frequency.value   = tvv;
     document.getElementById("trebleValue").innerHTML="treble = "+ tv;
