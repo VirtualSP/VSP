@@ -176,7 +176,7 @@ var geometry_cube = new THREE.CubeGeometry (2, 3, 1.5);
     plane.receiveShadow = true;
     renderer.shadowMap.enabled = true;
    renderer.render( scene, camera ); 
-    document.getElementById("fn").innerHTML= "Drag/Swipe(xy) & Wheel/Pinch(z) to move Speakers";
+    //document.getElementById("fn").innerHTML= "Drag/Swipe(xy) & Wheel/Pinch(z) to move Speakers";
 
     audio.autoplay = true; //audio.volume = 0.5;
   setPos(xv,yv,zv); 
@@ -237,7 +237,7 @@ function loadsrc() {
     audio.src=src;	audio.autoplay = true;
   
     audio.addEventListener('loadeddata', function() {
-      document.getElementById("fn").innerHTML= (fc+1) +" of "+flen+" : "+fname;
+      //document.getElementById("fn").innerHTML= (fc+1) +" of "+flen+" : "+fname;
       if ( fc  < flen ) { 
        audio.onended = function() { loadnext(); }
         //audio.addEventListener('ended', function() { 
