@@ -45,7 +45,7 @@ input[type='range']  {
 </head>
 
 <body onload="ini()">  
-<b>Web Virtual Speakers </b> 1.2.9<br>
+<b>Web Virtual Speakers </b> 1.3.0<br>
 
 <canvas id="tCanvas" width="400" height="400" style="border:1px solid #CCC;  z-index: 2"/></canvas>
 <br>
@@ -60,13 +60,7 @@ input[type='range']  {
  <input type="range" id="treble" min="-15" max="15" step="0.2" value="0" />
  <span id="trebleValue">treble = 0.0</span></div>
 
-<br>
-
-<div style="position: absolute; left: 10px; top: 520px;" >
- <input type="range" id="rSp" min="0" max="1" step="0.1" value="0.0" />
- <span id="rspVol">surround = 0.0</span></div>
-
-<div style="position: absolute; left: 10px; top: 550px;" > 
+<div style="position: absolute; left: 10px; top: 520px;" > 
  Loop : <input type="checkbox" id="loop" />
 <!--button id="loop" >OFF</button-->
 </div>
@@ -75,11 +69,10 @@ input[type='range']  {
 <div style="position: absolute; left: 10px; top: 405px;" >
 <button onclick="defpos()">Force default position</button></div>
 
-<div style="position: absolute; left: 110px; top: 550px;">  
+<div style="position: absolute; left: 110px; top: 520px;">  
  <input type="file" id="input" multiple accept="audio/*"></div>
 <br><br><br><br>
-<br>
-<br>
+
 
 <div style="position: absolute; left: 124px; top: 40px;" >
 <img id='myimg' style="position: absolute; z-index: -1">
