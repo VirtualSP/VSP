@@ -380,7 +380,7 @@ function update() {
 }
 
 function handlewheelm(evt) { evt.preventDefault(); //isMouseDown = true;
-   zv = zv - evt.wheelDelta/200;
+   zv = zv - evt.deltaY/120; 
   setPos( xv, yv, zv );
 }
 
