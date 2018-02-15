@@ -1,10 +1,10 @@
 /*
- *   Virtual Speaker System for Chrome Android
+ *   Virtual Speaker System for Chrome Android (VSP)
  */						
 
 var src, source, splitter, audio, fc,flen;
 var xv, yv, zv, vol, rv, tv,tvv, cv, bv, cf,cn2 ,tfile,gl,mf;
- vol = 0.7; ctlvol = 0.7; cv = 1.0; rv =-0.4; cf = 0;   //***
+ vol = 0.6; ctlvol = 0.5; cv = 1.0; rv =-0.4; cf = 0;   //***
 var obj= {};
 
 var touchSX,touchSY, touchEX,touchEY, touchDX, touchDY, diffSX, diffEX, el,ctx;
@@ -178,7 +178,7 @@ var geometry_cube = new THREE.CubeGeometry (2, 3, 1.5);
    renderer.render( scene, camera ); 
     //document.getElementById("fn").innerHTML= "Drag/Swipe(xy) & Wheel/Pinch(z) to move Speakers";
 
-    audio.autoplay = true; //audio.volume = 0.5;
+    audio.autoplay = true; audio.volume = 0.9;
   setPos(xv,yv,zv); 
  gl=gl+1;
 
@@ -254,12 +254,12 @@ function loadsrc() {
 function playGain() {
   source.connect(splitter); 
   //splitter.connect(gainL, 0).connect(pannerL).connect(bassL).connect(trebleL).connect(audioCtx.destination);
-  splitter.connect(pannerL, 0).connect(audioCtx.destination); //**
+  splitter.connect(gainL, 0).connect(pannerL).connect(bassL).connect(trebleL).connect(audioCtx.destination); //**
   splitter.connect(gainBL, 0).connect(pannerBL).connect(bassL).connect(trebleL).connect(delaySL).connect(audioCtx.destination);
     //splitter.connect(gainBL, 0).connect(pannerSL).connect(delaySL).connect(audioCtx.destination); 
       
   //splitter.connect(gainR, 0).connect(pannerR).connect(bassR).connect(trebleR).connect(audioCtx.destination);
-  splitter.connect(pannerR, 1).connect(audioCtx.destination); //**
+  splitter.connect(gainR, 1).connect(pannerR).connect(bassR).connect(trebleR).connect(audioCtx.destination); //**
   splitter.connect(gainBR, 1).connect(pannerBR).connect(bassR).connect(trebleR).connect(delaySR).connect(audioCtx.destination);
     //splitter.connect(gainBR, 1).connect(pannerSR).connect(delaySR).connect(audioCtx.destination);  
    
@@ -271,8 +271,8 @@ function defpos() {
 }
 
 function setPos(x,y,z) { 
- pannerL.setPosition( -x*0.8, y*2, z*3); 
-  pannerBL.setPosition(-x,y*2, -z*6); //pannerSL.setPosition(-x*4,y*2, 3*z/2); 
+ pannerL.setPosition( -x, y*2, z*3); 
+  pannerBL.setPosition(-x*0.8,y*2, -z*6); //pannerSL.setPosition(-x*4,y*2, 3*z/2); 
  pannerR.setPosition( x,y*2, z*3);  
   pannerBR.setPosition( x*0,8,y*2, -z*6); //pannerSR.setPosition( x*4,y*2, 3*z/2); 
  
