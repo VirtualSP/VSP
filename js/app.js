@@ -4,7 +4,7 @@
 
 var src, source, splitter, audio, fc,flen;
 var xv, yv, zv, vol, rv, tv,tvv, cv, bv, cf,cn2 ,tfile,gl,mf;
- vol = 0.6; ctlvol = 0.5; cv = 1.0; rv =-0.4; cf = 0;   //***
+ vol = 0.6; ctlvol = 0.5; cv = 1.0; rv =0.4; cf = 0;   //***
 var obj= {};
 
 var touchSX,touchSY, touchEX,touchEY, touchDX, touchDY, diffSX, diffEX, el,ctx;
@@ -47,8 +47,8 @@ var pannerBR = audioCtx.createPanner();
 //var pannerSL = audioCtx.createPanner();
 //var pannerSR = audioCtx.createPanner();
 
-var delaySL = audioCtx.createDelay(); delaySL.delayTime.setValueAtTime(0.01, 0);
-var delaySR = audioCtx.createDelay(); delaySR.delayTime.setValueAtTime(0.01, 0);
+var delaySL = audioCtx.createDelay(); delaySL.delayTime.setValueAtTime(0.001, 0);
+var delaySR = audioCtx.createDelay(); delaySR.delayTime.setValueAtTime(0.001, 0);
 //----------------------------------------------------------------------
 
 var listener = audioCtx.Spationallistener; 
@@ -230,7 +230,7 @@ function loadnext() {
 function loadsrc() {
  var fname;
     src = URL.createObjectURL(document.getElementsByTagName('input')[3].files[fc]); 
-    fname = document.getElementsByTagName('input')[3].files[fc].name; 
+    //fname = document.getElementsByTagName('input')[3].files[fc].name; 
     showMetaData(document.getElementsByTagName('input')[3].files[fc]);  // ********
 	//tfile=fname;
 						
@@ -255,12 +255,12 @@ function playGain() {
   source.connect(splitter); 
   //splitter.connect(gainL, 0).connect(pannerL).connect(bassL).connect(trebleL).connect(audioCtx.destination);
   splitter.connect(gainL, 0).connect(pannerL).connect(bassL).connect(trebleL).connect(audioCtx.destination); //**
-  splitter.connect(gainBL, 0).connect(pannerBL).connect(bassL).connect(trebleL).connect(delaySL).connect(audioCtx.destination);
+  splitter.connect(gainBL, 0).connect(pannerBL).connect(bassL).connect(trebleL).connect(audioCtx.destination);
     //splitter.connect(gainBL, 0).connect(pannerSL).connect(delaySL).connect(audioCtx.destination); 
       
   //splitter.connect(gainR, 0).connect(pannerR).connect(bassR).connect(trebleR).connect(audioCtx.destination);
   splitter.connect(gainR, 1).connect(pannerR).connect(bassR).connect(trebleR).connect(audioCtx.destination); //**
-  splitter.connect(gainBR, 1).connect(pannerBR).connect(bassR).connect(trebleR).connect(delaySR).connect(audioCtx.destination);
+  splitter.connect(gainBR, 1).connect(pannerBR).connect(bassR).connect(trebleR).connect(audioCtx.destination);
     //splitter.connect(gainBR, 1).connect(pannerSR).connect(delaySR).connect(audioCtx.destination);  
    
  audio.play();
