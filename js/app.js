@@ -4,7 +4,7 @@
 
 var src, source, splitter, audio, fc,flen;
 var xv, yv, zv, vol, rv, tv,tvv, cv, bv, cf,cn2 ,tfile,gl,mf;
- vol = 0.6; ctlvol = 0.5; cv = 1.0; rv =0.4; cf = 0;   //***
+ vol = 0.4; ctlvol = 0.2; cv = 1.0; rv =0.2; cf = 0;   //***
 var obj= {};
 
 var touchSX,touchSY, touchEX,touchEY, touchDX, touchDY, diffSX, diffEX, el,ctx;
@@ -21,7 +21,7 @@ gainR.gain.setValueAtTime(vol, 0); gainBR.gain.setValueAtTime(rv, 0);
 
 splitter = audioCtx.createChannelSplitter(2);
 
-xv = 6.0; yv = 2.0; zv = -6.0; rv = 0.0; tv = 0; bv = 0; gl=0;
+xv = 6.0; yv = 2.0; zv = -6.0; rv = 0.0; tv = 0.0; bv = 0; gl=0;
 /*--------------------------------------------------------------------
 function Panner() {
 	panningModel = 'HRTF';
@@ -37,9 +37,9 @@ function Panner() {
 }
 */
 var pannerL  = audioCtx.createPanner(); 
-    pannerL.panningModel = 'HRTF'; pannerL.distanceModel = 'linear'; pannerL.setOrientation(0,0,1); pannerL.maxDistance = 1000;
+    pannerL.panningModel = 'HRTF';  pannerL.distanceModel = 'linear'; pannerL.setOrientation(0,0,1); pannerL.maxDistance = 1000;
 var pannerR  = audioCtx.createPanner(); 
-    pannerR.panningModel = 'HRTF'; pannerR.distanceModel = 'linear'; pannerR.setOrientation(0,0,1); pannerR.maxDistance = 1000;
+    pannerR.panningModel = 'HRTF';  pannerR.distanceModel = 'linear'; pannerR.setOrientation(0,0,1); pannerR.maxDistance = 1000;
 var pannerBL = audioCtx.createPanner(); 
     pannerBL.panningModel = 'HRTF'; pannerBL.distanceModel = 'linear'; pannerBL.setOrientation(0,0,1);pannerBL.maxDistance = 1000;
 var pannerBR = audioCtx.createPanner();
@@ -47,8 +47,8 @@ var pannerBR = audioCtx.createPanner();
 //var pannerSL = audioCtx.createPanner();
 //var pannerSR = audioCtx.createPanner();
 
-var delaySL = audioCtx.createDelay(); delaySL.delayTime.setValueAtTime(0.001, 0);
-var delaySR = audioCtx.createDelay(); delaySR.delayTime.setValueAtTime(0.001, 0);
+//var delaySL = audioCtx.createDelay(); delaySL.delayTime.setValueAtTime(0.001, 0);
+//var delaySR = audioCtx.createDelay(); delaySR.delayTime.setValueAtTime(0.001, 0);
 //----------------------------------------------------------------------
 
 var listener = audioCtx.Spationallistener; 
@@ -57,15 +57,15 @@ var bassL   = audioCtx.createBiquadFilter(); bassL.type   = 'lowshelf';
  bassL.frequency.setValueAtTime(100, 0); 
  bassL.gain.setValueAtTime(rv, 0);
 var trebleL = audioCtx.createBiquadFilter(); trebleL.type   = 'highshelf';
- trebleL.frequency.setValueAtTime(12000, 0);
- trebleL.gain.setValueAtTime(20, 0);
+ trebleL.frequency.setValueAtTime(14000, 0);
+ trebleL.gain.setValueAtTime(tv, 0);
 
 var bassR   = audioCtx.createBiquadFilter(); bassR.type   = 'lowshelf';
  bassR.frequency.setValueAtTime(100, 0);
  bassR.gain.setValueAtTime(rv, 0);
 var trebleR = audioCtx.createBiquadFilter(); trebleR.type   = 'highshelf';
- trebleR.frequency.setValueAtTime(12000, 0);
- trebleR.gain.setValueAtTime(20, 0);
+ trebleR.frequency.setValueAtTime(14000, 0);
+ trebleR.gain.setValueAtTime(tv, 0);
 
 
 var camera, scene, renderer, canvas,ctx,geometry,material;	
@@ -178,7 +178,7 @@ var geometry_cube = new THREE.CubeGeometry (2, 3, 1.5);
    renderer.render( scene, camera ); 
     //document.getElementById("fn").innerHTML= "Drag/Swipe(xy) & Wheel/Pinch(z) to move Speakers";
 
-    audio.autoplay = true; audio.volume = 0.9;
+    audio.autoplay = true; //audio.volume = 0.9;
   setPos(xv,yv,zv); 
  gl=gl+1;
 
@@ -285,14 +285,14 @@ function changeBass(bvalue) {
   bv = bvalue;  //bv = bvalue*3 + 45;
   //bass.frequency.value   =  bv;
     document.getElementById("bassValue").innerHTML="bass = "+ bv;
-    document.querySelector("#bass").value = bvalue;
+    //document.querySelector("#bass").value = bvalue;
 }
 function changeTreble(tvalue) {
-  trebleL.gain.setValueAtTime(tvalue,0); trebleR.gain.setValueAtTime(tvalue,0); 
-  tv = tvalue; tvv = -tvalue*500 + 12000;
+  trebleL.gain.setValueAtTime(tvalue*4,0); trebleR.gain.setValueAtTime(tvalue*4,0); 
+  tv = tvalue; //tvv = -tvalue*500 + 12000;
   //treble.frequency.value   = tvv;
     document.getElementById("trebleValue").innerHTML="treble = "+ tv;
-    document.querySelector("#treble").value = tvalue;
+    //document.querySelector("#treble").value = tvalue;
 }
 
 // ---- swipe & pitch -----
