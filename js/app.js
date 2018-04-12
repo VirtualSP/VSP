@@ -57,14 +57,14 @@ var bassL   = audioCtx.createBiquadFilter(); bassL.type   = 'lowshelf';
  bassL.frequency.setValueAtTime(100, 0); 
  bassL.gain.setValueAtTime(rv, 0);
 var trebleL = audioCtx.createBiquadFilter(); trebleL.type   = 'highshelf';
- trebleL.frequency.setValueAtTime(14000, 0);
+ trebleL.frequency.setValueAtTime(12000, 0);
  trebleL.gain.setValueAtTime(tv, 0);
 
 var bassR   = audioCtx.createBiquadFilter(); bassR.type   = 'lowshelf';
  bassR.frequency.setValueAtTime(100, 0);
  bassR.gain.setValueAtTime(rv, 0);
 var trebleR = audioCtx.createBiquadFilter(); trebleR.type   = 'highshelf';
- trebleR.frequency.setValueAtTime(14000, 0);
+ trebleR.frequency.setValueAtTime(12000, 0);
  trebleR.gain.setValueAtTime(tv, 0);
 
 
@@ -254,12 +254,12 @@ function loadsrc() {
 function playGain() {
   source.connect(splitter); 
   //splitter.connect(gainL, 0).connect(pannerL).connect(bassL).connect(trebleL).connect(audioCtx.destination);
-  splitter.connect(gainL, 0).connect(pannerL).connect(bassL).connect(trebleL).connect(audioCtx.destination); //**
+  splitter.connect(pannerL,0).connect(bassL).connect(trebleL).connect(audioCtx.destination); //**
   splitter.connect(gainBL, 0).connect(pannerBL).connect(bassL).connect(trebleL).connect(audioCtx.destination);
     //splitter.connect(gainBL, 0).connect(pannerSL).connect(delaySL).connect(audioCtx.destination); 
       
   //splitter.connect(gainR, 0).connect(pannerR).connect(bassR).connect(trebleR).connect(audioCtx.destination);
-  splitter.connect(gainR, 1).connect(pannerR).connect(bassR).connect(trebleR).connect(audioCtx.destination); //**
+  splitter.connect(pannerR,1).connect(bassR).connect(trebleR).connect(audioCtx.destination); //**
   splitter.connect(gainBR, 1).connect(pannerBR).connect(bassR).connect(trebleR).connect(audioCtx.destination);
     //splitter.connect(gainBR, 1).connect(pannerSR).connect(delaySR).connect(audioCtx.destination);  
    
