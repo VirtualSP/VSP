@@ -4,7 +4,7 @@
 
 var src, source, splitter, audio, fc,flen;
 var xv, yv, zv, vol, rv, tv,tvv, cv, bv, cf,cn2 ,tfile,gl,mf;
- vol = 0.4; ctlvol = 0.2; cv = 1.0; rv =0.2; cf = 0;   //***
+ vol = 0.4; ctlvol = 0.2; cv = 1.0; rv =0.4; cf = 0;   //***
 var obj= {};
 
 var touchSX,touchSY, touchEX,touchEY, touchDX, touchDY, diffSX, diffEX, el,ctx;
@@ -16,12 +16,12 @@ var gainL = audioCtx.createGain();
  var gainBL = audioCtx.createGain();
 var gainR = audioCtx.createGain();
  var gainBR = audioCtx.createGain();
-gainL.gain.setValueAtTime(vol, 0); gainBL.gain.setValueAtTime(rv, 0);
-gainR.gain.setValueAtTime(vol, 0); gainBR.gain.setValueAtTime(rv, 0);
+gainL.gain.setValueAtTime(vol, 0); //gainBL.gain.setValueAtTime(rv, 0);
+gainR.gain.setValueAtTime(vol, 0); //gainBR.gain.setValueAtTime(rv, 0);
 
 splitter = audioCtx.createChannelSplitter(2);
 
-xv = 6.0; yv = 2.0; zv = -6.0; rv = 0.0; tv = 0.0; bv = 0; gl=0;
+xv = 6.0; yv = 2.0; zv = -6.0; rv = 0.0; tv = 0.2; bv = 0; gl=0;
 /*--------------------------------------------------------------------
 function Panner() {
 	panningModel = 'HRTF';
@@ -54,19 +54,24 @@ var pannerBR = audioCtx.createPanner();
 var listener = audioCtx.Spationallistener; 
 
 var bassL   = audioCtx.createBiquadFilter(); bassL.type   = 'lowshelf';
- bassL.frequency.setValueAtTime(100, 0); 
- bassL.gain.setValueAtTime(rv, 0);
+ bassL.frequency.setValueAtTime(400, 0); 
+ bassL.gain.setValueAtTime(rv, 0);				// -40db...40db
 var trebleL = audioCtx.createBiquadFilter(); trebleL.type   = 'highshelf';
  trebleL.frequency.setValueAtTime(12000, 0);
  trebleL.gain.setValueAtTime(tv, 0);
+var trebleBL = audioCtx.createBiquadFilter(); trebleBL.type   = 'highshelf';
+ trebleBL.frequency.setValueAtTime(6000, 0);
+ trebleBL.gain.setValueAtTime(tv, 0);
 
 var bassR   = audioCtx.createBiquadFilter(); bassR.type   = 'lowshelf';
- bassR.frequency.setValueAtTime(100, 0);
+ bassR.frequency.setValueAtTime(400, 0);
  bassR.gain.setValueAtTime(rv, 0);
 var trebleR = audioCtx.createBiquadFilter(); trebleR.type   = 'highshelf';
  trebleR.frequency.setValueAtTime(12000, 0);
  trebleR.gain.setValueAtTime(tv, 0);
-
+var trebleBR = audioCtx.createBiquadFilter(); trebleBR.type   = 'highshelf';
+ trebleBR.frequency.setValueAtTime(6000, 0);
+ trebleBR.gain.setValueAtTime(tv, 0);
 
 var camera, scene, renderer, canvas,ctx,geometry,material;	
 var cube, plane, light0,Sphere0;	
@@ -255,12 +260,12 @@ function playGain() {
   source.connect(splitter); 
   //splitter.connect(gainL, 0).connect(pannerL).connect(bassL).connect(trebleL).connect(audioCtx.destination);
   splitter.connect(pannerL,0).connect(bassL).connect(trebleL).connect(audioCtx.destination); //**
-  splitter.connect(gainBL, 0).connect(pannerBL).connect(bassL).connect(trebleL).connect(audioCtx.destination);
+  splitter.connect(pannerBL,0).connect(trebleBL).connect(audioCtx.destination);
     //splitter.connect(gainBL, 0).connect(pannerSL).connect(delaySL).connect(audioCtx.destination); 
       
   //splitter.connect(gainR, 0).connect(pannerR).connect(bassR).connect(trebleR).connect(audioCtx.destination);
   splitter.connect(pannerR,1).connect(bassR).connect(trebleR).connect(audioCtx.destination); //**
-  splitter.connect(gainBR, 1).connect(pannerBR).connect(bassR).connect(trebleR).connect(audioCtx.destination);
+  splitter.connect(pannerBR,1).connect(trebleBR).connect(audioCtx.destination);
     //splitter.connect(gainBR, 1).connect(pannerSR).connect(delaySR).connect(audioCtx.destination);  
    
  audio.play();
@@ -272,9 +277,9 @@ function defpos() {
 
 function setPos(x,y,z) { 
  pannerL.setPosition( -x, y*2, z*3); 
-  pannerBL.setPosition(-x*0.8,y*2, -z*6); //pannerSL.setPosition(-x*4,y*2, 3*z/2); 
+  pannerBL.setPosition(-x*0.8,y*2, z*4); //pannerSL.setPosition(-x*4,y*2, 3*z/2); 
  pannerR.setPosition( x,y*2, z*3);  
-  pannerBR.setPosition( x*0,8,y*2, -z*6); //pannerSR.setPosition( x*4,y*2, 3*z/2); 
+  pannerBR.setPosition( x*0.8,y*2, z*4); //pannerSR.setPosition( x*4,y*2, 3*z/2); 
  
  movsp();    
 //audio.currentTime=audio.currentTime-0.1; 
@@ -288,7 +293,8 @@ function changeBass(bvalue) {
     //document.querySelector("#bass").value = bvalue;
 }
 function changeTreble(tvalue) {
-  trebleL.gain.setValueAtTime(tvalue*4,0); trebleR.gain.setValueAtTime(tvalue*4,0); 
+  trebleL.gain.setValueAtTime(tvalue*2,0); trebleBL.gain.setValueAtTime(tvalue,0);
+  trebleR.gain.setValueAtTime(tvalue*2,0); trebleBR.gain.setValueAtTime(tvalue,0);
   tv = tvalue; //tvv = -tvalue*500 + 12000;
   //treble.frequency.value   = tvv;
     document.getElementById("trebleValue").innerHTML="treble = "+ tv;
