@@ -4,7 +4,7 @@
 
 var src, source, splitter, audio, fc,flen;
 var xv, yv, zv, vol, rv, tv,tvv, cv, bv, cf,cn2 ,tfile,gl,mf;
- vol = 0.4; ctlvol = 0.2; cv = 1.0; rv =0.4; cf = 0;   //***
+ vol = 0.4; ctlvol = 0.2; cv = 1.0; rv =0.2; cf = 0;   //***
 var obj= {};
 
 var touchSX,touchSY, touchEX,touchEY, touchDX, touchDY, diffSX, diffEX, el,ctx;
@@ -16,8 +16,8 @@ var gainL = audioCtx.createGain();
  var gainBL = audioCtx.createGain();
 var gainR = audioCtx.createGain();
  var gainBR = audioCtx.createGain();
-gainL.gain.setValueAtTime(vol, 0); //gainBL.gain.setValueAtTime(rv, 0);
-gainR.gain.setValueAtTime(vol, 0); //gainBR.gain.setValueAtTime(rv, 0);
+//gainL.gain.setValueAtTime(vol, 0); gainBL.gain.setValueAtTime(rv, 0);
+//gainR.gain.setValueAtTime(vol, 0); gainBR.gain.setValueAtTime(rv, 0);
 
 splitter = audioCtx.createChannelSplitter(2);
 
@@ -81,7 +81,8 @@ var wY = 400;
 var meshL,meshR,cubeL, cubeR;
  
 function ini() {
-  audio = new Audio(src); audio.controls = true; document.body.appendChild(audio); 
+  audio = new Audio(src); audio.controls = true; audio.volume=vol;
+  document.body.appendChild(audio); 
   source = audioCtx.createMediaElementSource(audio);
 
   loadxyz();
@@ -266,7 +267,7 @@ function playGain() {
   //splitter.connect(gainR, 0).connect(pannerR).connect(bassR).connect(trebleR).connect(audioCtx.destination);
   splitter.connect(pannerR,1).connect(bassR).connect(trebleR).connect(audioCtx.destination); //**
   splitter.connect(pannerBR,1).connect(trebleBR).connect(audioCtx.destination);
-    //splitter.connect(gainBR, 1).connect(pannerSR).connect(delaySR).connect(audioCtx.destination);  
+    //splitter.connect(pannerSR).connect(delaySR).connect(audioCtx.destination);  
    
  audio.play();
 }
@@ -277,9 +278,9 @@ function defpos() {
 
 function setPos(x,y,z) { 
  pannerL.setPosition( -x, y*2, z*3); 
-  pannerBL.setPosition(-x*0.8,y*2, z*4); //pannerSL.setPosition(-x*4,y*2, 3*z/2); 
+  pannerBL.setPosition(-x*0.8,y*2, z*5); //pannerSL.setPosition(-x*4,y*2, 3*z/2); 
  pannerR.setPosition( x,y*2, z*3);  
-  pannerBR.setPosition( x*0.8,y*2, z*4); //pannerSR.setPosition( x*4,y*2, 3*z/2); 
+  pannerBR.setPosition( x*0.8,y*2, z*5); //pannerSR.setPosition( x*4,y*2, 3*z/2); 
  
  movsp();    
 //audio.currentTime=audio.currentTime-0.1; 
