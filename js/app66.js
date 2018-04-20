@@ -5,27 +5,23 @@
 var src, source, splitter, audio, fname, fc,flen;
 var xv, yv, zv, vol, rv, tv,tvv, cv, bv, cf,cn2 ,tfile,gl,mf;
  vol = 0.4; ctlvol = 0.2; cv = 1.0; rv =0.2; cf = 0;   //***
-var obj= {};
 
 var touchSX,touchSY, touchEX,touchEY, touchDX, touchDY, diffSX, diffEX, el,ctx;
 
 var AudioContext = window.AudioContext || window.webkitAudioContext; 
 var audioCtx; // = new AudioContext();
 
-var gainL,gainBL,gainR,gainBR,pannerL,pannerR,pannerBL,pannerBR,listener;  //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+var gainL,gainBL,gainR,gainBR;
+var pannerL,pannerR,pannerBL,pannerBR,listener;  //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 var bassL,trebleL,trebleBL,bassR,trebleR,trebleBR;
 
 function initCtx() {
- gainL = audioCtx.createGain();
-  gainBL = audioCtx.createGain();
- gainR = audioCtx.createGain();
-  gainBR = audioCtx.createGain();
-//gainL.gain.setValueAtTime(vol, 0); gainBL.gain.setValueAtTime(rv, 0);
-//gainR.gain.setValueAtTime(vol, 0); gainBR.gain.setValueAtTime(rv, 0);
 
-splitter = audioCtx.createChannelSplitter(2);
+audioCtx = new AudioContext();
+ splitter = audioCtx.createChannelSplitter(2);
+ listener = audioCtx.Spationallistener;
 
-xv = 6.0; yv = 2.0; zv = -6.0; rv = 0.0; tv = 0.2; bv = 0.0; gl=0;
+xv = 6.0; yv = 2.0; zv = -6.0; rv = 0.0; tv = 0.2; bv = 0.0; 
 
  pannerL  = audioCtx.createPanner(); 
     pannerL.panningModel = 'HRTF';  pannerL.distanceModel = 'linear'; pannerL.setOrientation(0,0,1); pannerL.maxDistance = 1000;
@@ -35,18 +31,10 @@ xv = 6.0; yv = 2.0; zv = -6.0; rv = 0.0; tv = 0.2; bv = 0.0; gl=0;
     pannerBL.panningModel = 'HRTF'; pannerBL.distanceModel = 'linear'; pannerBL.setOrientation(0,0,1);pannerBL.maxDistance = 1000;
  pannerBR = audioCtx.createPanner();
     pannerBR.panningModel = 'HRTF'; pannerBR.distanceModel = 'linear'; pannerBR.setOrientation(0,0,1);pannerBR.maxDistance = 1000;
-//var pannerSL = audioCtx.createPanner();
-//var pannerSR = audioCtx.createPanner();
-
-//var delaySL = audioCtx.createDelay(); delaySL.delayTime.setValueAtTime(0.001, 0);
-//var delaySR = audioCtx.createDelay(); delaySR.delayTime.setValueAtTime(0.001, 0);
-//----------------------------------------------------------------------
-
-listener = audioCtx.Spationallistener; 
 
  bassL   = audioCtx.createBiquadFilter(); bassL.type   = 'lowshelf';
  bassL.frequency.setValueAtTime(400, 0); 
- bassL.gain.setValueAtTime(rv, 0);				// -40db...40db
+ bassL.gain.setValueAtTime(bv, 0);				// -40db...40db
  trebleL = audioCtx.createBiquadFilter(); trebleL.type   = 'highshelf';
  trebleL.frequency.setValueAtTime(12000, 0);
  trebleL.gain.setValueAtTime(tv, 0);
@@ -56,7 +44,7 @@ listener = audioCtx.Spationallistener;
 
  bassR   = audioCtx.createBiquadFilter(); bassR.type   = 'lowshelf';
  bassR.frequency.setValueAtTime(400, 0);
- bassR.gain.setValueAtTime(rv, 0);
+ bassR.gain.setValueAtTime(bv, 0);
  trebleR = audioCtx.createBiquadFilter(); trebleR.type   = 'highshelf';
  trebleR.frequency.setValueAtTime(12000, 0);
  trebleR.gain.setValueAtTime(tv, 0);
@@ -67,7 +55,7 @@ listener = audioCtx.Spationallistener;
 audio = new Audio(src); audio.controls = true; audio.volume=vol;
   document.body.appendChild(audio); 
   source = audioCtx.createMediaElementSource(audio);
-setPos(xv,yv,zv);
+ setPos(xv,yv,zv);
 
  audio.addEventListener('ended', savefxyz,false);
  audio.addEventListener('pause', savefxyz,false);
@@ -82,9 +70,6 @@ var wY = 400;
 var meshL,meshR,cubeL, cubeR;
  
 function ini() {
-  //audio = new Audio(src); audio.controls = true; audio.volume=vol;
-  //document.body.appendChild(audio); 
-  //source = audioCtx.createMediaElementSource(audio);
 
   loadxyz();
    window.onbeforeunload = function() { savexyz();}
@@ -95,9 +80,6 @@ function ini() {
   document.querySelector("#loop").addEventListener("click",
 	function () { chkLoop(); } );
   
-
-  //document.querySelector("#rSp").addEventListener("change",
-  //      function () { changeVolRear(document.querySelector("#rSp").value); });
   document.querySelector("#bass").addEventListener("change",
         function () { changeBass(document.querySelector("#bass").value); });
   document.querySelector("#treble").addEventListener("change",
@@ -113,11 +95,11 @@ function loadfxyz() {
 	 vol = parseFloat(fxyz[3]); bv = parseFloat(fxyz[4]); tv = parseFloat(fxyz[5]);
 	}
 }
-function savefxyz() { //console.log(fname);
+function savefxyz() { 
   var fxyz=Array();
 	fxyz[0]=String(xv).substr(0, 5); fxyz[1]=String(yv).substr(0, 5); fxyz[2]=String(zv).substr(0, 5);
 	fxyz[3]=String(vol).substr(0, 5); fxyz[4]=String(bv).substr(0, 5); fxyz[5]=String(tv).substr(0, 5);
-	localStorage.setItem(fname, JSON.stringify(fxyz));	//console.log(fname,fxyz[0]);
+	localStorage.setItem(fname, JSON.stringify(fxyz));	
 }
 
 function loadxyz() { 
@@ -133,11 +115,6 @@ function savexyz() {
 
 var lp = false;
 function chkLoop() { 
-//if (isMouseDown === false) {
-// if ( document.getElementById('loop').innerHTML === "OFF" ) { 
-//        document.getElementById('loop').innerHTML = "ON"; lp = true; }
-// else { document.getElementById('loop').innerHTML = "OFF"; lp = false; }
-//}
 if ( document.getElementById('loop').checked ) { lp = true;  }
  else { lp = false;}
 }
@@ -161,13 +138,11 @@ Sphere0.position.x= 0; Sphere0.position.y= 0; Sphere0.position.z= 0; Sphere0.cas
 scene.add( Sphere0 );
 
 var geometry_cube = new THREE.CubeGeometry (2, 3, 1.5);
-     //var ambient = new THREE.AmbientLight(0x333333); scene.add(ambient);
         
      var br = new THREE.MeshLambertMaterial({color: 0x886600});
      var gr = new THREE.MeshLambertMaterial({color: 0x333333});
      var materials = [ br, br, br, br, gr, br ];
    
-        //var material_cube = new THREE.Mesh(geometry_cube,materials);	//THREE.MeshFaceMaterial(materials);
          cubeL = new THREE.Mesh (geometry_cube, materials);		//material_cube
          cubeL.position.setX(-xv); cubeL.position.setY(yv); cubeL.position.setZ(zv); 
 		cubeL.rotation.order = "ZYX";          
@@ -185,24 +160,16 @@ var geometry_cube = new THREE.CubeGeometry (2, 3, 1.5);
   scene.add( light0 );
  
     var plane = new THREE.Mesh(
-        new THREE.PlaneGeometry(100, 100, 1, 1),
-        new THREE.MeshLambertMaterial({
-            color: 0xdddddd, transparent: true, opacity: 0.7
-        })
+        new THREE.PlaneGeometry(90, 100, 1, 1),
+        new THREE.MeshLambertMaterial({ color: 0xdddddd, transparent: true, opacity: 0.7 })
     );
-    plane.position.y = 0;
-    plane.rotation.x = -Math.PI / 2;
+    plane.position.y = 0; plane.rotation.x = -Math.PI / 2;
     scene.add( plane );
 
     light0.castShadow = true;
     plane.receiveShadow = true;
     renderer.shadowMap.enabled = true;
    renderer.render( scene, camera ); 
-    //document.getElementById("fn").innerHTML= "Drag/Swipe(xy) & Wheel/Pinch(z) to move Speakers";
-
-    //audio.autoplay = true; //audio.volume = 0.9;
-  //setPos(xv,yv,zv); 
- gl=gl+1;
 
  el = document.getElementById("tCanvas");
 
@@ -215,9 +182,6 @@ var geometry_cube = new THREE.CubeGeometry (2, 3, 1.5);
  el.addEventListener("touchend", handleEnd, false);
 	el.addEventListener("mouseup", handleEndm, false);
 //
- //audio.addEventListener('ended', savefxyz,false);			//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!11
- //audio.addEventListener('pause', savefxyz,false);
- //audio.addEventListener('volumechange', function() { vol=audio.volume; },false); 
 
 } // -- end of initgl --
 
@@ -225,8 +189,8 @@ var geometry_cube = new THREE.CubeGeometry (2, 3, 1.5);
 function movsp() { 
   cubeL.position.setX(-xv); cubeL.position.setY(yv); cubeL.position.setZ(zv);
   cubeR.position.setX(xv);  cubeR.position.setY(yv); cubeR.position.setZ(zv); 
-    cubeL.rotation.x=Math.atan(-yv/zv)/2; cubeR.rotation.x=Math.atan(-yv/zv)/2;
-    cubeL.rotation.y=Math.atan(-xv/zv); cubeR.rotation.y=Math.atan(xv/zv); 
+    cubeL.rotation.x=Math.atan(-yv/zv); cubeR.rotation.x=Math.atan(-yv/zv);
+    cubeL.rotation.y=Math.atan(-xv/zv); cubeR.rotation.y=Math.atan( xv/zv); 
  renderer.render( scene, camera ); 
 chkLoop();   
 }
@@ -237,9 +201,9 @@ function startPlay() {
 } 
    
 function handleFiles() { 
- if (!fname) {audioCtx = new AudioContext(); initCtx();}	//!!!!!!!!!!!!!!!!!!!
+ if (!fname) { initCtx();}	//!!!!!!!!!!!!!!!!!!!
 fc = 0; movsp();
-//audio = new Audio(src);
+
 var fileInput = document.getElementById("input");
 flen = fileInput.files.length;
   if (flen>0) {loadsrc(flen);}
@@ -250,27 +214,22 @@ function loadnext() {
    if (fc<flen) {loadsrc();}  
    else { fc = 0; 
 	if (lp === true) {loadsrc(flen);}
-       //  loadsrc();	if (document.getElementById("roop").checked) {loadsrc();}
    } 
 }
 
 function loadsrc() {
     src = URL.createObjectURL(document.getElementsByTagName('input')[3].files[fc]); 
-    fname = document.getElementsByTagName('input')[3].files[fc].name; // console.log(fname); +++++++
+    fname = document.getElementsByTagName('input')[3].files[fc].name; 
 	loadfxyz();
-    showMetaData(document.getElementsByTagName('input')[3].files[fc]);  // ********
-	//tfile=fname;
+    showMetaData(document.getElementsByTagName('input')[3].files[fc]);
+	
 						
     audio.src=src;	audio.autoplay = true;
   
     audio.addEventListener('loadeddata', function() {
-      //document.getElementById("fn").innerHTML= (fc+1) +" of "+flen+" : "+fname;
+      
       if ( fc  < flen ) { 
        audio.onended = function() { loadnext(); }
-        //audio.addEventListener('ended', function() { 
-        //  fc = fc + 1; loadsrc();                                 
-        //},false);
-      //startPlay();
       }
     startPlay();
    }, false);
@@ -280,15 +239,12 @@ function loadsrc() {
 
 function playGain() {
   source.connect(splitter); 
-  //splitter.connect(gainL, 0).connect(pannerL).connect(bassL).connect(trebleL).connect(audioCtx.destination);
+ 
   splitter.connect(pannerL,0).connect(bassL).connect(audioCtx.destination); //**
   splitter.connect(pannerBL,0).connect(trebleBL).connect(audioCtx.destination);
-    //splitter.connect(gainBL, 0).connect(pannerSL).connect(delaySL).connect(audioCtx.destination); 
-      
-  //splitter.connect(gainR, 0).connect(pannerR).connect(bassR).connect(trebleR).connect(audioCtx.destination);
+    
   splitter.connect(pannerR,1).connect(bassR).connect(audioCtx.destination); //**
   splitter.connect(pannerBR,1).connect(trebleBR).connect(audioCtx.destination);
-    //splitter.connect(pannerSR).connect(delaySR).connect(audioCtx.destination);  
    
  audio.play();
 }
@@ -298,27 +254,28 @@ function defpos() {
 }
 
 function setPos(x,y,z) { 
- pannerL.setPosition( -x, y*2, z*3); 
-  pannerBL.setPosition(-x*0.8,y*2, z*5); //pannerSL.setPosition(-x*4,y*2, 3*z/2); 
- pannerR.setPosition( x,y*2, z*3);  
-  pannerBR.setPosition( x*0.8,y*2, z*5); //pannerSR.setPosition( x*4,y*2, 3*z/2); 
- 
+ if (fname) {
+  pannerL.setPosition( -x, y*2, z*3); pannerBL.setPosition(-x*0.8, y*2, z*5); 
+  pannerR.setPosition(  x, y*2, z*3); pannerBR.setPosition( x*0.8, y*2, z*5);  
+ }
  movsp();    
-//audio.currentTime=audio.currentTime-0.1; 
+ 
 }
 
 function changeBass(bvalue) {
-  bassL.gain.setValueAtTime(bvalue,0); bassR.gain.setValueAtTime(bvalue,0); 
-  bv = bvalue;  //bv = bvalue*3 + 45;
-  //bass.frequency.value   =  bv;
+  if (fname) {
+	bassL.gain.setValueAtTime(bvalue,0); bassR.gain.setValueAtTime(bvalue,0);
+  } 
+  bv = bvalue; 
     document.getElementById("bassValue").innerHTML="bass = "+ bv;
     document.querySelector("#bass").value = bvalue;
 }
 function changeTreble(tvalue) {
-  trebleL.gain.setValueAtTime(tvalue*2,0); trebleBL.gain.setValueAtTime(tvalue,0);
-  trebleR.gain.setValueAtTime(tvalue*2,0); trebleBR.gain.setValueAtTime(tvalue,0);
-  tv = tvalue; //tvv = -tvalue*500 + 12000;
-  //treble.frequency.value   = tvv;
+  if (fname) {
+  	trebleL.gain.setValueAtTime(tvalue*2,0); trebleBL.gain.setValueAtTime(tvalue,0);
+  	trebleR.gain.setValueAtTime(tvalue*2,0); trebleBR.gain.setValueAtTime(tvalue,0);
+  }
+  tv = tvalue; 
     document.getElementById("trebleValue").innerHTML="treble = "+ tv;
     document.querySelector("#treble").value = tvalue;
 }
