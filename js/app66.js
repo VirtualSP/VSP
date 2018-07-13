@@ -4,24 +4,24 @@
 
 var src, source, splitter, audio, fname, fc,flen;
 var xv, yv, zv, vol, rv, tv,tvv, cv, bv, cf,cn2 ,tfile,gl,mf;
- vol = 0.4; ctlvol = 0.2; cv = 1.0; rv =0.2; cf = 0;   //***
+ vol = 0.7; ctlvol = 0.6; cv = 1.0; rv =0.4; cf = 0;   //***
 
 var touchSX,touchSY, touchEX,touchEY, touchDX, touchDY, diffSX, diffEX, el,ctx;
 
 var AudioContext = window.AudioContext || window.webkitAudioContext; 
 var audioCtx; // = new AudioContext();
 
-var gainL,gainBL,gainR,gainBR;
+var gainL,gainBL,gainR,gainBR,delaySL,delaySR;
 var pannerL,pannerR,pannerBL,pannerBR,listener;  //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 var bassL,trebleL,trebleBL,bassR,trebleR,trebleBR;
 
 function initCtx() {
 
-audioCtx = new AudioContext();
+audioCtx = new AudioContext(); //{ latencyHint: 'playback' }
  splitter = audioCtx.createChannelSplitter(2);
  listener = audioCtx.Spationallistener;
 
-xv = 6.0; yv = 2.0; zv = -6.0; rv = 0.0; tv = 0.2; bv = 0.0; 
+xv = 6.0; yv = 2.0; zv = -6.0;  tv = 0.0; bv = 0.0; 
 
  pannerL  = audioCtx.createPanner(); 
     pannerL.panningModel = 'HRTF';  pannerL.distanceModel = 'linear'; pannerL.setOrientation(0,0,1); pannerL.maxDistance = 1000;
@@ -33,24 +33,29 @@ xv = 6.0; yv = 2.0; zv = -6.0; rv = 0.0; tv = 0.2; bv = 0.0;
     pannerBR.panningModel = 'HRTF'; pannerBR.distanceModel = 'linear'; pannerBR.setOrientation(0,0,1);pannerBR.maxDistance = 1000;
 
  bassL   = audioCtx.createBiquadFilter(); bassL.type   = 'lowshelf';
- bassL.frequency.setValueAtTime(400, 0); 
- bassL.gain.setValueAtTime(bv, 0);				// -40db...40db
+  bassL.frequency.setValueAtTime(100, 0); 
+  bassL.gain.value = 0; //bassL.gain.setValueAtTime(bv, 0);				// -40db...40db
  trebleL = audioCtx.createBiquadFilter(); trebleL.type   = 'highshelf';
- trebleL.frequency.setValueAtTime(12000, 0);
- trebleL.gain.setValueAtTime(tv, 0);
+  trebleL.frequency.setValueAtTime(12000, 0);
+  trebleL.gain.setValueAtTime(tv, 0);
  trebleBL = audioCtx.createBiquadFilter(); trebleBL.type   = 'highshelf';
- trebleBL.frequency.setValueAtTime(6000, 0);
- trebleBL.gain.setValueAtTime(tv, 0);
+  trebleBL.frequency.setValueAtTime(6000, 0);
+  trebleBL.gain.setValueAtTime(tv, 0);
 
  bassR   = audioCtx.createBiquadFilter(); bassR.type   = 'lowshelf';
- bassR.frequency.setValueAtTime(400, 0);
- bassR.gain.setValueAtTime(bv, 0);
+  bassR.frequency.setValueAtTime(100, 0);
+  bassR.gain.value = 0; //bassR.gain.setValueAtTime(bv, 0);
  trebleR = audioCtx.createBiquadFilter(); trebleR.type   = 'highshelf';
- trebleR.frequency.setValueAtTime(12000, 0);
- trebleR.gain.setValueAtTime(tv, 0);
+  trebleR.frequency.setValueAtTime(12000, 0);
+  trebleR.gain.setValueAtTime(tv, 0);
  trebleBR = audioCtx.createBiquadFilter(); trebleBR.type   = 'highshelf';
- trebleBR.frequency.setValueAtTime(6000, 0);
- trebleBR.gain.setValueAtTime(tv, 0);
+  trebleBR.frequency.setValueAtTime(6000, 0);
+  trebleBR.gain.setValueAtTime(tv, 0);
+
+gainBL = audioCtx.createGain(); gainBL.gain.value = rv;
+gainBR = audioCtx.createGain(); gainBR.gain.value = rv;
+delaySL = audioCtx.createDelay(); delaySL.delayTime.value=0.01;
+delaySR = audioCtx.createDelay(); delaySR.delayTime.value=0.01;
 
 audio = new Audio(src); audio.controls = true; audio.volume=vol;
   document.body.appendChild(audio); 
@@ -123,7 +128,7 @@ function initgls() {
 
 renderer = new THREE.WebGLRenderer({ canvas: tCanvas , alpha: true }); //******
 renderer.setSize (wX,wY);    
-renderer.setClearColor(0x444477, 0.2); //*****
+renderer.setClearColor(0x3333cc, 0.1); //*****
          
 camera = new THREE.PerspectiveCamera (90, 1, 1, 1000);  
 camera.position.x=0; camera.position.y=5; camera.position.z=5;   
@@ -158,10 +163,17 @@ var geometry_cube = new THREE.CubeGeometry (2, 3, 1.5);
   light0.position.x=100; light0.position.y=100; light0.position.z=100;    
   light0.shadow.mapSize.width = 2048; light0.shadow.mapSize.height = 2048;
   scene.add( light0 );
- 
+ /*
     var plane = new THREE.Mesh(
         new THREE.PlaneGeometry(90, 100, 1, 1),
         new THREE.MeshLambertMaterial({ color: 0xdddddd, transparent: true, opacity: 0.7 })
+    );
+*/
+   var gm = new THREE.PlaneBufferGeometry(100, 100, 10, 10);
+    plane = new THREE.Mesh( gm,
+        new THREE.MeshLambertMaterial({
+            color: 0xdddddd, transparent: true, opacity: 0.7
+        })
     );
     plane.position.y = 0; plane.rotation.x = -Math.PI / 2;
     scene.add( plane );
@@ -196,7 +208,7 @@ chkLoop();
 }
 
 function startPlay() {  			 
-     setPos( xv, yv, zv ); audio.volume=vol; changeBass(bv); changeTreble(tv);
+     setPos( xv, yv, zv ); changeBass(bv); changeTreble(tv); //audio.volume=vol;
      playGain(); 
 } 
    
@@ -239,12 +251,12 @@ function loadsrc() {
 
 function playGain() {
   source.connect(splitter); 
- 
-  splitter.connect(pannerL,0).connect(bassL).connect(audioCtx.destination); //**
-  splitter.connect(pannerBL,0).connect(trebleBL).connect(audioCtx.destination);
-    
-  splitter.connect(pannerR,1).connect(bassR).connect(audioCtx.destination); //**
-  splitter.connect(pannerBR,1).connect(trebleBR).connect(audioCtx.destination);
+ //splitter.connect(pannerL,0).connect(audioCtx.destination);
+  splitter.connect(pannerL,0).connect(bassL).connect(trebleL).connect(audioCtx.destination); //**
+  splitter.connect(gainBL,0).connect(pannerBL).connect(delaySL).connect(audioCtx.destination);
+ //splitter.connect(pannerR,1).connect(audioCtx.destination);  
+  splitter.connect(pannerR,1).connect(bassR).connect(trebleR).connect(audioCtx.destination); //**
+  splitter.connect(gainBR,1).connect(pannerBR).connect(delaySR).connect(audioCtx.destination);
    
  audio.play();
 }
@@ -255,8 +267,8 @@ function defpos() {
 
 function setPos(x,y,z) { 
  if (fname) {
-  pannerL.setPosition( -x, y*2, z*3); pannerBL.setPosition(-x*0.8, y*2, z*5); 
-  pannerR.setPosition(  x, y*2, z*3); pannerBR.setPosition( x*0.8, y*2, z*5);  
+  pannerL.setPosition( -x, y, z); pannerBL.setPosition(-x, y, z*2);   
+  pannerR.setPosition(  x, y, z); pannerBR.setPosition( x, y, z*2);  //pannerBR.setPosition( x*0.8, y*2, z*5); 
  }
  movsp();    
  
@@ -272,8 +284,8 @@ function changeBass(bvalue) {
 }
 function changeTreble(tvalue) {
   if (fname) {
-  	trebleL.gain.setValueAtTime(tvalue*2,0); trebleBL.gain.setValueAtTime(tvalue,0);
-  	trebleR.gain.setValueAtTime(tvalue*2,0); trebleBR.gain.setValueAtTime(tvalue,0);
+  	trebleL.gain.setValueAtTime(tvalue,0); //trebleBL.gain.setValueAtTime(tvalue,0);
+  	trebleR.gain.setValueAtTime(tvalue,0); //trebleBR.gain.setValueAtTime(tvalue,0);
   }
   tv = tvalue; 
     document.getElementById("trebleValue").innerHTML="treble = "+ tv;
@@ -318,12 +330,14 @@ if ( isMouseDown ) {
     zv = zv + 0.2;
    }   
    break;
- }
+ } setPos( xv, yv, zv );
+/*
  if (needForRAF) {
     needForRAF = false;            
     requestAnimationFrame(update); 
   };
-}
+*/
+ }
 }
 
 function handleEnd(evt) { needForRAF = false;
@@ -351,19 +365,21 @@ function handlMovem(evt) { evt.preventDefault();
 
    touchDY = (touchSY - touchEY)*(-zv)*0.0004;		// /800;
    xv = xv - touchDX; 
-   yv = yv + touchDY;  
-
+   yv = yv + touchDY;  setPos( xv, yv, zv );
+/*
   if (needForRAF) {
     needForRAF = false;            
     requestAnimationFrame(update); 
   };
+*/
   }
 }
+/*
 function update() {
   needForRAF = true;
   setPos( xv, yv, zv );
 }
-
+*/
 function handlewheelm(evt) { evt.preventDefault(); //isMouseDown = true;
    zv = zv - evt.deltaY/120; 
   setPos( xv, yv, zv );
