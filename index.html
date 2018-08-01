@@ -55,12 +55,13 @@ input[type='range']  {
 </head>
 
 <body onload="ini()">  
-<b>Web Virtual Speakers </b> 1.4.3 (July 2018) : 
+<b>Virtual Speakers </b><font size="2"> 1.5.3 (1/8/18 scale-X changed!)</font>
 <a href="https://virtualsp.github.io/VSHome/" target="_blank"> About VSP</a><br>
 
 <canvas id="tCanvas" width="400" height="400" style="border:1px solid #CCC;  z-index: 2"/></canvas>
 <br>
-<font size="2">Move Speakers by drag/swipe(xy-axis) & wheel/pinch(z-axis)</font>
+<font size="2">Move Speakers by drag/swipe(xy-axis) & wheel/pinch(z-axis) </font><br>
+
 
 <div style="position: absolute; left: 10px; top: 465px;" >
  <input type="range" id="bass" min="-40" max="40" step="0.5" value="0" />
@@ -77,7 +78,7 @@ input[type='range']  {
 <br> 
 
 <div style="position: absolute; left: 10px; top: 405px;" >
-<button onclick="defpos()">Force default position</button></div>
+<button onclick="defpos()">Rest speaker position</button></div>
 
 <div style="position: absolute; left: 110px; top: 525px;">  
  <input type="file" id="input" multiple accept="audio/*"></div>
