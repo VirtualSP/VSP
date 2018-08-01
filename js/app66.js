@@ -126,7 +126,7 @@ if ( document.getElementById('loop').checked ) { lp = true;  }
 
 function initgls() {
 
-renderer = new THREE.WebGLRenderer({ canvas: tCanvas , alpha: true }); //******
+renderer = new THREE.WebGLRenderer({ canvas: tCanvas , alpha: true, antialias: true }); //******
 renderer.setSize (wX,wY);    
 renderer.setClearColor(0x3333cc, 0.1); //*****
          
@@ -142,13 +142,14 @@ Sphere0 = new THREE.Mesh (geometry_sph, material0);
 Sphere0.position.x= 0; Sphere0.position.y= 0; Sphere0.position.z= 0; Sphere0.castShadow = true;     
 scene.add( Sphere0 );
 
-var geometry_cube = new THREE.CubeGeometry (2, 3, 1.5);
+var geometry_cube = new THREE.BoxGeometry (2, 3, 1.5);
         
      var br = new THREE.MeshLambertMaterial({color: 0x886600});
      var gr = new THREE.MeshLambertMaterial({color: 0x333333});
      var materials = [ br, br, br, br, gr, br ];
    
-         cubeL = new THREE.Mesh (geometry_cube, materials);		//material_cube
+       var material_cube = new THREE.MeshFaceMaterial(materials);
+         cubeL = new THREE.Mesh (geometry_cube, material_cube);		//material_cube
          cubeL.position.setX(-xv*2); cubeL.position.setY(yv); cubeL.position.setZ(zv); 
 		cubeL.rotation.order = "ZYX";          
          cubeL.castShadow = true; 
@@ -161,14 +162,9 @@ var geometry_cube = new THREE.CubeGeometry (2, 3, 1.5);
          
   light0 = new THREE.SpotLight( 0xffffff );      
   light0.position.x=100; light0.position.y=100; light0.position.z=100;    
-  light0.shadow.mapSize.width = 2048; light0.shadow.mapSize.height = 2048;
+  light0.shadow.mapSize.width = 4096; light0.shadow.mapSize.height = 4096;
   scene.add( light0 );
- /*
-    var plane = new THREE.Mesh(
-        new THREE.PlaneGeometry(90, 120, 1, 1),
-        new THREE.MeshLambertMaterial({ color: 0xdddddd, transparent: true, opacity: 0.7 })
-    );
-*/
+ 
    var gm = new THREE.PlaneBufferGeometry(90, 120, 10, 10);
     plane = new THREE.Mesh( gm,
         new THREE.MeshLambertMaterial({
@@ -201,8 +197,8 @@ var geometry_cube = new THREE.CubeGeometry (2, 3, 1.5);
 function movsp() { 
   cubeL.position.setX(-xv*2); cubeL.position.setY(yv); cubeL.position.setZ(zv);
   cubeR.position.setX(xv*2);  cubeR.position.setY(yv); cubeR.position.setZ(zv); 
-    cubeL.rotation.x=Math.atan(-yv/zv/8); cubeR.rotation.x=Math.atan(-yv/zv/8);
-    cubeL.rotation.y=Math.atan(-xv/zv); cubeR.rotation.y=Math.atan( xv/zv); 
+    cubeL.rotation.x=Math.atan(-yv/zv/2); cubeR.rotation.x=Math.atan(-yv/zv/2);
+    cubeL.rotation.y=Math.atan(-xv/zv*2); cubeR.rotation.y=Math.atan( xv/zv*2); 
  renderer.render( scene, camera ); 
 chkLoop();   
 }
