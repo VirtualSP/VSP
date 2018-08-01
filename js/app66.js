@@ -4,7 +4,7 @@
 
 var src, source, splitter, audio, fname, fc,flen;
 var xv, yv, zv, vol, rv, tv,tvv, cv, bv, cf,cn2 ,tfile,gl,mf;
- vol = 0.7; ctlvol = 0.6; cv = 1.0; rv =0.4; cf = 0;   //***
+ vol = 0.7; ctlvol = 0.6; cv = 1.0; rv =0.2; cf = 0;   //***
 
 var touchSX,touchSY, touchEX,touchEY, touchDX, touchDY, diffSX, diffEX, el,ctx;
 
@@ -19,7 +19,7 @@ function initCtx() {
 
 audioCtx = new AudioContext(); //{ latencyHint: 'playback' }
  splitter = audioCtx.createChannelSplitter(2);
- listener = audioCtx.Spationallistener;
+ listener = audioCtx.listener;
 
 xv = 6.0; yv = 2.0; zv = -6.0;  tv = 0.0; bv = 0.0; 
 
@@ -32,30 +32,30 @@ xv = 6.0; yv = 2.0; zv = -6.0;  tv = 0.0; bv = 0.0;
  pannerBR = audioCtx.createPanner();
     pannerBR.panningModel = 'HRTF'; pannerBR.distanceModel = 'linear'; pannerBR.setOrientation(0,0,1);pannerBR.maxDistance = 1000;
 
- bassL   = audioCtx.createBiquadFilter(); bassL.type   = 'lowshelf';
+ bassL   = audioCtx.createBiquadFilter(); bassL.type   = 'lowshelf';  bassL.Q.automationRate='k-rate';
   bassL.frequency.setValueAtTime(100, 0); 
   bassL.gain.value = 0; //bassL.gain.setValueAtTime(bv, 0);				// -40db...40db
- trebleL = audioCtx.createBiquadFilter(); trebleL.type   = 'highshelf';
+ trebleL = audioCtx.createBiquadFilter(); trebleL.type   = 'highshelf';  trebleL.Q.automationRate='k-rate';
   trebleL.frequency.setValueAtTime(12000, 0);
   trebleL.gain.setValueAtTime(tv, 0);
- trebleBL = audioCtx.createBiquadFilter(); trebleBL.type   = 'highshelf';
-  trebleBL.frequency.setValueAtTime(6000, 0);
-  trebleBL.gain.setValueAtTime(tv, 0);
+ //trebleBL = audioCtx.createBiquadFilter(); trebleBL.type   = 'highshelf';
+ // trebleBL.frequency.setValueAtTime(6000, 0);
+  //trebleBL.gain.setValueAtTime(tv, 0);
 
- bassR   = audioCtx.createBiquadFilter(); bassR.type   = 'lowshelf';
+ bassR   = audioCtx.createBiquadFilter(); bassR.type   = 'lowshelf';  bassR.Q.automationRate='k-rate';
   bassR.frequency.setValueAtTime(100, 0);
   bassR.gain.value = 0; //bassR.gain.setValueAtTime(bv, 0);
- trebleR = audioCtx.createBiquadFilter(); trebleR.type   = 'highshelf';
+ trebleR = audioCtx.createBiquadFilter(); trebleR.type   = 'highshelf';  trebleR.Q.automationRate='k-rate';
   trebleR.frequency.setValueAtTime(12000, 0);
   trebleR.gain.setValueAtTime(tv, 0);
- trebleBR = audioCtx.createBiquadFilter(); trebleBR.type   = 'highshelf';
-  trebleBR.frequency.setValueAtTime(6000, 0);
-  trebleBR.gain.setValueAtTime(tv, 0);
+ //trebleBR = audioCtx.createBiquadFilter(); trebleBR.type   = 'highshelf';
+  //trebleBR.frequency.setValueAtTime(6000, 0);
+  //trebleBR.gain.setValueAtTime(tv, 0);
 
-gainBL = audioCtx.createGain(); gainBL.gain.value = rv;
-gainBR = audioCtx.createGain(); gainBR.gain.value = rv;
-delaySL = audioCtx.createDelay(); delaySL.delayTime.value=0.01;
-delaySR = audioCtx.createDelay(); delaySR.delayTime.value=0.01;
+gainBL = audioCtx.createGain(); gainBL.gain.value = rv;  	gainBL.gain.automationRate='k-rate';
+gainBR = audioCtx.createGain(); gainBR.gain.value = rv; 	gainBR.gain.automationRate='k-rate';
+delaySL = audioCtx.createDelay(); delaySL.delayTime.value=0.04; delaySL.delayTime.automationRate='k-rate';
+delaySR = audioCtx.createDelay(); delaySR.delayTime.value=0.04;delaySR.delayTime.automationRate='k-rate';
 
 audio = new Audio(src); audio.controls = true; audio.volume=vol;
   document.body.appendChild(audio); 
@@ -149,12 +149,12 @@ var geometry_cube = new THREE.CubeGeometry (2, 3, 1.5);
      var materials = [ br, br, br, br, gr, br ];
    
          cubeL = new THREE.Mesh (geometry_cube, materials);		//material_cube
-         cubeL.position.setX(-xv); cubeL.position.setY(yv); cubeL.position.setZ(zv); 
+         cubeL.position.setX(-xv*2); cubeL.position.setY(yv); cubeL.position.setZ(zv); 
 		cubeL.rotation.order = "ZYX";          
          cubeL.castShadow = true; 
 	scene.add( cubeL ); 
          cubeR = new THREE.Mesh (geometry_cube, materials);		//material_cube
-         cubeR.position.setX(xv); cubeR.position.setY(yv); cubeR.position.setZ(zv);
+         cubeR.position.setX(xv*2); cubeR.position.setY(yv); cubeR.position.setZ(zv);
 		cubeR.rotation.order = "ZYX";          
          cubeR.castShadow = true; 
         scene.add( cubeR ); 
@@ -165,14 +165,14 @@ var geometry_cube = new THREE.CubeGeometry (2, 3, 1.5);
   scene.add( light0 );
  /*
     var plane = new THREE.Mesh(
-        new THREE.PlaneGeometry(90, 100, 1, 1),
+        new THREE.PlaneGeometry(90, 120, 1, 1),
         new THREE.MeshLambertMaterial({ color: 0xdddddd, transparent: true, opacity: 0.7 })
     );
 */
-   var gm = new THREE.PlaneBufferGeometry(100, 100, 10, 10);
+   var gm = new THREE.PlaneBufferGeometry(90, 120, 10, 10);
     plane = new THREE.Mesh( gm,
         new THREE.MeshLambertMaterial({
-            color: 0xdddddd, transparent: true, opacity: 0.7
+            color: 0x9999ee, transparent: true, opacity: 0.7
         })
     );
     plane.position.y = 0; plane.rotation.x = -Math.PI / 2;
@@ -199,9 +199,9 @@ var geometry_cube = new THREE.CubeGeometry (2, 3, 1.5);
 
 
 function movsp() { 
-  cubeL.position.setX(-xv); cubeL.position.setY(yv); cubeL.position.setZ(zv);
-  cubeR.position.setX(xv);  cubeR.position.setY(yv); cubeR.position.setZ(zv); 
-    cubeL.rotation.x=Math.atan(-yv/zv); cubeR.rotation.x=Math.atan(-yv/zv);
+  cubeL.position.setX(-xv*2); cubeL.position.setY(yv); cubeL.position.setZ(zv);
+  cubeR.position.setX(xv*2);  cubeR.position.setY(yv); cubeR.position.setZ(zv); 
+    cubeL.rotation.x=Math.atan(-yv/zv/8); cubeR.rotation.x=Math.atan(-yv/zv/8);
     cubeL.rotation.y=Math.atan(-xv/zv); cubeR.rotation.y=Math.atan( xv/zv); 
  renderer.render( scene, camera ); 
 chkLoop();   
@@ -251,24 +251,24 @@ function loadsrc() {
 
 function playGain() {
   source.connect(splitter); 
- //splitter.connect(pannerL,0).connect(audioCtx.destination);
-  splitter.connect(pannerL,0).connect(bassL).connect(trebleL).connect(audioCtx.destination); //**
+
+  splitter.connect(pannerL,0).connect(bassL).connect(trebleL).connect(audioCtx.destination); 
   splitter.connect(gainBL,0).connect(pannerBL).connect(delaySL).connect(audioCtx.destination);
- //splitter.connect(pannerR,1).connect(audioCtx.destination);  
-  splitter.connect(pannerR,1).connect(bassR).connect(trebleR).connect(audioCtx.destination); //**
+
+  splitter.connect(pannerR,1).connect(bassR).connect(trebleR).connect(audioCtx.destination); 
   splitter.connect(gainBR,1).connect(pannerBR).connect(delaySR).connect(audioCtx.destination);
    
  audio.play();
 }
 
 function defpos() {
- xv=6; yv=2; zv=-6; setPos(xv,yv,zv);
+ xv=3; yv=2; zv=-6; setPos(xv,yv,zv);
 }
 
 function setPos(x,y,z) { 
  if (fname) {
   pannerL.setPosition( -x, y, z); pannerBL.setPosition(-x, y, z*2);   
-  pannerR.setPosition(  x, y, z); pannerBR.setPosition( x, y, z*2);  //pannerBR.setPosition( x*0.8, y*2, z*5); 
+  pannerR.setPosition(  x, y, z); pannerBR.setPosition( x, y, z*2);  
  }
  movsp();    
  
@@ -276,7 +276,8 @@ function setPos(x,y,z) {
 
 function changeBass(bvalue) {
   if (fname) {
-	bassL.gain.setValueAtTime(bvalue,0); bassR.gain.setValueAtTime(bvalue,0);
+	bassL.gain.setValueAtTime(bvalue,audioCtx.currentTime); 
+	bassR.gain.setValueAtTime(bvalue,audioCtx.currentTime);
   } 
   bv = bvalue; 
     document.getElementById("bassValue").innerHTML="bass = "+ bv;
@@ -284,8 +285,8 @@ function changeBass(bvalue) {
 }
 function changeTreble(tvalue) {
   if (fname) {
-  	trebleL.gain.setValueAtTime(tvalue,0); //trebleBL.gain.setValueAtTime(tvalue,0);
-  	trebleR.gain.setValueAtTime(tvalue,0); //trebleBR.gain.setValueAtTime(tvalue,0);
+  	trebleL.gain.setValueAtTime(tvalue,audioCtx.currentTime); 
+  	trebleR.gain.setValueAtTime(tvalue,audioCtx.currentTime); 
   }
   tv = tvalue; 
     document.getElementById("trebleValue").innerHTML="treble = "+ tv;
