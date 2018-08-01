@@ -148,8 +148,9 @@ var geometry_cube = new THREE.BoxGeometry (2, 3, 1.5);
      var gr = new THREE.MeshLambertMaterial({color: 0x333333});
      var materials = [ br, br, br, br, gr, br ];
    
-       var material_cube = new THREE.MeshFaceMaterial(materials);
-         cubeL = new THREE.Mesh (geometry_cube, material_cube);		//material_cube
+       //var material_cube = new THREE.MeshFaceMaterial(materials);
+         cubeL = new THREE.Mesh (geometry_cube, materials);		//material_cube
+	//cubeL = new THREE.Mesh (geometry_cube, [ br, br, br, br, gr, br ]);
          cubeL.position.setX(-xv*2); cubeL.position.setY(yv); cubeL.position.setZ(zv); 
 		cubeL.rotation.order = "ZYX";          
          cubeL.castShadow = true; 
