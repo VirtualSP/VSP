@@ -4,7 +4,7 @@
 
 var src, source, splitter, audio, fname, fc,flen;
 var xv, yv, zv, vol, rv, tv,tvv, cv, bv, cf,cn2 ,tfile,gl,mf;
- vol = 0.7; ctlvol = 0.6; cv = 1.0; rv =0.2; cf = 0;   //***
+ vol = 0.7; ctlvol = 0.6; cv = 1.0; rv =0.25; cf = 0;   //***
 
 var touchSX,touchSY, touchEX,touchEY, touchDX, touchDY, diffSX, diffEX, el,ctx;
 
@@ -36,21 +36,21 @@ xv = 6.0; yv = 2.0; zv = -6.0;  tv = 0.0; bv = 0.0;
   bassL.frequency.setValueAtTime(100, 0); 
   bassL.gain.value = 0; //bassL.gain.setValueAtTime(bv, 0);				// -40db...40db
  trebleL = audioCtx.createBiquadFilter(); trebleL.type   = 'highshelf';  trebleL.Q.automationRate='k-rate';
-  trebleL.frequency.setValueAtTime(12000, 0);
+  trebleL.frequency.setValueAtTime(10000, 0);
   trebleL.gain.setValueAtTime(tv, 0);
- //trebleBL = audioCtx.createBiquadFilter(); trebleBL.type   = 'highshelf';
- // trebleBL.frequency.setValueAtTime(6000, 0);
-  //trebleBL.gain.setValueAtTime(tv, 0);
+ trebleBL = audioCtx.createBiquadFilter(); trebleBL.type   = 'highshelf';
+  trebleBL.frequency.setValueAtTime(18000, 0);
+  trebleBL.gain.setValueAtTime(tv, 20);
 
  bassR   = audioCtx.createBiquadFilter(); bassR.type   = 'lowshelf';  bassR.Q.automationRate='k-rate';
   bassR.frequency.setValueAtTime(100, 0);
   bassR.gain.value = 0; //bassR.gain.setValueAtTime(bv, 0);
  trebleR = audioCtx.createBiquadFilter(); trebleR.type   = 'highshelf';  trebleR.Q.automationRate='k-rate';
-  trebleR.frequency.setValueAtTime(12000, 0);
+  trebleR.frequency.setValueAtTime(10000, 0);
   trebleR.gain.setValueAtTime(tv, 0);
- //trebleBR = audioCtx.createBiquadFilter(); trebleBR.type   = 'highshelf';
-  //trebleBR.frequency.setValueAtTime(6000, 0);
-  //trebleBR.gain.setValueAtTime(tv, 0);
+ trebleBR = audioCtx.createBiquadFilter(); trebleBR.type   = 'highshelf';
+  trebleBR.frequency.setValueAtTime(18000, 0);
+  trebleBR.gain.setValueAtTime(tv, 20);
 
 gainBL = audioCtx.createGain(); gainBL.gain.value = rv;  	gainBL.gain.automationRate='k-rate';
 gainBR = audioCtx.createGain(); gainBR.gain.value = rv; 	gainBR.gain.automationRate='k-rate';
@@ -250,10 +250,10 @@ function playGain() {
   source.connect(splitter); 
 
   splitter.connect(pannerL,0).connect(bassL).connect(trebleL).connect(audioCtx.destination); 
-  splitter.connect(gainBL,0).connect(pannerBL).connect(delaySL).connect(audioCtx.destination);
+  splitter.connect(gainBL,0).connect(pannerBL).connect(trebleBL).connect(delaySL).connect(audioCtx.destination);
 
   splitter.connect(pannerR,1).connect(bassR).connect(trebleR).connect(audioCtx.destination); 
-  splitter.connect(gainBR,1).connect(pannerBR).connect(delaySR).connect(audioCtx.destination);
+  splitter.connect(gainBR,1).connect(pannerBR).connect(trebleBR).connect(delaySR).connect(audioCtx.destination);
    
  audio.play();
 }
