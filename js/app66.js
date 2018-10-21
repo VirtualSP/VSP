@@ -27,10 +27,10 @@ xv = 6.0; yv = 2.0; zv = -6.0;  tv = 0.0; bv = 0.0;
     pannerL.panningModel = 'HRTF';  pannerL.distanceModel = 'linear'; pannerL.setOrientation(0,0,1); pannerL.maxDistance = 1000;
  pannerR  = audioCtx.createPanner(); 
     pannerR.panningModel = 'HRTF';  pannerR.distanceModel = 'linear'; pannerR.setOrientation(0,0,1); pannerR.maxDistance = 1000;
- pannerBL = audioCtx.createPanner(); 
-    pannerBL.panningModel = 'HRTF'; pannerBL.distanceModel = 'linear'; pannerBL.setOrientation(0,0,1);pannerBL.maxDistance = 1000;
- pannerBR = audioCtx.createPanner();
-    pannerBR.panningModel = 'HRTF'; pannerBR.distanceModel = 'linear'; pannerBR.setOrientation(0,0,1);pannerBR.maxDistance = 1000;
+ pannerBL = audioCtx.createPanner(); pannerBL.refDistance = 1;
+    pannerBL.panningModel = 'HRTF'; pannerBL.distanceModel = 'linear'; pannerBL.setOrientation(0,0,1);pannerBL.maxDistance = 100;
+ pannerBR = audioCtx.createPanner(); pannerBR.refDistance = 1;
+    pannerBR.panningModel = 'HRTF'; pannerBR.distanceModel = 'linear'; pannerBR.setOrientation(0,0,1);pannerBR.maxDistance = 100;
 
  bassL   = audioCtx.createBiquadFilter(); bassL.type   = 'lowshelf';  bassL.Q.automationRate='k-rate';
   bassL.frequency.setValueAtTime(100, 0); 
@@ -84,7 +84,14 @@ function ini() {
         function () { handleFiles(); } );
   document.querySelector("#loop").addEventListener("click",
 	function () { chkLoop(); } );
-  
+
+  document.querySelector("#xv").addEventListener("change",
+        function () { changeXV(document.querySelector("#xv").value); });
+ document.querySelector("#yv").addEventListener("change",
+        function () { changeYV(document.querySelector("#yv").value); });
+ document.querySelector("#zv").addEventListener("change",
+        function () { changeZV(document.querySelector("#zv").value); });
+
   document.querySelector("#bass").addEventListener("change",
         function () { changeBass(document.querySelector("#bass").value); });
   document.querySelector("#treble").addEventListener("change",
@@ -149,13 +156,13 @@ var geometry_cube = new THREE.BoxGeometry (2, 3, 1.5);
      var materials = [ br, br, br, br, gr, br ];
    
        //var material_cube = new THREE.MeshFaceMaterial(materials);
-         cubeL = new THREE.Mesh (geometry_cube, materials);		//material_cube
+         cubeL = new THREE.Mesh (geometry_cube, materials);	//cubeL.name="cubeL";console.log(cubeL.uuid);	//material_cube
 	//cubeL = new THREE.Mesh (geometry_cube, [ br, br, br, br, gr, br ]);
          cubeL.position.setX(-xv*2); cubeL.position.setY(yv); cubeL.position.setZ(zv); 
 		cubeL.rotation.order = "ZYX";          
          cubeL.castShadow = true; 
 	scene.add( cubeL ); 
-         cubeR = new THREE.Mesh (geometry_cube, materials);		//material_cube
+         cubeR = new THREE.Mesh (geometry_cube, materials);	//cubeR.name="cubeR"	//material_cube
          cubeR.position.setX(xv*2); cubeR.position.setY(yv); cubeR.position.setZ(zv);
 		cubeR.rotation.order = "ZYX";          
          cubeR.castShadow = true; 
@@ -182,15 +189,15 @@ var geometry_cube = new THREE.BoxGeometry (2, 3, 1.5);
 
  el = document.getElementById("tCanvas");
 
-//
- el.addEventListener("touchstart", handleStart, false);
+
+ //el.addEventListener("touchstart", handleStart, false);
 	el.addEventListener("mousedown", handleStartm, false);
- el.addEventListener("touchmove", handleMove, false);
+ //el.addEventListener("touchmove", handleMove, false);
 	el.addEventListener("wheel", handlewheelm,false);
 	el.addEventListener("mousemove", handlMovem,false);
- el.addEventListener("touchend", handleEnd, false);
+ //el.addEventListener("touchend", handleEnd, false);
 	el.addEventListener("mouseup", handleEndm, false);
-//
+
 
 } // -- end of initgl --
 
@@ -227,10 +234,10 @@ function loadnext() {
 }
 
 function loadsrc() {
-    src = URL.createObjectURL(document.getElementsByTagName('input')[3].files[fc]); 
-    fname = document.getElementsByTagName('input')[3].files[fc].name; 
+    src = URL.createObjectURL(document.getElementsByTagName('input')[6].files[fc]); 
+    fname = document.getElementsByTagName('input')[6].files[fc].name; 
 	loadfxyz();
-    showMetaData(document.getElementsByTagName('input')[3].files[fc]);
+    showMetaData(document.getElementsByTagName('input')[6].files[fc]);
 	
 						
     audio.src=src;	audio.autoplay = true;
@@ -260,6 +267,9 @@ function playGain() {
 
 function defpos() {
  xv=3; yv=2; zv=-6; setPos(xv,yv,zv);
+ document.getElementById("xValue").innerHTML="pos_x = "+ xv;
+ document.getElementById("yValue").innerHTML="pos_y = "+ yv;
+ document.getElementById("zValue").innerHTML="pos_z = "+ zv;
 }
 
 function setPos(x,y,z) { 
@@ -290,68 +300,65 @@ function changeTreble(tvalue) {
     document.querySelector("#treble").value = tvalue;
 }
 
-// ---- swipe & pitch -----
-var isMouseDown = false, needForRAF = true;
-
-function handleStart(evt) { 
- mf = 1; isMouseDown = true; needForRAF = true;
-  evt.preventDefault(); 
- switch ( evt.touches.length ) {
-  case 1:
-   touchDX = 0; touchDY = 0;
-   touchSX = evt.touches[0].pageX-200; touchSY = evt.touches[0].pageY-200; break;
-  case 2:
-   diffSX = Math.abs( evt.touches[0].pageX - evt.touches[1].pageX ); break;
- }
+function changeXV(x) {
+  xv = x; 
+    document.getElementById("xValue").innerHTML="pos_x = "+ xv;
+    document.querySelector("#xv").value = xv;
+ setPos( xv, yv, zv );
+}
+function changeYV(y) {
+  yv = y; 
+    document.getElementById("yValue").innerHTML="pos_y = "+ yv;
+    document.querySelector("#yv").value = yv;
+ setPos( xv, yv, zv );
+}
+function changeZV(z) {
+  zv = z; 
+    document.getElementById("zValue").innerHTML="pos_z = "+ zv;
+    document.querySelector("#zv").value = zv;
+ setPos( xv, yv, zv );
 }
 
-function handleMove(evt) {
-  evt.preventDefault();
-if ( isMouseDown ) {
- switch ( evt.touches.length ) {
-  case 1:
-   touchEX = evt.touches[0].pageX-200; touchEY = evt.touches[0].pageY-200;
-   if ( touchSX > 0) { 
-	touchDX = (touchSX - touchEX)*(-zv)*0.0004;	// /500;
-   } else {
-	touchDX = -(touchSX - touchEX)*(-zv)*0.0004;	// /500;
-   } 
-   touchDY = (touchSY - touchEY)*(-zv)*0.0004;		// /500;
-   xv = xv - touchDX;
-   yv = yv + touchDY;	
-   break;
-  case 2:
-   diffEX = Math.abs( evt.touches[0].pageX - evt.touches[1].pageX );
-   if ( diffSX > diffEX ) { 
-    zv = zv - 0.2;
-   } else {
-    zv = zv + 0.2;
-   }   
-   break;
- } setPos( xv, yv, zv );
-/*
- if (needForRAF) {
-    needForRAF = false;            
-    requestAnimationFrame(update); 
-  };
-*/
- }
-}
-
-function handleEnd(evt) { needForRAF = false;
-  evt.preventDefault(); isMouseDown = false;
-}
+function incXV() { xv = Math.round(xv*10 + 2)/10; setPos( xv, yv, zv ); document.getElementById("xValue").innerHTML="pos_x = "+ xv;}
+function decXV() { xv = Math.round(xv*10 - 2)/10; setPos( xv, yv, zv ); document.getElementById("xValue").innerHTML="pos_x = "+ xv;}
+function incYV() { yv = Math.round(yv*10 + 2)/10; setPos( xv, yv, zv ); document.getElementById("yValue").innerHTML="pos_y = "+ yv;}
+function decYV() { yv = Math.round(yv*10 - 2)/10; setPos( xv, yv, zv ); document.getElementById("yValue").innerHTML="pos_y = "+ yv;}
+function incZV() { zv = Math.round(zv*10 + 2)/10; setPos( xv, yv, zv ); document.getElementById("zValue").innerHTML="pos_z = "+ zv;}
+function decZV() { zv = Math.round(zv*10 - 2)/10; setPos( xv, yv, zv ); document.getElementById("zValue").innerHTML="pos_z = "+ zv;}
 
 //----- mouse -------
+//var mouse = new THREE.Vector2();
+//var raycaster = new THREE.Raycaster();
 
+var isMouseDown;
 function handleStartm(evt) {
   evt.preventDefault(); isMouseDown = true; document.body.style.cursor = "move";
    touchDX = 0; touchDY = 0;
    touchSX = evt.pageX-200; touchSY = evt.pageY-200; 
 }
 
+//var intersects;
 function handlMovem(evt) { evt.preventDefault(); 
- 
+/*
+  const element = event.currentTarget;
+  // canvas—v‘fã‚ÌXYÀ•W
+  const x = event.clientX - element.offsetLeft;
+  const y = event.clientY - element.offsetTop;
+  // canvas—v‘f‚Ì•E‚‚³
+  const w = element.offsetWidth;
+  const h = element.offsetHeight;
+   mouse.x = ( x / w ) * 2 - 1;
+   mouse.y = -( y / h ) * 2 + 1;
+   raycaster.setFromCamera(mouse, camera);
+   intersects = raycaster.intersectObjects(scene.children);
+ if(intersects.length > 1){ console.log(intersects.length);
+   if( intersects[0].object.name = "cubeR" ) { //console.log(intersects[0].object.name);
+	document.body.style.cursor = "move"; };
+    //if (intersects.length<2) { console.log(intersects[0].object.geometry); document.body.style.cursor = "default"; };
+  }
+ else { document.body.style.cursor = "default"; };
+*/  
+
   if (isMouseDown) { 
    
   	touchEX = evt.pageX-200; touchEY = evt.pageY-200;
@@ -362,15 +369,19 @@ function handlMovem(evt) { evt.preventDefault();
    	} 
 
    touchDY = (touchSY - touchEY)*(-zv)*0.0004;		// /800;
-   xv = xv - touchDX; 
-   yv = yv + touchDY;  setPos( xv, yv, zv );
+   xv = xv - touchDX;   xv = Math.round(xv*10)/10;
+   yv = yv + touchDY;  yv = Math.round(yv*10)/10; setPos( xv, yv, zv );
+	document.getElementById("xValue").innerHTML="pos_x = "+ xv;
+	document.getElementById("xv").value= xv;
+	document.getElementById("yValue").innerHTML="pos_y = "+ yv;
+	document.getElementById("yv").value= yv;
 /*
   if (needForRAF) {
     needForRAF = false;            
     requestAnimationFrame(update); 
   };
 */
-  }
+  } //setTimeout(handlMovem,1000);
 }
 /*
 function update() {
@@ -379,8 +390,10 @@ function update() {
 }
 */
 function handlewheelm(evt) { evt.preventDefault(); //isMouseDown = true;
-   zv = zv - evt.deltaY/120; 
+   zv = zv - evt.deltaY/240; zv = Math.round(zv*10)/10;
   setPos( xv, yv, zv );
+	document.getElementById("zValue").innerHTML="pos_z = "+ zv;
+	document.getElementById("zv").value= zv;
 }
 
 function handleEndm(evt) { evt.preventDefault(); 
