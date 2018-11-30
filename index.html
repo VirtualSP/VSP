@@ -53,21 +53,23 @@ input[type='range']  {
 </head>
 
 <body onload="ini()">  
-<b>Virtual Speakers </b><font size="2"> 1.6.5 ( Oct.2018 )</font>
+<b>Virtual Speakers </b><font size="2"> 1.7.6 ( Dec.2018 )</font>
 <a href="https://virtualsp.github.io/VSHome/" target="_blank"> About VSP</a><br>
 
 <canvas id="tCanvas" width="400" height="400" style="border:1px solid #CCC;  z-index: 2"/></canvas>
 <br>
 
-<div style="position: absolute; left: 8px; top: 446px;" >
-<input type="range" id="xv" min="-5" max="10" step="0.2" value="3.0" />
- <span id="xValue">pos_x = 3.0</span><br>
+
+<div style="position: absolute; left: 8px; top: 416px;" >
+<p style="font-size:15px; font-family:verdana">
+<input type="range" id="xv" min="-5" max="15" step="0.2" value="4.0" />
+ <span id="xValue">pos_x = 4.0</span><br>
 
 <input type="range" id="yv" min="-5" max="15" step="0.2" value="2.0" />
  <span id="yValue">pos_y = 2.0</span><br>
 
-<input type="range" id="zv" min="-20" max="2" step="0.2" value="-6.0" />
- <span id="zValue">pos_z = -6.0</span><br>
+<input type="range" id="zv" min="-20" max="2" step="0.2" value="-8.0" />
+ <span id="zValue">pos_z = -8.0</span><br>
 
  <input type="range" id="bass" min="-20" max="20" step="0.5" value="0" />
  <span id="bassValue">bass = 0.0</span><br>
@@ -79,29 +81,20 @@ input[type='range']  {
  <input type="file" id="input" multiple accept="audio/*"></div>
 
 <br><br><br><br><br><br><br><br><br><br>
+</p>
 </div>
  
-<div style="position: absolute; left: 10px; top: 405px;" >
+<div style="position: absolute; left: 10px; top: 402px;" >
  <button onclick="defpos()">Reset speaker position</button></div>
 
-<!--
-<div style="position: absolute; left: 10px; top: 448px;" >
- <button onclick="decXV()" style="WIDTH: 30px; HEIGHT: 30px">-</button></div>
-<div style="position: absolute; left: 243px; top: 448px;" >
- <button onclick="incXV()" style="WIDTH: 30px; HEIGHT: 30px">+</button></div>
-<div style="position: absolute; left: 10px; top: 487px;" >
- <button onclick="decYV()" style="WIDTH: 30px; HEIGHT: 30px">-</button></div>
-<div style="position: absolute; left: 243px; top: 487px;" >
- <button onclick="incYV()" style="WIDTH: 30px; HEIGHT: 30px">+</button></div>
-<div style="position: absolute; left: 10px; top: 526px;" >
- <button onclick="decZV()"style="WIDTH: 30px; HEIGHT: 30px">-</button></div>
-<div style="position: absolute; left: 243px; top: 526px;" >
- <button onclick="incZV()" style="WIDTH: 30px; HEIGHT: 30px">+</button>
---!>
-
-<div style="position: absolute; left: 124px; top: 40px;" >
+<div style="position: absolute; left: 124px; top: 30px;" >
 <img id='myimg' style="position: absolute; z-index: -1">
-  </div>
+</div>
+
+<div style="position: absolute; left: 40px; top: 80px; width:320px; height:320px; color:#886600" >
+ <div class="top-left" id="centered"></div>
+ </div>
+
 
 </body>
 </html>
