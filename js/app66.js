@@ -9,7 +9,7 @@ var xv, yv, zv, vol, rv, tv,tvv, cv, bv, cf,cn2 ,tfile,gl,mf;
 var touchSX,touchSY, touchEX,touchEY, touchDX, touchDY, diffSX, diffEX, el,ctx;
 
 var AudioContext = window.AudioContext || window.webkitAudioContext; 
-var audioCtx; // = new AudioContext();
+var audioCtx; 
 
 var gainL,gainBL,gainR,gainBR,delaySL,delaySR;
 var pannerL,pannerR,pannerBL,pannerBR,listener;  //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -21,7 +21,7 @@ audioCtx = new AudioContext(); //{ latencyHint: 'playback' }
  splitter = audioCtx.createChannelSplitter(2);
  listener = audioCtx.listener;
 
-xv = 6.0; yv = 2.0; zv = -6.0;  tv = 0.0; bv = 0.0; 
+xv = 4.0; yv = 2.0; zv = -8.0;  tv = 0.0; bv = 0.0; 
 
  pannerL  = audioCtx.createPanner(); 
     pannerL.panningModel = 'HRTF';  pannerL.distanceModel = 'linear'; pannerL.setOrientation(0,0,1); pannerL.maxDistance = 1000;
@@ -54,13 +54,13 @@ xv = 6.0; yv = 2.0; zv = -6.0;  tv = 0.0; bv = 0.0;
 
 gainBL = audioCtx.createGain(); gainBL.gain.value = rv;  	gainBL.gain.automationRate='k-rate';
 gainBR = audioCtx.createGain(); gainBR.gain.value = rv; 	gainBR.gain.automationRate='k-rate';
-delaySL = audioCtx.createDelay(); delaySL.delayTime.value=0.04; delaySL.delayTime.automationRate='k-rate';
-delaySR = audioCtx.createDelay(); delaySR.delayTime.value=0.04;delaySR.delayTime.automationRate='k-rate';
+delaySL = audioCtx.createDelay(); delaySL.delayTime.value=0.04*(-zv/6); delaySL.delayTime.automationRate='k-rate';
+delaySR = audioCtx.createDelay(); delaySR.delayTime.value=0.04*(-zv/6); delaySR.delayTime.automationRate='k-rate';
 
 audio = new Audio(src); audio.controls = true; audio.volume=vol;
   document.body.appendChild(audio); 
   source = audioCtx.createMediaElementSource(audio);
- setPos(xv,yv,zv);
+ //setPos(xv,yv,zv);
 
  audio.addEventListener('ended', savefxyz,false);
  audio.addEventListener('pause', savefxyz,false);
@@ -77,13 +77,12 @@ var meshL,meshR,cubeL, cubeR;
 function ini() {
 
   loadxyz();
-   window.onbeforeunload = function() { savexyz();}
-  initgls(); //movsp();
+   window.onbeforeunload = function() { savexyz(); alert("beforunload");}
+  initCtx();
+  initgls(); setPos(xv,yv,zv); //movsp();
 
-  document.querySelector("#input").addEventListener("change",
-        function () { handleFiles(); } );
-  document.querySelector("#loop").addEventListener("click",
-	function () { chkLoop(); } );
+  document.querySelector("#input").addEventListener("change",   function () { handleFiles(); } );
+  document.querySelector("#loop").addEventListener("click",  function () { chkLoop(); } );
 
   document.querySelector("#xv").addEventListener("change",
         function () { changeXV(document.querySelector("#xv").value); });
@@ -104,6 +103,12 @@ function loadfxyz() {
  	fxyz = JSON.parse(localStorage.getItem(fname));
 	if (fxyz) {
 	 xv = parseFloat(fxyz[0]); yv = parseFloat(fxyz[1]); zv = parseFloat(fxyz[2]);
+		document.getElementById("xValue").innerHTML="pos_x = "+ xv;
+   		document.querySelector("#xv").value = xv;
+		document.getElementById("yValue").innerHTML="pos_y = "+ yv;
+    		document.querySelector("#yv").value = yv;
+		document.getElementById("zValue").innerHTML="pos_z = "+ zv;
+    		document.querySelector("#zv").value = zv; 
 	 vol = parseFloat(fxyz[3]); bv = parseFloat(fxyz[4]); tv = parseFloat(fxyz[5]);
 	}
 }
@@ -116,9 +121,16 @@ function savefxyz() {
 
 function loadxyz() { 
 	sxv = localStorage.getItem("vspx"); if (sxv) { xv = parseFloat(sxv);};
-	syv = localStorage.getItem("vspy"); if (syv) { yv = parseFloat(syv);};
+		document.getElementById("xValue").innerHTML="pos_x = "+ xv;
+   		document.querySelector("#xv").value = xv;
+	syv = localStorage.getItem("vspy"); if (syv) { yv = parseFloat(syv);}; 
+		document.getElementById("yValue").innerHTML="pos_y = "+ yv;
+    		document.querySelector("#yv").value = yv;		
 	szv = localStorage.getItem("vspz"); if (szv) { zv = parseFloat(szv);};
-};	
+		document.getElementById("zValue").innerHTML="pos_z = "+ zv;
+    		document.querySelector("#zv").value = zv; 
+};
+	
 function savexyz() {  
 	localStorage.setItem("vspx",xv.toString()); 
 	localStorage.setItem("vspy",yv.toString()); 
@@ -131,82 +143,13 @@ if ( document.getElementById('loop').checked ) { lp = true;  }
  else { lp = false;}
 }
 
-function initgls() {
-
-renderer = new THREE.WebGLRenderer({ canvas: tCanvas , alpha: true, antialias: true }); //******
-renderer.setSize (wX,wY);    
-renderer.setClearColor(0x3333cc, 0.1); //*****
-         
-camera = new THREE.PerspectiveCamera (90, 1, 1, 1000);  
-camera.position.x=0; camera.position.y=5; camera.position.z=5;   
-camera.lookAt( {x:0, y:4.2, z:0 } ); 
-      
-scene = new THREE.Scene(); scene.add(camera);  //scene.background = new THREE.Color( 0xff0000 );
-    
-var geometry_sph = new THREE.SphereGeometry (0.7, 36, 36);         
-var material0 = new THREE.MeshLambertMaterial( { color: 0x0088cc } );    
-Sphere0 = new THREE.Mesh (geometry_sph, material0);     
-Sphere0.position.x= 0; Sphere0.position.y= 0; Sphere0.position.z= 0; Sphere0.castShadow = true;     
-scene.add( Sphere0 );
-
-var geometry_cube = new THREE.BoxGeometry (2, 3, 1.5);
-        
-     var br = new THREE.MeshLambertMaterial({color: 0x886600});
-     var gr = new THREE.MeshLambertMaterial({color: 0x333333});
-     var materials = [ br, br, br, br, gr, br ];
-   
-       //var material_cube = new THREE.MeshFaceMaterial(materials);
-         cubeL = new THREE.Mesh (geometry_cube, materials);	//cubeL.name="cubeL";console.log(cubeL.uuid);	//material_cube
-	//cubeL = new THREE.Mesh (geometry_cube, [ br, br, br, br, gr, br ]);
-         cubeL.position.setX(-xv*2); cubeL.position.setY(yv); cubeL.position.setZ(zv); 
-		cubeL.rotation.order = "ZYX";          
-         cubeL.castShadow = true; 
-	scene.add( cubeL ); 
-         cubeR = new THREE.Mesh (geometry_cube, materials);	//cubeR.name="cubeR"	//material_cube
-         cubeR.position.setX(xv*2); cubeR.position.setY(yv); cubeR.position.setZ(zv);
-		cubeR.rotation.order = "ZYX";          
-         cubeR.castShadow = true; 
-        scene.add( cubeR ); 
-         
-  light0 = new THREE.SpotLight( 0xffffff );      
-  light0.position.x=100; light0.position.y=100; light0.position.z=100;    
-  light0.shadow.mapSize.width = 4096; light0.shadow.mapSize.height = 4096;
-  scene.add( light0 );
- 
-   var gm = new THREE.PlaneBufferGeometry(90, 120, 10, 10);
-    plane = new THREE.Mesh( gm,
-        new THREE.MeshLambertMaterial({
-            color: 0x9999ee, transparent: true, opacity: 0.7
-        })
-    );
-    plane.position.y = 0; plane.rotation.x = -Math.PI / 2;
-    scene.add( plane );
-
-    light0.castShadow = true;
-    plane.receiveShadow = true;
-    renderer.shadowMap.enabled = true;
-   renderer.render( scene, camera ); 
-
- el = document.getElementById("tCanvas");
-
-
- //el.addEventListener("touchstart", handleStart, false);
-	el.addEventListener("mousedown", handleStartm, false);
- //el.addEventListener("touchmove", handleMove, false);
-	el.addEventListener("wheel", handlewheelm,false);
-	el.addEventListener("mousemove", handlMovem,false);
- //el.addEventListener("touchend", handleEnd, false);
-	el.addEventListener("mouseup", handleEndm, false);
-
-
-} // -- end of initgl --
-
-
 function movsp() { 
-  cubeL.position.setX(-xv*2); cubeL.position.setY(yv); cubeL.position.setZ(zv);
-  cubeR.position.setX(xv*2);  cubeR.position.setY(yv); cubeR.position.setZ(zv); 
-    cubeL.rotation.x=Math.atan(-yv/zv/2); cubeR.rotation.x=Math.atan(-yv/zv/2);
-    cubeL.rotation.y=Math.atan(-xv/zv*2); cubeR.rotation.y=Math.atan( xv/zv*2); 
+ var xv2;
+  xv2 = xv*2;
+  cubeL.position.setX(-xv2); cubeL.position.setY(yv); cubeL.position.setZ(zv); //changeXV(xv);
+  cubeR.position.setX(xv2);  cubeR.position.setY(yv); cubeR.position.setZ(zv); 
+    cubeL.rotation.x=Math.atan(-yv/zv); cubeR.rotation.x=Math.atan(-yv/zv);
+    cubeL.rotation.y=Math.atan(-xv2/zv); cubeR.rotation.y=Math.atan( xv2/zv); 
  renderer.render( scene, camera ); 
 chkLoop();   
 }
@@ -217,7 +160,7 @@ function startPlay() {
 } 
    
 function handleFiles() { 
- if (!fname) { initCtx();}	//!!!!!!!!!!!!!!!!!!!
+ //if (!fname) { initCtx();}	//!!!!!!!!!!!!!!!!!!!
 fc = 0; movsp();
 
 var fileInput = document.getElementById("input");
@@ -236,14 +179,14 @@ function loadnext() {
 function loadsrc() {
     src = URL.createObjectURL(document.getElementsByTagName('input')[6].files[fc]); 
     fname = document.getElementsByTagName('input')[6].files[fc].name; 
+
 	loadfxyz();
     showMetaData(document.getElementsByTagName('input')[6].files[fc]);
-	
-						
+							
     audio.src=src;	audio.autoplay = true;
   
     audio.addEventListener('loadeddata', function() {
-      
+      //showMetaData(document.getElementsByTagName('input')[6].files[fc]);
       if ( fc  < flen ) { 
        audio.onended = function() { loadnext(); }
       }
@@ -251,7 +194,6 @@ function loadsrc() {
    }, false);
 
 }
-
 
 function playGain() {
   source.connect(splitter); 
@@ -266,7 +208,7 @@ function playGain() {
 }
 
 function defpos() {
- xv=3; yv=2; zv=-6; setPos(xv,yv,zv);
+ xv=4; yv=2; zv=-8; setPos(xv,yv,zv); 
  document.getElementById("xValue").innerHTML="pos_x = "+ xv;
  document.getElementById("yValue").innerHTML="pos_y = "+ yv;
  document.getElementById("zValue").innerHTML="pos_z = "+ zv;
@@ -316,6 +258,8 @@ function changeZV(z) {
   zv = z; 
     document.getElementById("zValue").innerHTML="pos_z = "+ zv;
     document.querySelector("#zv").value = zv;
+	delaySL.delayTime.value=0.04*(-zv/6);
+	//delaySR.delayTime.value=0.04*(-zv/6); //console.log(0.04*(-zv/6));
  setPos( xv, yv, zv );
 }
 
@@ -326,95 +270,102 @@ function decYV() { yv = Math.round(yv*10 - 2)/10; setPos( xv, yv, zv ); document
 function incZV() { zv = Math.round(zv*10 + 2)/10; setPos( xv, yv, zv ); document.getElementById("zValue").innerHTML="pos_z = "+ zv;}
 function decZV() { zv = Math.round(zv*10 - 2)/10; setPos( xv, yv, zv ); document.getElementById("zValue").innerHTML="pos_z = "+ zv;}
 
-//----- mouse -------
-//var mouse = new THREE.Vector2();
-//var raycaster = new THREE.Raycaster();
+//------------------------- init gl ------------------------------------
+function initgls() {
 
-var isMouseDown;
-function handleStartm(evt) {
-  evt.preventDefault(); isMouseDown = true; document.body.style.cursor = "move";
-   touchDX = 0; touchDY = 0;
-   touchSX = evt.pageX-200; touchSY = evt.pageY-200; 
-}
+renderer = new THREE.WebGLRenderer({ canvas: tCanvas , alpha: true, antialias: true }); //******
+renderer.setSize (wX,wY);    
+renderer.setClearColor(0x3333cc, 0.1); //*****
+         
+camera = new THREE.PerspectiveCamera (90, 1, 1, 1000);  
+camera.position.x=0; camera.position.y=5; camera.position.z=5;   
+camera.lookAt( {x:0, y:4.2, z:0 } ); 
+      
+scene = new THREE.Scene(); scene.add(camera);  //scene.background = new THREE.Color( 0xff0000 );
+    
+var geometry_sph = new THREE.SphereGeometry (0.7, 36, 36);         
+var material0 = new THREE.MeshLambertMaterial( { color: 0x0088cc } );    
+Sphere0 = new THREE.Mesh (geometry_sph, material0);     
+Sphere0.position.x= 0; Sphere0.position.y= 0; Sphere0.position.z= 0; Sphere0.castShadow = true;     
+scene.add( Sphere0 );
 
-//var intersects;
-function handlMovem(evt) { evt.preventDefault(); 
-/*
-  const element = event.currentTarget;
-  // canvasóvëfè„ÇÃXYç¿ïW
-  const x = event.clientX - element.offsetLeft;
-  const y = event.clientY - element.offsetTop;
-  // canvasóvëfÇÃïùÅEçÇÇ≥
-  const w = element.offsetWidth;
-  const h = element.offsetHeight;
-   mouse.x = ( x / w ) * 2 - 1;
-   mouse.y = -( y / h ) * 2 + 1;
-   raycaster.setFromCamera(mouse, camera);
-   intersects = raycaster.intersectObjects(scene.children);
- if(intersects.length > 1){ console.log(intersects.length);
-   if( intersects[0].object.name = "cubeR" ) { //console.log(intersects[0].object.name);
-	document.body.style.cursor = "move"; };
-    //if (intersects.length<2) { console.log(intersects[0].object.geometry); document.body.style.cursor = "default"; };
-  }
- else { document.body.style.cursor = "default"; };
-*/  
-
-  if (isMouseDown) { 
+var geometry_cube = new THREE.BoxGeometry (2, 3, 1.5);
+        
+     var br = new THREE.MeshLambertMaterial({color: 0x886600});
+     var gr = new THREE.MeshLambertMaterial({color: 0x333333});
+     var materials = [ br, br, br, br, gr, br ];
    
-  	touchEX = evt.pageX-200; touchEY = evt.pageY-200;
-   	if ( touchSX > 0) {
-	touchDX = (touchSX - touchEX)*(-zv)*0.0004;
-   	} else {
-	touchDX = -(touchSX - touchEX)*(-zv)*0.0004;
-   	} 
+       //var material_cube = new THREE.MeshFaceMaterial(materials);
+         cubeL = new THREE.Mesh (geometry_cube, materials);	//cubeL.name="cubeL";console.log(cubeL.uuid);	//material_cube
+	//cubeL = new THREE.Mesh (geometry_cube, [ br, br, br, br, gr, br ]);
+         cubeL.position.setX(-xv); cubeL.position.setY(yv); cubeL.position.setZ(zv); 
+		cubeL.rotation.order = "ZYX";          
+         cubeL.castShadow = true; 
+	scene.add( cubeL ); 
+         cubeR = new THREE.Mesh (geometry_cube, materials);	//cubeR.name="cubeR"	//material_cube
+         cubeR.position.setX(xv); cubeR.position.setY(yv); cubeR.position.setZ(zv);
+		cubeR.rotation.order = "ZYX";          
+         cubeR.castShadow = true; 
+        scene.add( cubeR ); 
+         
+  light0 = new THREE.SpotLight( 0xffffff );      
+  light0.position.x=100; light0.position.y=100; light0.position.z=100;    
+  light0.shadow.mapSize.width = 4096; light0.shadow.mapSize.height = 4096;
+  scene.add( light0 );
+ 
+   var gm = new THREE.PlaneBufferGeometry(90, 120, 10, 10);
+    plane = new THREE.Mesh( gm,
+        new THREE.MeshLambertMaterial({
+            color: 0x9999ee, transparent: true, opacity: 0.7
+        })
+    );
+    plane.position.y = 0; plane.rotation.x = -Math.PI / 2;
+    scene.add( plane );
 
-   touchDY = (touchSY - touchEY)*(-zv)*0.0004;		// /800;
-   xv = xv - touchDX;   xv = Math.round(xv*10)/10;
-   yv = yv + touchDY;  yv = Math.round(yv*10)/10; setPos( xv, yv, zv );
-	document.getElementById("xValue").innerHTML="pos_x = "+ xv;
-	document.getElementById("xv").value= xv;
-	document.getElementById("yValue").innerHTML="pos_y = "+ yv;
-	document.getElementById("yv").value= yv;
-/*
-  if (needForRAF) {
-    needForRAF = false;            
-    requestAnimationFrame(update); 
-  };
-*/
-  } //setTimeout(handlMovem,1000);
-}
-/*
-function update() {
-  needForRAF = true;
-  setPos( xv, yv, zv );
-}
-*/
-function handlewheelm(evt) { evt.preventDefault(); //isMouseDown = true;
-   zv = zv - evt.deltaY/240; zv = Math.round(zv*10)/10;
-  setPos( xv, yv, zv );
-	document.getElementById("zValue").innerHTML="pos_z = "+ zv;
-	document.getElementById("zv").value= zv;
-}
+    light0.castShadow = true;
+    plane.receiveShadow = true;
+    renderer.shadowMap.enabled = true;
+   renderer.render( scene, camera ); 
 
-function handleEndm(evt) { evt.preventDefault(); 
- isMouseDown = false; document.body.style.cursor = "default"; //savexyz(); //mf = 0;
-}
+ //el = document.getElementById("tCanvas");
 
+} // -- end of initgl --
 //------------ metedata --------------------------
 var material,picture,texture,planea,image,img,picdata;
 
-function showMetaData(data) {
+function showMetaData(data) { //console.log(fname);
+	image = document.getElementById('myimg');
       musicmetadata(data, function (err, result) {
        
-	image = document.getElementById('myimg');
+	//image = document.getElementById('myimg');
 
-        if (result.picture.length > 0) { 
-          picture = result.picture[0]; 
+        if (result.picture.length > 0) { image.style.visibility = 'visible';
+          picture = result.picture[0]; 		//console.log(result.title,result.year);
           var url = URL.createObjectURL(new Blob([picture.data], {'type': 'image/' + picture.format}));
-	 
-          image.src = url; image.width=164; image.height=164;	
+	document.getElementById("centered").innerHTML=''; 
+          image.src = url; image.width=178; image.height=178;	
 
         }
-        else {image.style.visibility = 'hidden';} 
+        else { image.style.visibility = 'hidden';
+	document.getElementById("centered").innerHTML=result.title+"<br>"+result.artist[0];  } 
       });
     }
+// ---------------- draw art ------------------
+function drawArt() {
+var texture = new THREE.TextureLoader().load(image.src,
+(tex) => { // ì«Ç›çûÇ›äÆóπéû
+    
+    const w = 32;//tex.image.width; 
+    const h = 32;//tex.image.height/(tex.image.width/w); //console.log(w,h);
+
+    // ïΩñ 
+    //const geometry = new THREE.PlaneGeometry(1, 1);
+
+     const geometry = new THREE.TextGeometry( 'Hello three.js!',{height: 16} );
+
+    const material = new THREE.MeshPhongMaterial( { map:texture } );
+    const plane = new THREE.Mesh( geometry, material );
+    plane.scale.set(w, h, 1); plane.position.z=-30; plane.position.y = 10; //plane.rotation.x = -Math.PI / 2;
+    scene.add( plane ); renderer.render( scene, camera ); 
+}); //renderer.render( scene, camera ); 
+}
