@@ -57,9 +57,10 @@ gainBR = audioCtx.createGain(); gainBR.gain.value = rv; 	gainBR.gain.automationR
 delaySL = audioCtx.createDelay(); delaySL.delayTime.value=0.04*(-zv/6); delaySL.delayTime.automationRate='k-rate';
 delaySR = audioCtx.createDelay(); delaySR.delayTime.value=0.04*(-zv/6); delaySR.delayTime.automationRate='k-rate';
 
-audio = new Audio(src); audio.controls = true; audio.volume=vol;
+audio = new Audio(src); audio.controls = true; audio.volume=vol;	
+audio.crossOrigin = "anonymous";				// +++ for chrome71 CORS access ++++
   document.body.appendChild(audio); 
-  source = audioCtx.createMediaElementSource(audio);
+  source = audioCtx.createMediaElementSource(audio); 
  //setPos(xv,yv,zv);
 
  audio.addEventListener('ended', savefxyz,false);
@@ -78,7 +79,7 @@ function ini() {
 
   loadxyz();
    window.onbeforeunload = function() { savexyz(); alert("beforunload");}
-  initCtx();
+  //initCtx();
   initgls(); setPos(xv,yv,zv); //movsp();
 
   document.querySelector("#input").addEventListener("change",   function () { handleFiles(); } );
@@ -160,7 +161,7 @@ function startPlay() {
 } 
    
 function handleFiles() { 
- //if (!fname) { initCtx();}	//!!!!!!!!!!!!!!!!!!!
+ // initCtx();//if (!fname) { initCtx();}	//!!!!!!!!!!!!!!!!!!!
 fc = 0; movsp();
 
 var fileInput = document.getElementById("input");
@@ -176,13 +177,13 @@ function loadnext() {
    } 
 }
 
-function loadsrc() {
-    src = URL.createObjectURL(document.getElementsByTagName('input')[6].files[fc]); 
+function loadsrc() {	//initCtx();			//*************************************************
+    src = URL.createObjectURL(document.getElementsByTagName('input')[6].files[fc]); //console.log(src);
     fname = document.getElementsByTagName('input')[6].files[fc].name; 
 
 	loadfxyz();
     showMetaData(document.getElementsByTagName('input')[6].files[fc]);
-							
+    initCtx();							
     audio.src=src;	audio.autoplay = true;
   
     audio.addEventListener('loadeddata', function() {
