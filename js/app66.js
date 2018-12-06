@@ -161,7 +161,7 @@ function startPlay() {
 } 
    
 function handleFiles() { 
- // initCtx();//if (!fname) { initCtx();}	//!!!!!!!!!!!!!!!!!!!
+ if (!fname) { initCtx();}	//!!!!!!!!!!!!!!!!!!!
 fc = 0; movsp();
 
 var fileInput = document.getElementById("input");
@@ -183,7 +183,7 @@ function loadsrc() {	//initCtx();			//******************************************
 
 	loadfxyz();
     showMetaData(document.getElementsByTagName('input')[6].files[fc]);
-    initCtx();							
+    //initCtx();							
     audio.src=src;	audio.autoplay = true;
   
     audio.addEventListener('loadeddata', function() {
