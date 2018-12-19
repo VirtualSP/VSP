@@ -211,8 +211,11 @@ function playGain() {
 function defpos() {
  xv=4; yv=2; zv=-8; setPos(xv,yv,zv); 
  document.getElementById("xValue").innerHTML="pos_x = "+ xv;
+  document.querySelector("#xv").value = xv;
  document.getElementById("yValue").innerHTML="pos_y = "+ yv;
+  document.querySelector("#yv").value = yv;
  document.getElementById("zValue").innerHTML="pos_z = "+ zv;
+  document.querySelector("#zv").value = zv;
 }
 
 function setPos(x,y,z) { 
