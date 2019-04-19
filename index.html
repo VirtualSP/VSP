@@ -53,12 +53,14 @@ input[type='range']  {
 </head>
 
 <body onload="ini()">  
-<b>Virtual Speakers </b><font size="2"> 1.7.7 ( Jan.2019 )</font>
+<b>Virtual Speakers </b><font size="2"> 1.8.0 ( Apr.2019 )</font>
 <a href="https://virtualsp.github.io/VSHome/" target="_blank"> About VSP</a><br>
 
 <canvas id="tCanvas" width="400" height="400" style="border:1px solid #CCC;  z-index: 2"/></canvas>
+<div style="position: absolute; left: 8px; top: 200px;">
+ <canvas id="canvasA" width="400" height="200" style="border:1px solid 0x444477;"></canvas>
+</div>
 <br>
-
 
 <div style="position: absolute; left: 8px; top: 416px;" >
 <p style="font-size:15px; font-family:verdana">
@@ -80,21 +82,22 @@ input[type='range']  {
 <br>Loop : <input type="checkbox" id="loop" />
  <input type="file" id="input" multiple accept="audio/*"></div>
 
-<br><br><br><br><br><br><br><br><br><br>
+<br><br><br><br><br><br><font size="8"> </font><br><br>
 </p>
 </div>
  
 <div style="position: absolute; left: 10px; top: 402px;" >
  <button onclick="defpos()">Reset speaker position</button></div>
+<div style="position: absolute; left: 260px; top: 406px;" >
+ <input type="checkbox" id="3Dfrq" onclick="chk3Dsv()"> 3D visualizer <br></div>
 
-<div style="position: absolute; left: 124px; top: 30px;" >
+<div style="position: absolute; left: 124px; top: 34px;" >
 <img id='myimg' style="position: absolute; z-index: -1">
 </div>
 
 <div style="position: absolute; left: 40px; top: 80px; width:320px; height:320px; color:#886600" >
  <div class="top-left" id="centered"></div>
  </div>
-
 
 </body>
 </html>
