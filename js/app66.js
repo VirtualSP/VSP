@@ -4,7 +4,7 @@
 
 var src, source, splitter, audio, fname, fc,flen;
 var xv, yv, zv, vol, rv, tv,tvv, cv, bv, cf,cn2 ,tfile,gl,mf;
- vol = 0.7; ctlvol = 0.6; cv = 1.0; rv =0.25; cf = 0;   				//*** rv =0.25;  2019/1/25
+ vol = 0.7; ctlvol = 0.6; cv = 1.0; rv =0.4; cf = 0;   				//*** rv =0.25;  2019/1/25
 
 var touchSX,touchSY, touchEX,touchEY, touchDX, touchDY, diffSX, diffEX, el,ctx;
 
@@ -68,17 +68,17 @@ xv = 4.0; yv = 2.0; zv = -8.0;  tv = 0.0; bv = 0.0;
   trebleBR.frequency.setValueAtTime(18000, 0);
   trebleBR.gain.setValueAtTime(tv, 0);
 
-gainBL = audioCtx.createGain(); gainBL.gain.value = rv/2;  	//gainBL.gain.automationRate='k-rate';
-gainBR = audioCtx.createGain(); gainBR.gain.value = rv/2; 	//gainBR.gain.automationRate='k-rate';
+gainBL = audioCtx.createGain(); gainBL.gain.value = rv/4;  	//gainBL.gain.automationRate='k-rate';
+gainBR = audioCtx.createGain(); gainBR.gain.value = rv/4; 	//gainBR.gain.automationRate='k-rate';
  gainRL = audioCtx.createGain(); gainRL.gain.value = rv;  	//gainBR.gain.automationRate='k-rate';
  gainRR = audioCtx.createGain(); gainRR.gain.value = rv; 	//gainBR.gain.automationRate='k-rate';
 
 //delayL = audioCtx.createDelay(); delayL.delayTime.value=0.004*(-zv/6); delayL.delayTime.automationRate='k-rate';
 //delayR = audioCtx.createDelay(); delayR.delayTime.value=0.004*(-zv/6); delayR.delayTime.automationRate='k-rate';
-delayBL = audioCtx.createDelay(); delayBL.delayTime.value=0.004*(-zv/6); delayBL.delayTime.automationRate='k-rate';
-delayBR = audioCtx.createDelay(); delayBR.delayTime.value=0.004*(-zv/6); delayBR.delayTime.automationRate='k-rate';
- delayRL = audioCtx.createDelay(); delayRL.delayTime.value=0.04*(-zv/6); delayRL.delayTime.automationRate='k-rate';
- delayRR = audioCtx.createDelay(); delayRR.delayTime.value=0.04*(-zv/6); delayRR.delayTime.automationRate='k-rate';
+delayBL = audioCtx.createDelay(); delayBL.delayTime.value=0.04*(-zv/8); delayBL.delayTime.automationRate='k-rate'; 
+delayBR = audioCtx.createDelay(); delayBR.delayTime.value=0.04*(-zv/8); delayBR.delayTime.automationRate='k-rate';
+ delayRL = audioCtx.createDelay(); delayRL.delayTime.value=0.04*(-zv/8); delayRL.delayTime.automationRate='k-rate';
+ delayRR = audioCtx.createDelay(); delayRR.delayTime.value=0.06*(-zv/8); delayRR.delayTime.automationRate='k-rate';
 
 // --------------------------------------------------------------------------
 
@@ -190,10 +190,10 @@ if ( document.getElementById('loop').checked ) { lp = true;  }
 function movsp() { 
  var xv2;
   xv2 = xv*2;
-  cubeL.position.setX(-xv2); cubeL.position.setY(yv); cubeL.position.setZ(zv); //changeXV(xv);
+  cubeL.position.setX(-xv2); cubeL.position.setY(yv); cubeL.position.setZ(zv); 
   cubeR.position.setX(xv2);  cubeR.position.setY(yv); cubeR.position.setZ(zv); 
-    cubeL.rotation.x=Math.atan(-yv/zv); cubeR.rotation.x=Math.atan(-yv/zv);
-    cubeL.rotation.y=Math.atan(-xv2/zv); cubeR.rotation.y=Math.atan( xv2/zv); 
+    cubeL.rotation.x=Math.atan(-yv/zv*1.5); cubeR.rotation.x=Math.atan(-yv/zv*1.5);
+    cubeL.rotation.y=Math.atan(-xv2/zv*1.5); cubeR.rotation.y=Math.atan( xv2/zv*1.5); 
  renderer.render( scene, camera ); 
 chkLoop();   
 }
@@ -253,7 +253,7 @@ function playGain() {
 							//	    o
   splitter.connect(pannerR,1).connect(bassR).connect(trebleR).connect(audioCtx.destination); 			//
   splitter.connect(gainRR,1).connect(pannerRR).connect(trebleRR).connect(delayRR).connect(audioCtx.destination);			//
-  splitter.connect(gainBR,1).connect(pannerBR).connect(delayBR).connect(audioCtx.destination); 			//          BR           BL
+  splitter.connect(gainBR,1).connect(pannerBR).connect(delayBR).connect(audioCtx.destination); 		//          BR           BL
    splitter.connect(pannerR,1).connect(analyserR); //splitter.connect(pannerRR,0).connect(analyserRR);
 
  audio.play();
@@ -261,8 +261,8 @@ function playGain() {
 
 function setPos(x,y,z) {  var fx,frx;
  if (fname) { fx = Math.abs(8/z); //frx = fx*0.8;
-  pannerL.setPosition( -x, y, z); pannerBL.setPosition( x*2, y, -z*2);  pannerRL.setPosition(-x*2, y, z*2);   //2019/1/25
-  pannerR.setPosition(  x, y, z); pannerBR.setPosition(-x*2, y, -z*2);  pannerRR.setPosition( x*2, y, z*2);  //console.log(zv);
+  pannerL.setPosition( -x, y, z*2); pannerBL.setPosition( x*2, -y*2, -z*4);  pannerRL.setPosition(-x*2, y*2, z*3);   //2019/1/25
+  pannerR.setPosition(  x, y, z*2); pannerBR.setPosition(-x*2, -y*2, -z*4);  pannerRR.setPosition( x*2, y*2, z*3);  //console.log(zv);
  }
  movsp();     
 }
@@ -275,6 +275,8 @@ function defpos() {
   document.querySelector("#yv").value = yv;
  document.getElementById("zValue").innerHTML="pos_z = "+ zv;
   document.querySelector("#zv").value = zv;
+   if ( fname ) { delayRL.delayTime.setValueAtTime(0.04*(-zv/8),0);
+   		delayRR.delayTime.setValueAtTime(0.04*(-zv/8),0); }
  setPos(xv,yv,zv); 
 }
 
@@ -307,14 +309,14 @@ function changeYV(y) {
   yv = y; 
     document.getElementById("yValue").innerHTML="pos_y = "+ yv;
     document.querySelector("#yv").value = yv;
- setPos( xv, yv, zv );
+ setPos( xv, yv, zv ); 
 }
 function changeZV(z) {	
   zv = z; 
     document.getElementById("zValue").innerHTML="pos_z = "+ zv;
     document.querySelector("#zv").value = zv;
-	if ( fname ) {delayRL.delayTime.setValueAtTime(0.04*(-zv/6),0);
-		     delayRR.delayTime.setValueAtTime(0.04*(-zv/6),0); }//console.log(0.04*(-zv/6));
+	if ( fname ) {delayRL.delayTime.setValueAtTime(0.04*(-zv/8),0);
+		     delayRR.delayTime.setValueAtTime(0.04*(-zv/8),0); };
  setPos( xv, yv, zv );
 }
 
