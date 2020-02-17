@@ -1,24 +1,19 @@
 {
-  
- "short_name": "web Virtual Speakers",
-  
- "name": "Virtual Speakers System on the web",
-  
- "icons": [
-{
-
-     "src": "icon_128.png",
- 
-     "sizes": "128x128",
- 
-     "type": "image/png"
-   
-}
- ],
- "start_url": "https://virtualsp.github.io/VSP/",
-
-  "display": "browser",
-
-  "orientation": "portrait"
-
+    "short_name": "PWA Virtual Speakers",
+    "name": "PWA web Virtual Speakers",
+    "display": "standalone",
+    "start_url": "https://virtualsp.github.io/VirtualSPD/index.html",
+    "background_color": "#3333CC",
+    "icons": [
+        {
+            "src": "icon_192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+	  {
+            "src": "icon_512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
 }
