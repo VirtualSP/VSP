@@ -1,7 +1,7 @@
 var CACHE_NAME = 'VSPcache195';
 var urlsToCache = [
     '/VirtualSPD/index.html',
-    '/VirtualSPD/js/app66.js',
+    '/VirtualSPD/js/app86.js',
     '/VirtualSPD/js/three.min.js',
     '/VirtualSPD/js/musicmetadata.js',
  
