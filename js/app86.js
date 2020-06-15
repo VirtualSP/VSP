@@ -431,49 +431,50 @@ function showMetaData(data) { //console.log(fname);
 
 // --------------------------------------------------------------------------
 var def,sef,defB,sefB,ds,mx,col,cr,cg,cb, fq, defR,sefR, ct,maxdef, logdef;
-var dar=[], sar=[], darB=[], sarB=[];
+var dar=[], sar=[];
 
-var x,y,z, intv, hue; x=0; y=0; var ly=2; var k=0; maxdef=0;
+var x,y,z, intv, hue; x=0; y=0;  var maxdef=0;
+var xar = new Array( ), yar = new Array( ), zar = new Array( ), xw = new Array()          
+   for( var i=0; i<512; i++)     { xar[i] = new Array(10).fill(0); yar[i] = new Array(10).fill(0); zar[i] = new Array(10).fill(0);
+			     xw[i] = new Array(10).fill(0); sar[i]=0; dar[i]=0	}
 
 function renderA() {  
-  var nextANLtime = audioCtx.currentTime; //ctxA.lineWidth = 0.5;
+  var nextANLtime = audioCtx.currentTime; 	//ctxA.lineWidth = 0.5;
 
      analyserL.getByteFrequencyData(spectrumsL); analyserR.getByteFrequencyData(spectrumsR);
-    
-    if ( k%3 == 0 ) { ctxA.clearRect(0, 0, canvasA.width, canvasA.height);	k=0 }
-    //len=analyserL.frequencyBinCount; = 256
-	k=k+1; fq = 0; 
-    while ( fq<len ) { 
+   
+   fq = 0; 	
+    while ( fq<len ) { 		  //len=analyserL.frequencyBinCount; = 256
 	
      	sef = (spectrumsL[fq]+spectrumsR[fq]); //sefR = (spectrumsLR[fq]+spectrumsRR[fq]); 	
 	def = -(spectrumsL[fq]-spectrumsR[fq]); //defR = -(spectrumsLR[fq]-spectrumsRR[fq]); 
 	logdef = Math.log2(Math.abs(def))
 	 	if ( maxdef<logdef ) { maxdef=logdef; changeXV( Math.round(maxdef*10)/10)
 				     if (maxdef>6) { zv = Math.round( (zv - (maxdef-6))*10 )/10; changeZV(zv) }  }	
-	ds = (sef*2-sar[fq] -dar[fq])+Math.abs(def)/2; //+sef-dar[fq];   +def?
+	ds = (sef*2-sar[fq] -dar[fq])+Math.abs(def)/2;
 
 	 //y = 80-(ds*(-zv)/4);  	    x = ( def*xv*(y+100)/256 )+200 ; 	z = -sef/20
-	//y = -Math.abs(ds)*(-zv)/4;  x = ( def*xv/(-zv)*10 ) ; 	z = -sef/20	
-		y = Math.abs(ds);  x = ( def ) ; 	z = Math.abs(sef/20); 
-
-		if ( y<20 ) { y=Math.log(y)*10-10 }
-		else if ( y>50) { y=50+(y-50)/2; }
+	//y = -Math.abs(ds)*(-zv)/4;  x = ( def*xv/(-zv)*10 ) ; 	z = -sef/20
+	
+		 x = def; y = Math.abs(ds);  z = Math.abs(sef/20); 
+		  if ( y<20 ) { y=Math.log(y)*10-10 } else if ( y>50) { y=50+(y-50)/2; }
+		xar[fq].push( x*3*xv/5*12/(-zv+2)+200 ); xar[fq].shift(); 
+		yar[fq].push( 220-(-zv)*3-yv*10+50-y );    yar[fq].shift(); 
+		zar[fq].push( z ); 			       zar[fq].shift();
+		xw[fq].push( 4/(y/30+1.5) ); 	       xw[fq].shift()
 		
-	//if (y < 120 && z<-3) {	// 50-100?
-	hue = fq/len * 360; 
-    	 //ctxA.strokeStyle = 'hsla(' + hue + ', 100%, 65%,' +y/80+ ')'; 	 //y:35-110?
-	ctxA.strokeStyle = 'hsl(' + hue + ', 100%, 60% )'; 
-    	 //ctxA.strokeRect( x/2+200, y+z/4-yv+250, y/30, z );	// ( x, y+z-yv*8+120, y/30, z )
-		ctxA.strokeRect( x*3*xv/5*12/(-zv+2)+200, 220-(-zv)*3-yv*10+50-y, 4/(y/30+1.5), -z ); //4/(y/30+1)
-		//console.log(Math.sqrt(y))
-	// }
+	hue = fq/len * 360; ctxA.strokeStyle = 'hsl(' + hue + ', 100%, 60% )'; 
+    			 //ctxA.strokeRect( x/2+200, y+z/4-yv+250, y/30, z );	// ( x, y+z-yv*8+120, y/30, z )
+	ctxA.strokeRect( xar[fq][9], yar[fq][9], xw[fq][9], zar[fq][9]  );			 //4/(y/30+1)
+	ctxA.clearRect( xar[fq][0]-1, yar[fq][0]-1, xw[fq][0]+2, zar[fq][0]+2  );
+
 	sar[fq] = sef; 	 dar[fq] = sar[fq]; 
        fq++;
-    } ; //ctxA.strokeRect( 198, 120, maxdef*2, 1 ); ctxA.strokeRect( 202, 120, -maxdef*2, 1 ); //ct = audio.currentTime;
+    } ; 
      if ( anf )  { 
-	// while(nextANLtime < audioCtx.currentTime + 0.1) {
-        	//  nextANLtime += 4.0;
-    	//}
+	 while(nextANLtime < audioCtx.currentTime + 0.1) {
+        	  nextANLtime += 4.0;
+    	}
 	intv = setTimeout(renderA, 60) } 
 	else { clearTimeout( intv ); ctxA.clearRect(0, 0, canvasA.width, canvasA.height);}
   }
