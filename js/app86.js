@@ -16,6 +16,7 @@ var gainL,gainBL,gainR,gainBR,delaySL,delaySR, gainRL, gainRR, delayRL, delayRR;
 var pannerL,pannerR,pannerBL,pannerBR,listener, pannerRL, pannerRR; 
 var bassL,trebleL,trebleRL,bassR,trebleR,trebleRR;
 var analyserL, analyserR, analyserLR, analyserRR, spectrumsL, spectrumsR; //spectrumsLR, spectrumsRR;
+	var comp;
 
 var canvasL,canvasR,canvasA, ctxL,ctxR,ctxA, animationId,renderA;
 var anf = false;
@@ -26,7 +27,8 @@ function initCtx() {
 
 audioCtx = new AudioContext(); 
  splitter = audioCtx.createChannelSplitter(2);
- listener = audioCtx.listener;
+ listener = audioCtx.listener;			
+	comp = audioCtx.createDynamicsCompressor();
 
  pannerL  = audioCtx.createPanner(); pannerL.rolloffFactor = 0;
     pannerL.panningModel = 'HRTF';  pannerL.distanceModel = 'linear'; pannerL.setOrientation(0,0,1); pannerL.maxDistance = 10000;
@@ -76,8 +78,8 @@ gainBR = audioCtx.createGain(); gainBR.gain.value = -rv/4; 	//gainBR.gain.automa
 
 //delayL = audioCtx.createDelay(); delayL.delayTime.value=0.004*(-zv/6); delaL.delayTime.automationRate='k-rate';
 //delayR = audioCtx.createDelay(); delayR.delayTime.value=0.004*(-zv/6); delayR.delayTime.automationRate='k-rate';
-delayBL = audioCtx.createDelay(); delayBL.delayTime.value=0.001*(-zv/4); delayBL.delayTime.automationRate='k-rate'; 
-delayBR = audioCtx.createDelay(); delayBR.delayTime.value=0.001*(-zv/4); delayBR.delayTime.automationRate='k-rate';
+delayBL = audioCtx.createDelay(); delayBL.delayTime.value=0.001*(-zv/2); delayBL.delayTime.automationRate='k-rate'; 
+delayBR = audioCtx.createDelay(); delayBR.delayTime.value=0.001*(-zv/2); delayBR.delayTime.automationRate='k-rate';
  delayRL = audioCtx.createDelay(); delayRL.delayTime.value=0.001*(-zv/4); delayRL.delayTime.automationRate='k-rate';
  delayRR = audioCtx.createDelay(); delayRR.delayTime.value=0.001*(-zv/4); delayRR.delayTime.automationRate='k-rate';
 
@@ -264,14 +266,13 @@ function playGain() {
 
   splitter.connect(pannerL,0).connect(bassL).connect(trebleL).connect(audioCtx.destination); 			//     RL	              RR
   splitter.connect(gainRL,0).connect(pannerRL).connect(delayRL).connect(audioCtx.destination);				
-  splitter.connect(gainBL,0).connect(pannerBL).connect(delayBL).connect(audioCtx.destination);			//         L	             R	
-    //splitter.connect(pannerL,0).connect(analyserL); //splitter.connect(pannerRL,0).connect(analyserLR);
+  splitter.connect(gainBL,0).connect(pannerBL).connect(delayBL).connect(audioCtx.destination);	//         L	             R	
 												//	    o
   splitter.connect(pannerR,1).connect(bassR).connect(trebleR).connect(audioCtx.destination); 			
   splitter.connect(gainRR,1).connect(pannerRR).connect(delayRR).connect(audioCtx.destination);			
-  splitter.connect(gainBR,1).connect(pannerBR).connect(delayBR).connect(audioCtx.destination); 		//          BR           BL
-  //splitter.connect(pannerR,1).connect(analyserR); //splitter.connect(pannerRR,0).connect(analyserRR);
+  splitter.connect(gainBR,1).connect(pannerBR).connect(delayBR).connect(audioCtx.destination);  //          BR           BL
 
+ 	//comp.connect(audioCtx.destination)
  audio.play();
 }
 
@@ -337,20 +338,22 @@ function changeZV(z) {
 		     delayRR.delayTime.setValueAtTime(0.004*(-zv/4),0); }; 
  setPos( xv, yv, zv );
 }
-
+/*
 function incXV() { xv = Math.round(xv*10 + 2)/10; setPos( xv, yv, zv ); document.getElementById("xValue").innerHTML="pos_x = "+ xv;}
 function decXV() { xv = Math.round(xv*10 - 2)/10; setPos( xv, yv, zv ); document.getElementById("xValue").innerHTML="pos_x = "+ xv;}
 function incYV() { yv = Math.round(yv*10 + 2)/10; setPos( xv, yv, zv ); document.getElementById("yValue").innerHTML="pos_y = "+ yv;}
 function decYV() { yv = Math.round(yv*10 - 2)/10; setPos( xv, yv, zv ); document.getElementById("yValue").innerHTML="pos_y = "+ yv;}
 function incZV() { zv = Math.round(zv*10 + 2)/10; setPos( xv, yv, zv ); document.getElementById("zValue").innerHTML="pos_z = "+ zv;}
 function decZV() { zv = Math.round(zv*10 - 2)/10; setPos( xv, yv, zv ); document.getElementById("zValue").innerHTML="pos_z = "+ zv;}
-
+*/
 //------------------------- init gl ------------------------------------
 function initgls() {
 
 renderer = new THREE.WebGLRenderer({ canvas: tCanvas , alpha: true, antialias: true }); 
 renderer.setSize (wX,wY);    
 renderer.setClearColor(0x3333cc, 0.1);
+	canvasB = document.getElementById("canvasB"); ctxB = canvasB.getContext("2d");
+	canvasC = document.getElementById("canvasC"); ctxC = canvasC.getContext("2d");
          
 camera = new THREE.PerspectiveCamera (90, 1, 1, 1000);  
 camera.position.x=0; camera.position.y=5; camera.position.z=5;   
@@ -365,23 +368,35 @@ Sphere0.position.x= 0; Sphere0.position.y= 0; Sphere0.position.z= 0; Sphere0.cas
 scene.add( Sphere0 );
 
 var geometry_cube = new THREE.BoxGeometry (2, 3, 1.5);
-        
+
+	canvasB.style.visibility = "hidden"; canvasC.style.visibility = "hidden";
+
+	ctxB.beginPath(); ctxB.fillStyle = "#504000"; ctxB.fillRect( 0,0,256,256 );
+	ctxB.ellipse(50, 50, 20, 30, 0, 0, 2 * Math.PI);
+	ctxB.ellipse(70, 170, 40, 70, 0, 0, 2 * Math.PI); ctxB.fillStyle = "black";ctxB.fill(); 	
+	var txR = new THREE.CanvasTexture(canvasB);		//txR.needsUpdate = true; txR.flipY = true;
+      	var grR = new THREE.MeshBasicMaterial({map: txR,}); ctxB.closePath()
+//
+	ctxC.beginPath(); ctxC.fillStyle = "#504000"; ctxC.fillRect( 0,0,256,256 );
+	ctxC.ellipse(80, 50, 20, 30, 0, 0, 2 * Math.PI);
+	ctxC.ellipse(70, 170, 40, 70, 0, 0, 2 * Math.PI); ctxC.fillStyle = "black";ctxC.fill();	
+	var txL = new THREE.CanvasTexture(canvasC);		//txL.needsUpdate = true; //txL.flipY = true;
+      	var grL = new THREE.MeshBasicMaterial({map: txL,}); ctxC.closePath()
+//        
      var br = new THREE.MeshLambertMaterial({color: 0x886600});
-     var gr = new THREE.MeshLambertMaterial({color: 0x333333});
-     var materials = [ br, br, br, br, gr, br ];
+     //var gr = new THREE.MeshLambertMaterial({color: 0x333333});
+     var materialsL = [ br, br, br, br, grL, br ]; 
+     var materialsR = [ br, br, br, br, grR, br ];
    
-       //var material_cube = new THREE.MeshFaceMaterial(materials);
-         cubeL = new THREE.Mesh (geometry_cube, materials);
-	//cubeL = new THREE.Mesh (geometry_cube, [ br, br, br, br, gr, br ]);
+         cubeL = new THREE.Mesh (geometry_cube, materialsL);
          cubeL.position.setX(-xv); cubeL.position.setY(yv); cubeL.position.setZ(zv); 
-		cubeL.rotation.order = "ZYX";          
-         cubeL.castShadow = true; 
-	scene.add( cubeL ); 
-         cubeR = new THREE.Mesh (geometry_cube, materials);
-         cubeR.position.setX(xv); cubeR.position.setY(yv); cubeR.position.setZ(zv);
-		cubeR.rotation.order = "ZYX";          
-         cubeR.castShadow = true; 
-        scene.add( cubeR ); 
+         cubeL.rotation.order = "ZYX"; cubeL.castShadow = true; 
+         scene.add( cubeL ); 
+
+         cubeR = new THREE.Mesh (geometry_cube, materialsR);
+         cubeR.position.setX(xv); cubeR.position.setY(yv); cubeR.position.setZ(zv); 
+         cubeR.rotation.order = "ZYX"; cubeR.castShadow = true; 
+         scene.add( cubeR ); 
          
   light0 = new THREE.SpotLight( 0xffffff );      
   light0.position.x=100; light0.position.y=100; light0.position.z=100;    
