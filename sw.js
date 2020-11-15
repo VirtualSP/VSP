@@ -48,39 +48,3 @@ self.addEventListener('activate', function(event) {
     })()
   );
 });
-
-
-
-self.addEventListener('activate', function(event) {
-  event.waitUntil(
-    (function() {
-      caches.keys().then(function(oldCacheKeys) {
-        oldCacheKeys
-          .filter(function(key) {
-            return key !== CACHE_NAME;
-          })
-          .map(function(key) {
-            return caches.delete(key);
-          });
-      });
-      clients.claim();
-    })()
-  );
-});
-
-self.addEventListener('activate', function(event) {
-  event.waitUntil(
-    (function() {
-      caches.keys().then(function(oldCacheKeys) {
-        oldCacheKeys
-          .filter(function(key) {
-            return key !== CACHE_NAME;
-          })
-          .map(function(key) {
-            return caches.delete(key);
-          });
-      });
-      clients.claim();
-    })()
-  );
-});
