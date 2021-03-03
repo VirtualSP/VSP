@@ -139,7 +139,7 @@ function ini() {
   //initCtx();
   initgls(); setPos(xv,yv,zv); //movsp();
 // ------- Feb 2021 -------
-const st='Deer Users, </br>Speaker coodinate system has chanded. (v1.9.9) Move speakers to your favorite position again if loaded old position.(VSP automatically saves speaker position when you chaged for each file.)'
+const st='Deer Users, </br>Speaker coodinate system has chanded. (v1.9.9) Move speakers to your favorite position again if loaded old position.(VSP automatically saves speaker position when you changed for each file.)'
 document.getElementById("centered").innerHTML=st
 // --------------------------
   document.querySelector("#input").addEventListener("change",   function () { handleFiles(); } );
