@@ -4,7 +4,7 @@
 
 var src, source, splitter, audio, fname, fc,flen;
 var xv, yv, zv, vol, rv, tv,tvv, cv, bv, cf,cn2 ,tfile,gl,mf;
- vol = 0.6;   rv =0.4; cf = 0;   				//*** rv =0.25;  2019/1/25
+ vol = 0.5;   rv =0.3; cf = 0;   				//*** rv =0.4;  2020 Nov
  xv = 5.0; yv = 2.0; zv = -10.0;  tv = 0.5; bv = 0.0; 
 
 //var touchSX,touchSY, touchEX,touchEY, touchDX, touchDY, diffSX, diffEX, el,ctx;
@@ -12,8 +12,8 @@ var xv, yv, zv, vol, rv, tv,tvv, cv, bv, cf,cn2 ,tfile,gl,mf;
 var AudioContext = window.AudioContext; // || window.webkitAudioContext; 
 var audioCtx; 
 
-var gainL,gainBL,gainR,gainBR,delaySL,delaySR, gainRL, gainRR, delayRL, delayRR;
-var pannerL,pannerR,pannerBL,pannerBR,listener, pannerRL, pannerRR; 
+var gainL,gainBL,gainR,gainBR,delaySL,delaySR, gainRL, gainRR, delayRL, delayRR, 	gainCL,gainCR,delayCL,delayCR;
+var pannerL,pannerR,pannerBL,pannerBR,listener, pannerRL, pannerRR, 		pannerCL,pannerCR; 
 var bassL,trebleL,trebleRL,bassR,trebleR,trebleRR;
 var analyserL, analyserR, analyserLR, analyserRR, spectrumsL, spectrumsR; //spectrumsLR, spectrumsRR;
 	var comp;
@@ -30,14 +30,21 @@ audioCtx = new AudioContext();
  listener = audioCtx.listener;			
 	comp = audioCtx.createDynamicsCompressor();
 
- pannerL  = audioCtx.createPanner(); pannerL.rolloffFactor = 0;
+ pannerL  = audioCtx.createPanner(); pannerL.rolloffFactor = 0;	//equalpower
     pannerL.panningModel = 'HRTF';  pannerL.distanceModel = 'linear'; pannerL.setOrientation(0,0,1); pannerL.maxDistance = 10000;
  pannerR  = audioCtx.createPanner(); pannerR.rolloffFactor = 0;
     pannerR.panningModel = 'HRTF';  pannerR.distanceModel = 'linear'; pannerR.setOrientation(0,0,1); pannerR.maxDistance = 10000;
+
  pannerBL = audioCtx.createPanner(); pannerBL.refDistance = 0;
     pannerBL.panningModel = 'HRTF'; pannerBL.distanceModel = 'linear'; pannerBL.setOrientation(0,0,1);pannerBL.maxDistance = 10000;
  pannerBR = audioCtx.createPanner(); pannerBR.refDistance = 0;
     pannerBR.panningModel = 'HRTF'; pannerBR.distanceModel = 'linear'; pannerBR.setOrientation(0,0,1);pannerBR.maxDistance = 10000;
+
+ pannerCL = audioCtx.createPanner(); pannerCL.refDistance = 0;
+    pannerCL.panningModel = 'HRTF'; pannerCL.distanceModel = 'linear'; pannerCL.setOrientation(0,0,1);pannerCL.maxDistance = 10000;
+ pannerCR = audioCtx.createPanner(); pannerCR.refDistance = 0;
+    pannerCR.panningModel = 'HRTF'; pannerCR.distanceModel = 'linear'; pannerCR.setOrientation(0,0,1);pannerCR.maxDistance = 10000;
+
  pannerRL = audioCtx.createPanner();		pannerRL.refDistance = 0;
     pannerRL.panningModel = 'HRTF'; pannerRL.distanceModel = 'linear'; pannerRL.setOrientation(0,0,1);pannerRL.maxDistance = 10000;
  pannerRR = audioCtx.createPanner();		pannerRR.refDistance = 0;
@@ -47,7 +54,7 @@ audioCtx = new AudioContext();
   bassL.frequency.setValueAtTime(60, 0); 
   bassL.gain.setValueAtTime(bv, 0);				// -40db...40db
  trebleL = audioCtx.createBiquadFilter(); trebleL.type   = 'highshelf';  trebleL.Q.automationRate='k-rate';
-  trebleL.frequency.setValueAtTime(10000, 0);
+  trebleL.frequency.setValueAtTime(11000, 0);
   trebleL.gain.setValueAtTime(tv, 0);
 
  trebleRL = audioCtx.createBiquadFilter(); trebleL.type   = 'highshelf';  trebleL.Q.automationRate='k-rate';
@@ -61,7 +68,7 @@ audioCtx = new AudioContext();
   bassR.frequency.setValueAtTime(60, 0);
   bassR.gain.setValueAtTime(bv, 0);
  trebleR = audioCtx.createBiquadFilter(); trebleR.type   = 'highshelf';  trebleR.Q.automationRate='k-rate';
-  trebleR.frequency.setValueAtTime(10000, 0);
+  trebleR.frequency.setValueAtTime(11000, 0);
   trebleR.gain.setValueAtTime(tv, 0);
 
  trebleRR = audioCtx.createBiquadFilter(); trebleL.type   = 'highshelf';  trebleL.Q.automationRate='k-rate';
@@ -71,17 +78,21 @@ audioCtx = new AudioContext();
 //  trebleBR.frequency.setValueAtTime(18000, 0);
 //  trebleBR.gain.setValueAtTime(tv, 0);
 
-gainBL = audioCtx.createGain(); gainBL.gain.value = -rv/4;  	//gainBL.gain.automationRate='k-rate';
-gainBR = audioCtx.createGain(); gainBR.gain.value = -rv/4; 	//gainBR.gain.automationRate='k-rate';
+gainBL = audioCtx.createGain(); gainBL.gain.value = -rv/2;  	// -/4 gainBL.gain.automationRate='k-rate';
+gainBR = audioCtx.createGain(); gainBR.gain.value = -rv; 	// -/4 gainBR.gain.automationRate='k-rate';
+gainCL = audioCtx.createGain(); gainCL.gain.value = -rv;  	// -/4 gainBL.gain.automationRate='k-rate';
+gainCR = audioCtx.createGain(); gainCR.gain.value = -rv/2;
+
  gainRL = audioCtx.createGain(); gainRL.gain.value = rv;  	//gainBR.gain.automationRate='k-rate';
  gainRR = audioCtx.createGain(); gainRR.gain.value = rv; 	//gainBR.gain.automationRate='k-rate';
 
-//delayL = audioCtx.createDelay(); delayL.delayTime.value=0.004*(-zv/6); delaL.delayTime.automationRate='k-rate';
-//delayR = audioCtx.createDelay(); delayR.delayTime.value=0.004*(-zv/6); delayR.delayTime.automationRate='k-rate';
-delayBL = audioCtx.createDelay(); delayBL.delayTime.value=0.001*(-zv/2); delayBL.delayTime.automationRate='k-rate'; 
+delayCL = audioCtx.createDelay(); delayCL.delayTime.value=0.001*(-zv/2); delayCL.delayTime.automationRate='k-rate';
+delayCR = audioCtx.createDelay(); delayCR.delayTime.value=0.001*(-zv/4); delayCR.delayTime.automationRate='k-rate';
+delayBL = audioCtx.createDelay(); delayBL.delayTime.value=0.001*(-zv/4); delayBL.delayTime.automationRate='k-rate'; 
 delayBR = audioCtx.createDelay(); delayBR.delayTime.value=0.001*(-zv/2); delayBR.delayTime.automationRate='k-rate';
- delayRL = audioCtx.createDelay(); delayRL.delayTime.value=0.001*(-zv/4); delayRL.delayTime.automationRate='k-rate';
- delayRR = audioCtx.createDelay(); delayRR.delayTime.value=0.001*(-zv/4); delayRR.delayTime.automationRate='k-rate';
+
+delayRL = audioCtx.createDelay(); delayRL.delayTime.value=0.001*(-zv); delayRL.delayTime.automationRate='k-rate';
+delayRR = audioCtx.createDelay(); delayRR.delayTime.value=0.001*(-zv); delayRR.delayTime.automationRate='k-rate';
 
 // --------------------------------------------------------------------------
 
@@ -127,7 +138,10 @@ function ini() {
   // window.onbeforeunload = function() { savexyz(); alert("beforunload");}
   //initCtx();
   initgls(); setPos(xv,yv,zv); //movsp();
-
+// ------- Feb 2021 -------
+const st='Deer Users, </br>Speaker coodinate system has chanded. (v1.9.9) Move speakers to your favorite position again if loaded old position.(VSP automatically saves speaker position when you chaged for each file.)'
+document.getElementById("centered").innerHTML=st
+// --------------------------
   document.querySelector("#input").addEventListener("change",   function () { handleFiles(); } );
   document.querySelector("#loop").addEventListener("click",  function () { chkLoop(); } );
 
@@ -174,23 +188,7 @@ function savefxyz() {
     return false; 
   }	
 }
-/*
-function loadxyz() { 
-  try {
-	sxv = localStorage.getItem("vspx"); if (sxv) { xv = parseFloat(sxv);};
-		document.getElementById("xValue").innerHTML="pos_x = "+ xv;
-   		//document.querySelector("#xv").value = xv;
-	syv = localStorage.getItem("vspy"); if (syv) { yv = parseFloat(syv);}; 
-		document.getElementById("yValue").innerHTML="pos_y = "+ yv;
-    		//document.querySelector("#yv").value = yv;		
-	szv = localStorage.getItem("vspz"); if (szv) { zv = parseFloat(szv);};
-		document.getElementById("zValue").innerHTML="pos_z = "+ zv;
-    		//document.querySelector("#zv").value = zv; 
-  } catch(e) {
-    return false; 
-  }
-};
-*/	
+
 function savexyz() {  
   try {
 	localStorage.setItem("vspx",xv.toString()); 
@@ -209,7 +207,7 @@ if ( document.getElementById('loop').checked ) { lp = true;  }
 
 function movsp() { 
  var xv2;
-  xv2 = xv*2;
+  xv2 = xv*2;		// xv*2
   cubeL.position.setX(-xv2); cubeL.position.setY(yv); cubeL.position.setZ(zv); 
   cubeR.position.setX(xv2);  cubeR.position.setY(yv); cubeR.position.setZ(zv); 
     cubeL.rotation.x=Math.atan(-yv/zv*1.0); cubeR.rotation.x=Math.atan(-yv/zv*1.0);
@@ -222,7 +220,7 @@ function startPlay() {
 // ------------------------------------------------------------------------------------------------------
    audio.addEventListener('pause',function() { anf = false; },false);
    //audio.addEventListener('play',function() { renderA(); anf = true; },false);	//chk3Dsv()
-   audio.addEventListener('play',function() { chk3Dsv() },false);
+   //audio.addEventListener('play',function() { chk3Dsv() },false);	---------	Feb 2021 -----------
 // ------------------------------------------------------------------------------------------------------		 
      setPos( xv, yv, zv ); changeBass(bv); changeTreble(tv); //audio.volume=vol;
      playGain(); 
@@ -264,22 +262,30 @@ function loadsrc() {
 function playGain() {
   source.connect(splitter); 
 
-  splitter.connect(pannerL,0).connect(bassL).connect(trebleL).connect(audioCtx.destination); 			//     RL	              RR
+  splitter.connect(pannerL,0).connect(bassL).connect(trebleL).connect(audioCtx.destination); 		//     RL	              RR
   splitter.connect(gainRL,0).connect(pannerRL).connect(delayRL).connect(audioCtx.destination);				
-  splitter.connect(gainBL,0).connect(pannerBL).connect(delayBL).connect(audioCtx.destination);	//         L	             R	
-												//	    o
+  splitter.connect(gainBL,0).connect(pannerBL).connect(delayBL).connect(audioCtx.destination);	// BL  BR          L	             R         CL CR	
+  splitter.connect(gainCL,0).connect(pannerCL).connect(delayCL).connect(audioCtx.destination);
+  	//splitter.connect(gainRL,0).connect(pannerRL).connect(audioCtx.destination);				
+    	//splitter.connect(gainBL,0).connect(pannerBL).connect(audioCtx.destination);
+											//	    o
   splitter.connect(pannerR,1).connect(bassR).connect(trebleR).connect(audioCtx.destination); 			
   splitter.connect(gainRR,1).connect(pannerRR).connect(delayRR).connect(audioCtx.destination);			
-  splitter.connect(gainBR,1).connect(pannerBR).connect(delayBR).connect(audioCtx.destination);  //          BR           BL
+  splitter.connect(gainBR,1).connect(pannerBR).connect(delayBR).connect(audioCtx.destination); 	 //          -BR           -BL
+  splitter.connect(gainCR,1).connect(pannerCR).connect(delayCR).connect(audioCtx.destination);
 
- 	//comp.connect(audioCtx.destination)
+  	//splitter.connect(gainRR,1).connect(pannerRR).connect(audioCtx.destination);			
+    	//splitter.connect(gainBR,1).connect(pannerBR).connect(audioCtx.destination);
+ 		//comp.connect(audioCtx.destination)
  audio.play();
 }
 
-function setPos(x,y,z) { 		 //var fx,frx;
+function setPos(x,y,z) { 	y=y-2; x=x/2; 	 //var fx,frx;
  if (fname) { 			//fx = Math.abs(8/z); //frx = fx*0.8;
-  pannerL.setPosition( -x, y*4, z*2); pannerBL.setPosition( x*2, -y*8, -z*4);  pannerRL.setPosition(-x*2, y*8, z*4);   //2020 sep
-  pannerR.setPosition(  x, y*4, z*2); pannerBR.setPosition(-x*2, -y*8, -z*4);  pannerRR.setPosition( x*2, y*8, z*4); 
+  pannerL.setPosition( -x, y, z); pannerRL.setPosition ( -x, y, z*3);   //*-3 BLR
+  pannerR.setPosition(  x, y, z); pannerRR.setPosition(   x, y, z*3); 
+			   pannerBL.setPosition(  -x*4, y, z);  pannerBR.setPosition( -x*2, y, z);
+			   pannerCL.setPosition(   x*2, y, z);  pannerCR.setPosition(   x*4, y, z);
  }
  movsp();     
 }
@@ -292,8 +298,8 @@ function defpos() {
   document.querySelector("#yv").value = yv;
  document.getElementById("zValue").innerHTML="pos_z = "+ zv;
   document.querySelector("#zv").value = zv;
-   if ( fname ) { delayRL.delayTime.setValueAtTime(0.004*(-zv/4),0);
-   	         delayRR.delayTime.setValueAtTime(0.004*(-zv/4),0); }
+   if ( fname ) { delayRL.delayTime.setValueAtTime(0.001*(-zv),0);
+   	         delayRR.delayTime.setValueAtTime(0.001*(-zv),0); }
  setPos(xv,yv,zv); 
 }
 
@@ -332,20 +338,15 @@ function changeZV(z) {
   zv = z; 
     document.getElementById("zValue").innerHTML="pos_z = "+ zv;
     //document.querySelector("#zv").value = zv;
-	if ( fname ) {delayRL.delayTime.setValueAtTime(0.004*(-zv/4),0);
-		     delayRR.delayTime.setValueAtTime(0.004*(-zv/4),0); 
-		     delayRL.delayTime.setValueAtTime(0.004*(-zv/4),0);
-		     delayRR.delayTime.setValueAtTime(0.004*(-zv/4),0); }; 
+//
+	if ( fname ) {delayRL.delayTime.setValueAtTime(0.001*(-zv),0);
+		     delayRR.delayTime.setValueAtTime(0.001*(-zv),0); 
+		     delayBL.delayTime.setValueAtTime(0.001*(-zv/2),0);	delayCL.delayTime.setValueAtTime(0.001*(-zv/2),0);
+		     delayBR.delayTime.setValueAtTime(0.001*(-zv/2),0); 	delayCR.delayTime.setValueAtTime(0.001*(-zv/2),0); }; 
+//
  setPos( xv, yv, zv );
 }
-/*
-function incXV() { xv = Math.round(xv*10 + 2)/10; setPos( xv, yv, zv ); document.getElementById("xValue").innerHTML="pos_x = "+ xv;}
-function decXV() { xv = Math.round(xv*10 - 2)/10; setPos( xv, yv, zv ); document.getElementById("xValue").innerHTML="pos_x = "+ xv;}
-function incYV() { yv = Math.round(yv*10 + 2)/10; setPos( xv, yv, zv ); document.getElementById("yValue").innerHTML="pos_y = "+ yv;}
-function decYV() { yv = Math.round(yv*10 - 2)/10; setPos( xv, yv, zv ); document.getElementById("yValue").innerHTML="pos_y = "+ yv;}
-function incZV() { zv = Math.round(zv*10 + 2)/10; setPos( xv, yv, zv ); document.getElementById("zValue").innerHTML="pos_z = "+ zv;}
-function decZV() { zv = Math.round(zv*10 - 2)/10; setPos( xv, yv, zv ); document.getElementById("zValue").innerHTML="pos_z = "+ zv;}
-*/
+
 //------------------------- init gl ------------------------------------
 function initgls() {
 
@@ -379,7 +380,7 @@ var geometry_cube = new THREE.BoxGeometry (2, 3, 1.5);
 //
 	ctxC.beginPath(); ctxC.fillStyle = "#504000"; ctxC.fillRect( 0,0,256,256 );
 	ctxC.ellipse(80, 50, 20, 30, 0, 0, 2 * Math.PI);
-	ctxC.ellipse(70, 170, 40, 70, 0, 0, 2 * Math.PI); ctxC.fillStyle = "black";ctxC.fill();	
+	ctxC.ellipse(60, 170, 40, 70, 0, 0, 2 * Math.PI); ctxC.fillStyle = "black";ctxC.fill();	// 60<-70 11/16
 	var txL = new THREE.CanvasTexture(canvasC);		//txL.needsUpdate = true; //txL.flipY = true;
       	var grL = new THREE.MeshBasicMaterial({map: txL,}); ctxC.closePath()
 //        
@@ -427,7 +428,7 @@ var material,picture,texture,planea,image,img,picdata;
 
 function showMetaData(data) {
 	image = document.getElementById('myimg');
-      musicmetadata(data, function (err, result) {
+      musicmetadata(data, function (err, result) {	
 
         if (result.picture.length > 0) { image.style.visibility = 'visible';
           picture = result.picture[0]; 		
