@@ -4,8 +4,8 @@
 
 var src, source, splitter, audio, fname, fc,flen;
 var xv, yv, zv, vol, rv, tv,tvv, cv, bv, cf,cn2 ,tfile,gl,mf;
- vol = 0.5;   rv =0.3; cf = 0;   				//*** rv =0.4;  2020 Nov
- xv = 5.0; yv = 2.0; zv = -10.0;  tv = 0.5; bv = 0.0; 
+ vol = 0.5;   rv =0.3; cf = 0;   					
+ xv = 5.0; yv = 2.0; zv = -10.0;  tv = 0.0; bv = 0.0; 					// tv = 0.5 2021 Mar
 
 //var touchSX,touchSY, touchEX,touchEY, touchDX, touchDY, diffSX, diffEX, el,ctx;
 
@@ -54,7 +54,7 @@ audioCtx = new AudioContext();
   bassL.frequency.setValueAtTime(60, 0); 
   bassL.gain.setValueAtTime(bv, 0);				// -40db...40db
  trebleL = audioCtx.createBiquadFilter(); trebleL.type   = 'highshelf';  trebleL.Q.automationRate='k-rate';
-  trebleL.frequency.setValueAtTime(11000, 0);
+  trebleL.frequency.setValueAtTime(12000, 0);
   trebleL.gain.setValueAtTime(tv, 0);
 
  trebleRL = audioCtx.createBiquadFilter(); trebleL.type   = 'highshelf';  trebleL.Q.automationRate='k-rate';
@@ -68,7 +68,7 @@ audioCtx = new AudioContext();
   bassR.frequency.setValueAtTime(60, 0);
   bassR.gain.setValueAtTime(bv, 0);
  trebleR = audioCtx.createBiquadFilter(); trebleR.type   = 'highshelf';  trebleR.Q.automationRate='k-rate';
-  trebleR.frequency.setValueAtTime(11000, 0);
+  trebleR.frequency.setValueAtTime(12000, 0);
   trebleR.gain.setValueAtTime(tv, 0);
 
  trebleRR = audioCtx.createBiquadFilter(); trebleL.type   = 'highshelf';  trebleL.Q.automationRate='k-rate';
@@ -139,8 +139,8 @@ function ini() {
   //initCtx();
   initgls(); setPos(xv,yv,zv); //movsp();
 // ------- Feb 2021 -------
-const st='Deer Users, </br>Speaker coodinate system has chanded. (v1.9.9) Move speakers to your favorite position again if loaded old position.(VSP automatically saves speaker position when you changed for each file.)'
-document.getElementById("centered").innerHTML=st
+//const st='Deer Users, </br>Speaker coodinate system has chanded. (v1.9.9) Move speakers to your favorite position again if loaded old position.(VSP automatically saves speaker position when you changed for each file.)'
+//document.getElementById("centered").innerHTML=st
 // --------------------------
   document.querySelector("#input").addEventListener("change",   function () { handleFiles(); } );
   document.querySelector("#loop").addEventListener("click",  function () { chkLoop(); } );
@@ -163,14 +163,14 @@ function loadfxyz() {
   var fxyz=Array();
   try {
  	fxyz = JSON.parse(localStorage.getItem(fname));
-	if (fxyz) {
+	if (fxyz) {	
 	 xv = parseFloat(fxyz[0]); yv = parseFloat(fxyz[1]); zv = parseFloat(fxyz[2]);
 		document.getElementById("xValue").innerHTML="pos_x = "+ xv;
-   		//document.querySelector("#xv").value = xv;
+   		  document.querySelector("#xv").value = xv;
 		document.getElementById("yValue").innerHTML="pos_y = "+ yv;
-    		//document.querySelector("#yv").value = yv;
+    		  document.querySelector("#yv").value = yv;
 		document.getElementById("zValue").innerHTML="pos_z = "+ zv;
-    		//document.querySelector("#zv").value = zv; 
+    		  document.querySelector("#zv").value = zv; 
 	 vol = parseFloat(fxyz[3]); bv = parseFloat(fxyz[4]); tv = parseFloat(fxyz[5]);
 	}
   } catch(e) { defpos();
@@ -282,10 +282,12 @@ function playGain() {
 
 function setPos(x,y,z) { 	y=y-2; x=x/2; 	 //var fx,frx;
  if (fname) { 			//fx = Math.abs(8/z); //frx = fx*0.8;
-  pannerL.setPosition( -x, y, z); pannerRL.setPosition ( -x, y, z*3);   //*-3 BLR
-  pannerR.setPosition(  x, y, z); pannerRR.setPosition(   x, y, z*3); 
-			   pannerBL.setPosition(  -x*4, y, z);  pannerBR.setPosition( -x*2, y, z);
-			   pannerCL.setPosition(   x*2, y, z);  pannerCR.setPosition(   x*4, y, z);
+  pannerL.setPosition( -x, y, z); pannerRL.setPosition ( -x-z, y, z*5);			//( -x*5, y, z*5)  2021/May ******
+  pannerR.setPosition(  x, y, z); pannerRR.setPosition(   x-z, y, z*5); 			//(   x*5, y, z*5)   x+10->x-z
+			   pannerBL.setPosition(  -x*3-z, y, z);  		//(  -x*4, y, z)
+			pannerBR.setPosition( -x-z, y, z);			//( -x*2, y, z)
+			   pannerCL.setPosition(   x-z, y, z);  			//(   x*2, y, z)
+			pannerCR.setPosition(   x*3-z, y, z);			//(   x*4, y, z)
  }
  movsp();     
 }
@@ -341,8 +343,8 @@ function changeZV(z) {
 //
 	if ( fname ) {delayRL.delayTime.setValueAtTime(0.001*(-zv),0);
 		     delayRR.delayTime.setValueAtTime(0.001*(-zv),0); 
-		     delayBL.delayTime.setValueAtTime(0.001*(-zv/2),0);	delayCL.delayTime.setValueAtTime(0.001*(-zv/2),0);
-		     delayBR.delayTime.setValueAtTime(0.001*(-zv/2),0); 	delayCR.delayTime.setValueAtTime(0.001*(-zv/2),0); }; 
+		     delayBL.delayTime.setValueAtTime(0.001*(-zv/4),0);	delayCL.delayTime.setValueAtTime(0.001*(-zv/2),0);
+		     delayBR.delayTime.setValueAtTime(0.001*(-zv/2),0); 	delayCR.delayTime.setValueAtTime(0.001*(-zv/4),0); };
 //
  setPos( xv, yv, zv );
 }
