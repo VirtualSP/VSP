@@ -2,7 +2,7 @@
     "short_name": "PWA Virtual Speakers",
     "name": "PWA web Virtual Speakers",
     "display": "standalone",
-    "start_url": "https://virtualsp.github.io/index.html",
+    "start_url": "https://virtualsp.github.io/VSP/index.html",
     "background_color": "#3333CC",
     "icons": [
         {

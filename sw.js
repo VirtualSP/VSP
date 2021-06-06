@@ -1,4 +1,4 @@
-var CACHE_NAME = 'VSPcache199';
+var CACHE_NAME = 'VSPcache1991';
 var urlsToCache = [
     '/VirtualSPD/index.html',
     '/VirtualSPD/js/app86.js',
