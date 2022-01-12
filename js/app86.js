@@ -3,10 +3,10 @@
  */						
 
 var xv, yv, zv, vol, rv, tv,tvv, cv, bv;
- vol = 0.5;   rv =0.3;    					
+ vol = 0.5;   rv =0.3;    				//rv =0.3; 			
  xv = 5.0; yv = 2.0; zv = -10.0;  tv = 0.0; bv = 0.0; 					// tv = 0.5 2021 Mar
 
-var AudioContext = window.AudioContext; 	// || window.webkitAudioContext; 
+var AudioContext;		// = new AudioContext(); 
 var audioCtx, listener, src, source, splitter, audio, fname, fc,flen; 
 var gainL,gainBL,gainR,gainBR, gainRL, gainRR, delayRL, delayRR, gainCL,gainCR,delayCL,delayCR;
 var pannerL,pannerR,pannerBL,pannerBR, pannerRL, pannerRR, pannerCL,pannerCR; 
@@ -17,14 +17,14 @@ function initCtx() {
  splitter = audioCtx.createChannelSplitter(2);
  listener = audioCtx.listener;			
 
- pannerL  = audioCtx.createPanner(); setProperties( pannerL )
- pannerR  = audioCtx.createPanner(); setProperties( pannerR )
- pannerBL = audioCtx.createPanner(); setProperties( pannerBL )
- pannerBR = audioCtx.createPanner(); setProperties( pannerBR )
- pannerCL = audioCtx.createPanner(); setProperties( pannerCL )
- pannerCR = audioCtx.createPanner(); setProperties( pannerCR )
- pannerRL = audioCtx.createPanner();	setProperties( pannerRL )
- pannerRR = audioCtx.createPanner();	setProperties( pannerRR )
+ pannerL  = audioCtx.createPanner(); setProperties( pannerL );	//pannerL.panningModel = 'equalpower';
+ pannerR  = audioCtx.createPanner(); setProperties( pannerR );	//pannerR.panningModel = 'equalpower';
+ pannerBL = audioCtx.createPanner(); setProperties( pannerBL );	//pannerBL.panningModel = 'equalpower';
+ pannerBR = audioCtx.createPanner(); setProperties( pannerBR );	//pannerBR.panningModel = 'equalpower';
+ pannerCL = audioCtx.createPanner(); setProperties( pannerCL );	//pannerCL.panningModel = 'equalpower';
+ pannerCR = audioCtx.createPanner(); setProperties( pannerCR );	//pannerCR.panningModel = 'equalpower';
+ pannerRL = audioCtx.createPanner();	setProperties( pannerRL );	//pannerRL.panningModel = 'equalpower';
+ pannerRR = audioCtx.createPanner();	setProperties( pannerRR );	//pannerRR.panningModel = 'equalpower';
 
  bassL   = audioCtx.createBiquadFilter(); bassL.type   = 'lowshelf'; 
   bassL.frequency.setValueAtTime(60, 0); 
@@ -69,9 +69,10 @@ delayRL = audioCtx.createDelay(); delayRR = audioCtx.createDelay();
 
 audio = new Audio(src); audio.controls = true; audio.volume=vol;	audio.clientWidth=50;
 audio.crossOrigin = "anonymous";			// +++ for chrome71- CORS access ++++
-  document.body.appendChild(audio); 
+  //document.body.appendChild(audio); 
+ var ip= document.getElementById("vals"); ip.append(audio);
   source = audioCtx.createMediaElementSource(audio); 
- //setPos(xv,yv,zv);
+ setPos(xv,yv,zv);
 
  audio.addEventListener('ended', savefxyz,false);
  audio.addEventListener('pause', savefxyz,false);
@@ -82,7 +83,7 @@ var camera, scene, renderer, canvas,ctx,geometry,material;
 var cube, plane, light0,Sphere0, meshL,meshR,cubeL, cubeR;	
 	
 var wX = 400, wY = 400;   
- 
+
 function ini() {
 
   //loadxyz(); 
@@ -146,12 +147,12 @@ function chkLoop() {
 }
 
 function movsp() { 
- var xv2;
-  xv2 = xv*2;
-  cubeL.position.setX(-xv2); cubeL.position.setY(yv); cubeL.position.setZ(zv); 
-  cubeR.position.setX(xv2);  cubeR.position.setY(yv); cubeR.position.setZ(zv); 	
-    cubeL.rotation.y=Math.atan(-xv2/zv*0.8); cubeR.rotation.y=Math.atan( xv2/zv*0.8); //cubeR.rotation.z=(zv+10)/10
-    cubeL.rotation.x=Math.atan(-yv/zv*0.5);   cubeR.rotation.x=Math.atan(-yv/zv*0.5);	
+ var xv2,zv2;
+  xv2 = xv*2; 	zv2=zv*2
+  cubeL.position.setX(-xv2); cubeL.position.setY(yv); cubeL.position.setZ(zv2); 
+  cubeR.position.setX(xv2);  cubeR.position.setY(yv); cubeR.position.setZ(zv2); 	
+    cubeL.rotation.y=Math.atan(-xv2/zv*0.5); cubeR.rotation.y=Math.atan( xv2/zv*0.5); //cubeL.rotation.z=-(zv+10)/1000
+    cubeL.rotation.x=Math.atan(-yv/zv*0.1);   cubeR.rotation.x=Math.atan(-yv/zv*0.1);	
  renderer.render( scene, camera ); 
 chkLoop();   
 }
@@ -211,14 +212,14 @@ function playGain() {	//  audio with depth information, improved the sound sense
 
   var RL=[],RR=[],BL=[],BR=[],CL=[],CR=[]
 function setPos(x,y,z) { 	
- var a,b; 	a=3; y=y-2; x=x/2; w=15+x;v=15-x
+ var a,b; 	a=2; y=y-2; w=x*3; v=x*4	//x=x/2;w=15+x;v=15-x; 		// a=3
  if (fname) { 
-  setPan( pannerL, -x, y, z); setPan( pannerRL, -x, y, z*a);	RL[0]=-x; RL[1]=y; RL[2]=z*a	// -x-(-z), y, z*a
-  setPan( pannerR,  x, y, z); setPan( pannerRR,  x, y, z*a); RR[0]= x; RR[1]=y; RR[2]=z*a	//  x-z, y, z*a
-			setPan( pannerBL,  -w, y, z); BL[0]=-w; BL[1]=y; BL[2]=z;	//(  -x*4, y, z)
-			setPan( pannerBR,  -v, y, z); BR[0]=-v; BR[1]=y; BR[2]=z 	//( -x*2, y, z)
-			setPan( pannerCL,   v, y, z);  	CL[0]= v; CL[1]=y; CL[2]=z 		//(   x*2, y, z)
-			setPan( pannerCR,   w, y, z);	CR[0]= w; CR[1]=y; CR[2]=z 	//(   x*4, y, z)
+  setPan( pannerL, -x, y, z); setPan( pannerRL, -x, y, z*a);	//RL[0]=-x; RL[1]=y; RL[2]=z*a	// -x-(-z), y, z*a
+  setPan( pannerR,  x, y, z); setPan( pannerRR,  x, y, z*a); //RR[0]= x; RR[1]=y; RR[2]=z*a	//  x-z, y, z*a
+			setPan( pannerBL,  -w, y, z); //BL[0]=-w; BL[1]=y; BL[2]=z;	//(  -x*4, y, z)
+			setPan( pannerBR,  -v, y, z); //BR[0]=-v; BR[1]=y; BR[2]=z 	//( -x*2, y, z)
+			setPan( pannerCL,   v, y, z);  	//CL[0]= v; CL[1]=y; CL[2]=z 		//(   x*2, y, z)
+			setPan( pannerCR,   w, y, z);	//CR[0]= w; CR[1]=y; CR[2]=z 	//(   x*4, y, z)
  }
   movsp();   if (fname) { setDelay()  }
 }
@@ -233,14 +234,18 @@ function setProperties( sp ) {
   sp.panningModel = 'HRTF';  sp.distanceModel = 'linear';
 }
 
-function setDelay() {
-  var dr, dv, dw, df = 24;  
-	dr =  0.004*Math.sqrt(RL[0]*RL[0]+RL[1]*RL[1]+RL[2]*RL[2])/df; 
-	dw = 0.004*Math.sqrt(BL[0]*BL[0]+BL[1]*BL[1]+BL[2]*BL[2])/df;
-	dv =  0.004*Math.sqrt(CL[0]*CL[0]+CL[1]*CL[1]+CL[2]*CL[2])/df; 
-	delayRL.delayTime.setValueAtTime( dr,0 );    delayRR.delayTime.setValueAtTime( dr,0 ); 	
+function setDelay() {		// in seconds
+  var dr, dv, dw, df = -zv/100;  
+	//dr =  0.004*Math.sqrt(RL[0]*RL[0]+RL[1]*RL[1]+RL[2]*RL[2])*df; 
+	//dw = 0.004*Math.sqrt(BL[0]*BL[0]+BL[1]*BL[1]+BL[2]*BL[2])*df/2;
+	//dv =  0.004*Math.sqrt(CL[0]*CL[0]+CL[1]*CL[1]+CL[2]*CL[2])*df; 
+	dr =  ( Math.sqrt(xv*xv+4*zv*zv)-Math.sqrt(xv*xv+zv*zv) )/340;
+	dw = ( Math.sqrt(9*xv*xv+zv*zv)-Math.sqrt(xv*xv+zv*zv) )/340;
+	dv=   ( Math.sqrt(16*xv*xv+zv*zv)-Math.sqrt(xv*xv+zv*zv) )/340;
+		//console.log(BL[0],dr,dw,dv);	// dw<dv
+	delayRL.delayTime.setValueAtTime( dr,0 );  delayRR.delayTime.setValueAtTime( dr,0 ); 	
 	delayBL.delayTime.setValueAtTime( dw,0 ); delayBR.delayTime.setValueAtTime( dv,0 );
-	delayCL.delayTime.setValueAtTime( dv,0 ); delayCR.delayTime.setValueAtTime( dw,0 );
+	delayCL.delayTime.setValueAtTime( dv,0 ); delayCR.delayTime.setValueAtTime( dw,0 ); //console.log(dr,dv,dw)
 }
 
 function defpos() {
@@ -302,17 +307,17 @@ renderer.setClearColor(0x3333cc, 0.1);
 	canvasB = document.getElementById("canvasB"); ctxB = canvasB.getContext("2d");
 	canvasC = document.getElementById("canvasC"); ctxC = canvasC.getContext("2d");
          
-camera = new THREE.PerspectiveCamera (90, 1, 1, 1000);  
+camera = new THREE.PerspectiveCamera (60, 1, 1, 1000);  
 camera.position.x=0; camera.position.y=5; camera.position.z=6;   	//z:5
-camera.lookAt( {x:0, y:4.2, z:-10 } ); 				//z:0
+camera.lookAt( {x:0, y:4, z:-500 } ); 				//z:0
       
 scene = new THREE.Scene(); scene.add(camera);  //scene.background = new THREE.Color( 0xff0000 );
     
 var geometry_sph = new THREE.SphereGeometry (0.7, 36, 36);         
 var material0 = new THREE.MeshLambertMaterial( { color: 0x0088cc } );    
-Sphere0 = new THREE.Mesh (geometry_sph, material0);     
-Sphere0.position.x= 0; Sphere0.position.y= 0; Sphere0.position.z= 0; Sphere0.castShadow = true;     
-scene.add( Sphere0 );
+	//Sphere0 = new THREE.Mesh (geometry_sph, material0);     				//12_12
+	//Sphere0.position.x= 0; Sphere0.position.y= 0; Sphere0.position.z= 0; Sphere0.castShadow = true;     //12_12
+	//scene.add( Sphere0 );
 
 var geometry_cube = new THREE.BoxGeometry (2, 3, 1.5);
 
@@ -349,14 +354,15 @@ var geometry_cube = new THREE.BoxGeometry (2, 3, 1.5);
   light0.shadow.mapSize.width = 4096; light0.shadow.mapSize.height = 4096;
   scene.add( light0 );
  
-   var gm = new THREE.PlaneBufferGeometry(90, 120, 10, 10);
+   var gm = new THREE.PlaneBufferGeometry(120, 120, 30, 30);
     plane = new THREE.Mesh( gm,
         new THREE.MeshLambertMaterial({
             color: 0x888888, transparent: true, opacity: 0.7
         })
     );	//color: 0x8888ee
     plane.position.y = 0; plane.rotation.x = -Math.PI / 2;
-	var grid = new THREE.GridHelper(120, 60, 0x555555, 0x777777);
+	var grid = new THREE.GridHelper(100, 50, 0x555555, 0x777777);	//(120, 60, 0x555555, 0x777777)
+	//var grid = new THREE.InfiniteGridHelper(120,60,0x777777,100)
     scene.add( plane ); scene.add( grid );
 
     light0.castShadow = true;
