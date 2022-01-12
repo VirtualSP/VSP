@@ -2,7 +2,7 @@
     "short_name": "PWA Virtual Speakers",
     "name": "PWA web Virtual Speakers",
       "version": "1.9.95",
-      "manifest_version": 3,
+      "manifest_version": 2,
     "display": "standalone",
     "start_url": "https://virtualsp.github.io/VSP/index.html",
     "background_color": "#3333CC",
