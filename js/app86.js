@@ -89,9 +89,9 @@ function ini() {
   //loadxyz(); 
   //initCtx();
   initgls(); setPos(xv,yv,zv); //movsp();
-// ------- Feb 2021 -------
-//const st='Deer Users, </br>Speaker coodinate system has chanded. (v1.9.9) 
-//document.getElementById("centered").innerHTML=st
+// ------- Mar 2020 -------L182
+const st=' Stop Putin Now!<br>'
+document.getElementById("centered0").innerHTML=st
 // --------------------------
   document.querySelector("#input").addEventListener("change",   function () { handleFiles(); } );
   document.querySelector("#loop").addEventListener("click",  function () { chkLoop(); } );
@@ -179,7 +179,7 @@ function loadnext() {
    } 
 }
 
-function loadsrc() {	
+function loadsrc() {	document.getElementById("centered0").innerHTML=''	
     src = URL.createObjectURL(document.getElementsByTagName('input')[6].files[fc]);
     fname = document.getElementsByTagName('input')[6].files[fc].name; 
 	loadfxyz();
@@ -303,7 +303,7 @@ function initgls() {
 
 renderer = new THREE.WebGLRenderer({ canvas: tCanvas , alpha: true, antialias: true }); 
 renderer.setSize (wX,wY);    
-renderer.setClearColor(0x3333cc, 0.1);
+renderer.setClearColor(0x3333ff, 0.5);						// 0x3333cc, 0.1
 	canvasB = document.getElementById("canvasB"); ctxB = canvasB.getContext("2d");
 	canvasC = document.getElementById("canvasC"); ctxC = canvasC.getContext("2d");
          
@@ -357,7 +357,7 @@ var geometry_cube = new THREE.BoxGeometry (2, 3, 1.5);
    var gm = new THREE.PlaneBufferGeometry(120, 120, 30, 30);
     plane = new THREE.Mesh( gm,
         new THREE.MeshLambertMaterial({
-            color: 0x888888, transparent: true, opacity: 0.7
+            color: 0xE0FA03, transparent: true, opacity: 0.95			// color: 0x888888 opacity: 0.7
         })
     );	//color: 0x8888ee
     plane.position.y = 0; plane.rotation.x = -Math.PI / 2;
