@@ -90,7 +90,7 @@ function ini() {
   //initCtx();
   initgls(); setPos(xv,yv,zv); //movsp();
 // ------- Mar 2020 -------L182
-const st=' Stop Putin Now!<br>'
+const st=' Stop Putin <br> for peaceful & democratic Europe-Russia'
 document.getElementById("centered0").innerHTML=st
 // --------------------------
   document.querySelector("#input").addEventListener("change",   function () { handleFiles(); } );
