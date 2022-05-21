@@ -90,7 +90,7 @@ function ini() {
   //initCtx();
   initgls(); setPos(xv,yv,zv); //movsp();
 // ------- Mar 2020 -------L182
-const st=' Stop Putin <br> for peaceful & democratic Europe-Russia'
+const st=' Stop Putin and bring about <br>a peaceful,democratic Europe-Russia'
 document.getElementById("centered0").innerHTML=st
 // --------------------------
   document.querySelector("#input").addEventListener("change",   function () { handleFiles(); } );
@@ -212,7 +212,7 @@ function playGain() {	//  audio with depth information, improved the sound sense
 
   var RL=[],RR=[],BL=[],BR=[],CL=[],CR=[]
 function setPos(x,y,z) { 	
- var a,b; 	a=2; y=y-2; w=x*3; v=x*4	//x=x/2;w=15+x;v=15-x; 		// a=3
+ var a,b; 	a=3; y=y-2; w=x*3; v=x*4	//x=x/2;w=15+x;v=15-x; 		// a=2				// **2020Mar**(a=2)
  if (fname) { 
   setPan( pannerL, -x, y, z); setPan( pannerRL, -x, y, z*a);	//RL[0]=-x; RL[1]=y; RL[2]=z*a	// -x-(-z), y, z*a
   setPan( pannerR,  x, y, z); setPan( pannerRR,  x, y, z*a); //RR[0]= x; RR[1]=y; RR[2]=z*a	//  x-z, y, z*a
@@ -225,7 +225,7 @@ function setPos(x,y,z) {
 }
 
 function setPan( sp, x,y,z ) {
-  sp.positionX.value = x; sp.positionY.value = y; sp.positionZ.value = z;
+  sp.positionX.value = x; sp.positionY.value = y; sp.positionZ.value = z;	listener.positionZ.value=-z/2		// **2020Mar** (-z)
 }
 
 function setProperties( sp ) {
@@ -239,7 +239,7 @@ function setDelay() {		// in seconds
 	//dr =  0.004*Math.sqrt(RL[0]*RL[0]+RL[1]*RL[1]+RL[2]*RL[2])*df; 
 	//dw = 0.004*Math.sqrt(BL[0]*BL[0]+BL[1]*BL[1]+BL[2]*BL[2])*df/2;
 	//dv =  0.004*Math.sqrt(CL[0]*CL[0]+CL[1]*CL[1]+CL[2]*CL[2])*df; 
-	dr =  ( Math.sqrt(xv*xv+4*zv*zv)-Math.sqrt(xv*xv+zv*zv) )/340;
+	dr =  ( Math.sqrt(xv*xv+9*zv*zv)-Math.sqrt(xv*xv+zv*zv) )/340;					// **2020Mar**(3*zv)
 	dw = ( Math.sqrt(9*xv*xv+zv*zv)-Math.sqrt(xv*xv+zv*zv) )/340;
 	dv=   ( Math.sqrt(16*xv*xv+zv*zv)-Math.sqrt(xv*xv+zv*zv) )/340;
 		//console.log(BL[0],dr,dw,dv);	// dw<dv
