@@ -12,6 +12,7 @@
 </script>
 <script>
 // PWA
+/*			// -----------------------
 window.addEventListener("load", () => {
     if ("serviceWorker" in navigator) {
         navigator.serviceWorker
@@ -28,6 +29,7 @@ window.addEventListener("load", () => {
             });
     }
 });
+*/
 </script>
 
  
@@ -37,8 +39,9 @@ window.addEventListener("load", () => {
 
 <link rel="icon" href="icon_192.png" sizes="192x192" type="image/png">
 <link rel="icon" href="icon_512.png" sizes="512x512" type="image/png">
+<!--
 <link rel="manifest" href="manifest.json"> 
-
+-->
 <script src="js/three.min.js"></script> 
 <script src="js/app86.js"></script>  
 <script src="js/musicmetadata.js"></script>
@@ -76,11 +79,13 @@ window.addEventListener("load", () => {
 <body onload="ini()">  
 
 <script>
+/*				// -----------------------
 if ('serviceWorker' in navigator) {
     window.addEventListener("load", function() {
         navigator.serviceWorker.register('sw.js');
     });
 }
+*/
 </script>
 
 <b>Virtual Audio Speakers</b><font size="2"> 1.9.95 (Mar.2022)</font>
@@ -125,7 +130,7 @@ if ('serviceWorker' in navigator) {
  <button onclick="defpos()">Reset speaker position</button></div>
 
 <div style="position: absolute; top: 50px; width:400px" >
- <div style="text-align: center;"><img id='myimg' style=" z-index: 3" src="LM03.png"></div>
+ <div style="text-align: center;"><img id='myimg' style=" z-index: 3" ></div>
 </div>
 
 <div style="position: absolute; left: 40px; top: 70px; width:320px; height:320px; color:#886600 >
