@@ -17,42 +17,42 @@ function initCtx() {
  splitter = audioCtx.createChannelSplitter(2);
  listener = audioCtx.listener;			
 
- pannerL  = audioCtx.createPanner(); setProperties( pannerL );	//pannerL.panningModel = 'equalpower';
- pannerR  = audioCtx.createPanner(); setProperties( pannerR );	//pannerR.panningModel = 'equalpower';
- pannerBL = audioCtx.createPanner(); setProperties( pannerBL );	//pannerBL.panningModel = 'equalpower';
- pannerBR = audioCtx.createPanner(); setProperties( pannerBR );	//pannerBR.panningModel = 'equalpower';
- pannerCL = audioCtx.createPanner(); setProperties( pannerCL );	//pannerCL.panningModel = 'equalpower';
- pannerCR = audioCtx.createPanner(); setProperties( pannerCR );	//pannerCR.panningModel = 'equalpower';
- pannerRL = audioCtx.createPanner();	setProperties( pannerRL );	//pannerRL.panningModel = 'equalpower';
- pannerRR = audioCtx.createPanner();	setProperties( pannerRR );	//pannerRR.panningModel = 'equalpower';
+ pannerL  = audioCtx.createPanner(); setProperties( pannerL );
+ pannerR  = audioCtx.createPanner(); setProperties( pannerR );
+ pannerBL = audioCtx.createPanner(); setProperties( pannerBL );
+ pannerBR = audioCtx.createPanner(); setProperties( pannerBR );
+ pannerCL = audioCtx.createPanner(); setProperties( pannerCL );
+ pannerCR = audioCtx.createPanner(); setProperties( pannerCR );
+ pannerRL = audioCtx.createPanner();	setProperties( pannerRL );
+ pannerRR = audioCtx.createPanner();	setProperties( pannerRR );
 
  bassL   = audioCtx.createBiquadFilter(); bassL.type   = 'lowshelf'; 
-  bassL.frequency.setValueAtTime(60, 0); 
+  bassL.frequency.setValueAtTime(120, 0); 
   bassL.gain.setValueAtTime(bv, 0);				// -40db...40db
  trebleL = audioCtx.createBiquadFilter(); trebleL.type   = 'highshelf';
-  trebleL.frequency.setValueAtTime(12000, 0);
+  trebleL.frequency.setValueAtTime(8000, 0);
   trebleL.gain.setValueAtTime(tv, 0);
 
- trebleRL = audioCtx.createBiquadFilter(); trebleL.type   = 'highshelf';
-  trebleRL.frequency.setValueAtTime(12000, 0);
-  trebleRL.gain.setValueAtTime(tv, 0);
-// trebleBL = audioCtx.createBiquadFilter(); trebleBL.type   = 'highshelf';
-//  trebleBL.frequency.setValueAtTime(18000, 0);
-//  trebleBL.gain.setValueAtTime(tv, 0);
+ 	//trebleRL = audioCtx.createBiquadFilter(); trebleL.type   = 'highshelf';
+  	//trebleRL.frequency.setValueAtTime(12000, 0);
+  	//trebleRL.gain.setValueAtTime(tv, 0);
+	// trebleBL = audioCtx.createBiquadFilter(); trebleBL.type   = 'highshelf';
+	//  trebleBL.frequency.setValueAtTime(18000, 0);
+	//  trebleBL.gain.setValueAtTime(tv, 0);
 
  bassR   = audioCtx.createBiquadFilter(); bassR.type   = 'lowshelf';
-  bassR.frequency.setValueAtTime(60, 0);
+  bassR.frequency.setValueAtTime(120, 0);
   bassR.gain.setValueAtTime(bv, 0);
  trebleR = audioCtx.createBiquadFilter(); trebleR.type   = 'highshelf';
-  trebleR.frequency.setValueAtTime(12000, 0);
+  trebleR.frequency.setValueAtTime(8000, 0);
   trebleR.gain.setValueAtTime(tv, 0);
 
- trebleRR = audioCtx.createBiquadFilter(); trebleL.type   = 'highshelf';
-  trebleRR.frequency.setValueAtTime(12000, 0);
-  trebleRR.gain.setValueAtTime(tv, 0);			// -40..40
-// trebleBR = audioCtx.createBiquadFilter(); trebleBR.type   = 'highshelf';
-//  trebleBR.frequency.setValueAtTime(18000, 0);
-//  trebleBR.gain.setValueAtTime(tv, 0);
+ 	//trebleRR = audioCtx.createBiquadFilter(); trebleL.type   = 'highshelf';
+  	//trebleRR.frequency.setValueAtTime(12000, 0);
+  	//trebleRR.gain.setValueAtTime(tv, 0);			// -40..40
+	// trebleBR = audioCtx.createBiquadFilter(); trebleBR.type   = 'highshelf';
+	//  trebleBR.frequency.setValueAtTime(18000, 0);
+	//  trebleBR.gain.setValueAtTime(tv, 0);
 
 gainBL = audioCtx.createGain(); gainBL.gain.value = rv;  	
 gainBR = audioCtx.createGain(); gainBR.gain.value = rv/2; 
@@ -89,8 +89,8 @@ function ini() {
   //loadxyz(); 
   //initCtx();
   initgls(); setPos(xv,yv,zv); //movsp();
-// ------- Mar 2020 -------L182
-const st=' Stop Putin and bring about <br>a peaceful,democratic Europe-Russia'
+// ------- Jun 2022 -------
+const st=' Putin'+"'"+'s tyranny and expansionism must be stopped. He cannot justify aggression<br> and crimes against human life forever.'
 document.getElementById("centered0").innerHTML=st
 // --------------------------
   document.querySelector("#input").addEventListener("change",   function () { handleFiles(); } );
@@ -103,8 +103,8 @@ document.getElementById("centered0").innerHTML=st
  document.querySelector("#zv").addEventListener("change",
         function (e) { e.preventDefault(); changeZV(document.querySelector("#zv").value); });
 
-  document.querySelector("#bass").addEventListener("change",
-        function () { changeBass(document.querySelector("#bass").value); });
+  document.getElementById("bass").addEventListener("change",
+        function () { changeBass( document.querySelector("#bass").value ); });
   document.querySelector("#treble").addEventListener("change",
         function () { changeTreble(document.querySelector("#treble").value); });
  
@@ -122,7 +122,7 @@ function loadfxyz() {
     		  document.querySelector("#yv").value = yv;
 		document.getElementById("zValue").innerHTML="pos_z = "+ zv;
     		  document.querySelector("#zv").value = zv; 
-	 vol = parseFloat(fxyz[3]); bv = parseFloat(fxyz[4]); tv = parseFloat(fxyz[5]);
+	 vol = parseFloat(fxyz[3]); bv = parseFloat(fxyz[4]); tv = parseFloat(fxyz[5]);		
 	}
   } catch(e) { defpos();
     return false; 
@@ -133,7 +133,7 @@ function savefxyz() {
   var fxyz=Array();
    try {
 	fxyz[0]=String(xv).substr(0, 5); fxyz[1]=String(yv).substr(0, 5); fxyz[2]=String(zv).substr(0, 5);
-	fxyz[3]=String(vol).substr(0, 5); fxyz[4]=String(bv).substr(0, 5); fxyz[5]=String(tv).substr(0, 5);
+	fxyz[3]=String(vol).substr(0, 5); fxyz[4]=String(bv).substr(0, 5); fxyz[5]=String(tv).substr(0, 5);	// -8
 	localStorage.setItem(fname, JSON.stringify(fxyz));
   } catch(e) {
     return false; 
@@ -212,7 +212,7 @@ function playGain() {	//  audio with depth information, improved the sound sense
 
   var RL=[],RR=[],BL=[],BR=[],CL=[],CR=[]
 function setPos(x,y,z) { 	
- var a,b; 	a=3; y=y-2; w=x*3; v=x*4	//x=x/2;w=15+x;v=15-x; 		// a=2				// **2020Mar**(a=2)
+ var a,b; 	a=1.5; y=y-2; w=x*1.5; v=w+2*x	//x=x/2;w=15+x;v=15-x; 		// a=3	w=x*3	v=x*4	// **2020Mar**(a=2)
  if (fname) { 
   setPan( pannerL, -x, y, z); setPan( pannerRL, -x, y, z*a);	//RL[0]=-x; RL[1]=y; RL[2]=z*a	// -x-(-z), y, z*a
   setPan( pannerR,  x, y, z); setPan( pannerRR,  x, y, z*a); //RR[0]= x; RR[1]=y; RR[2]=z*a	//  x-z, y, z*a
@@ -220,12 +220,13 @@ function setPos(x,y,z) {
 			setPan( pannerBR,  -v, y, z); //BR[0]=-v; BR[1]=y; BR[2]=z 	//( -x*2, y, z)
 			setPan( pannerCL,   v, y, z);  	//CL[0]= v; CL[1]=y; CL[2]=z 		//(   x*2, y, z)
 			setPan( pannerCR,   w, y, z);	//CR[0]= w; CR[1]=y; CR[2]=z 	//(   x*4, y, z)
- }
+  listener.positionZ.value=-z/5 
+  }
   movsp();   if (fname) { setDelay()  }
 }
 
 function setPan( sp, x,y,z ) {
-  sp.positionX.value = x; sp.positionY.value = y; sp.positionZ.value = z;	listener.positionZ.value=-z/2		// **2020Mar** (-z)
+  sp.positionX.value = x; sp.positionY.value = y; sp.positionZ.value = z;  	// **2020Mar** (-z)
 }
 
 function setProperties( sp ) {
@@ -236,16 +237,17 @@ function setProperties( sp ) {
 
 function setDelay() {		// in seconds
   var dr, dv, dw, df = -zv/100;  
-	//dr =  0.004*Math.sqrt(RL[0]*RL[0]+RL[1]*RL[1]+RL[2]*RL[2])*df; 
-	//dw = 0.004*Math.sqrt(BL[0]*BL[0]+BL[1]*BL[1]+BL[2]*BL[2])*df/2;
-	//dv =  0.004*Math.sqrt(CL[0]*CL[0]+CL[1]*CL[1]+CL[2]*CL[2])*df; 
-	dr =  ( Math.sqrt(xv*xv+9*zv*zv)-Math.sqrt(xv*xv+zv*zv) )/340;					// **2020Mar**(3*zv)
-	dw = ( Math.sqrt(9*xv*xv+zv*zv)-Math.sqrt(xv*xv+zv*zv) )/340;
-	dv=   ( Math.sqrt(16*xv*xv+zv*zv)-Math.sqrt(xv*xv+zv*zv) )/340;
+		//dr =  0.004*Math.sqrt(RL[0]*RL[0]+RL[1]*RL[1]+RL[2]*RL[2])*df; 
+		//dw = 0.004*Math.sqrt(BL[0]*BL[0]+BL[1]*BL[1]+BL[2]*BL[2])*df/2;
+		//dv =  0.004*Math.sqrt(CL[0]*CL[0]+CL[1]*CL[1]+CL[2]*CL[2])*df; 
+	dr =  ( Math.sqrt(xv*xv+9*zv*zv)-Math.sqrt(xv*xv+zv*zv) )/340;		dr=dr*2;		// **2020Mar**(3*zv)
+	dw = ( Math.sqrt(9*xv*xv+zv*zv)-Math.sqrt(xv*xv+zv*zv) )/340;		dw=dw*2;
+	dv=   ( Math.sqrt(16*xv*xv+zv*zv)-Math.sqrt(xv*xv+zv*zv) )/340;		dv=dv*2;
 		//console.log(BL[0],dr,dw,dv);	// dw<dv
 	delayRL.delayTime.setValueAtTime( dr,0 );  delayRR.delayTime.setValueAtTime( dr,0 ); 	
 	delayBL.delayTime.setValueAtTime( dw,0 ); delayBR.delayTime.setValueAtTime( dv,0 );
-	delayCL.delayTime.setValueAtTime( dv,0 ); delayCR.delayTime.setValueAtTime( dw,0 ); //console.log(dr,dv,dw)
+	delayCL.delayTime.setValueAtTime( dv,0 ); delayCR.delayTime.setValueAtTime( dw,0 ); 
+		//console.log(dr,dv,dw); //-> 0.056 0.0328 0.0201-> 19.04m 11.15m 6.83m
 }
 
 function defpos() {
@@ -261,21 +263,24 @@ function defpos() {
 }
 
 function changeBass(bvalue) { 
-  if (fname) {
-	bassL.gain.setValueAtTime(bvalue,0); 
-	bassR.gain.setValueAtTime(bvalue,0);
+	//bv = document.querySelector("#bass").value+2;
+  if (fname) {	
+	bassL.gain.value = bvalue; 
+	bassR.gain.value = bvalue;		// 2020 Jun
   } 
-  bv = bvalue; 
-    document.getElementById("bassValue").innerHTML="bass = "+ bv;
+  //bv = bvalue; 
+    document.getElementById("bassValue").innerHTML="bass = "+ bvalue;
     //document.querySelector("#bass").value = bvalue;
 }
+	
 function changeTreble(tvalue) {
-  if (fname) {
-  	trebleL.gain.setValueAtTime(tvalue,0); 
+	//tv = tvalue;
+  if (fname) {			//console.log( tvalue )
+  	trebleL.gain.setValueAtTime(tvalue,0);  		// 2020 Jun
   	trebleR.gain.setValueAtTime(tvalue,0); 
   }
-  tv = tvalue; 
-    document.getElementById("trebleValue").innerHTML="treble = "+ tv;
+  //tv = tvalue; 
+    document.getElementById("trebleValue").innerHTML="treble = "+ tvalue;
     //document.querySelector("#treble").value = tvalue;
 }
 
@@ -357,7 +362,7 @@ var geometry_cube = new THREE.BoxGeometry (2, 3, 1.5);
    var gm = new THREE.PlaneBufferGeometry(120, 120, 30, 30);
     plane = new THREE.Mesh( gm,
         new THREE.MeshLambertMaterial({
-            color: 0xE0FA03, transparent: true, opacity: 0.95			// color: 0x888888 opacity: 0.7
+            color: 0xE0FA03, transparent: true, opacity: 0.75			// color: 0x888888 opacity: 0.7
         })
     );	//color: 0x8888ee
     plane.position.y = 0; plane.rotation.x = -Math.PI / 2;
