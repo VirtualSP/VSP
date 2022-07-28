@@ -32,13 +32,9 @@ function initCtx() {
  trebleL = audioCtx.createBiquadFilter(); trebleL.type   = 'highshelf';
   trebleL.frequency.setValueAtTime(8000, 0);
   trebleL.gain.setValueAtTime(tv, 0);
-
- 	//trebleRL = audioCtx.createBiquadFilter(); trebleL.type   = 'highshelf';
-  	//trebleRL.frequency.setValueAtTime(12000, 0);
-  	//trebleRL.gain.setValueAtTime(tv, 0);
-	// trebleBL = audioCtx.createBiquadFilter(); trebleBL.type   = 'highshelf';
-	//  trebleBL.frequency.setValueAtTime(18000, 0);
-	//  trebleBL.gain.setValueAtTime(tv, 0);
+ trebleLH = audioCtx.createBiquadFilter(); trebleLH.type   = 'highshelf';
+  trebleLH.frequency.setValueAtTime(12000, 0);
+  trebleLH.gain.setValueAtTime(tv+4, 0);
 
  bassR   = audioCtx.createBiquadFilter(); bassR.type   = 'lowshelf';
   bassR.frequency.setValueAtTime(120, 0);
@@ -46,13 +42,9 @@ function initCtx() {
  trebleR = audioCtx.createBiquadFilter(); trebleR.type   = 'highshelf';
   trebleR.frequency.setValueAtTime(8000, 0);
   trebleR.gain.setValueAtTime(tv, 0);
-
- 	//trebleRR = audioCtx.createBiquadFilter(); trebleL.type   = 'highshelf';
-  	//trebleRR.frequency.setValueAtTime(12000, 0);
-  	//trebleRR.gain.setValueAtTime(tv, 0);			// -40..40
-	// trebleBR = audioCtx.createBiquadFilter(); trebleBR.type   = 'highshelf';
-	//  trebleBR.frequency.setValueAtTime(18000, 0);
-	//  trebleBR.gain.setValueAtTime(tv, 0);
+ trebleRH = audioCtx.createBiquadFilter(); trebleRH.type   = 'highshelf';
+  trebleRH.frequency.setValueAtTime(12000, 0);
+  trebleRH.gain.setValueAtTime(tv+4, 0);
 
 gainBL = audioCtx.createGain(); gainBL.gain.value = rv;  	
 gainBR = audioCtx.createGain(); gainBR.gain.value = rv/2; 
@@ -90,23 +82,21 @@ function ini() {
   //initCtx();
   initgls(); setPos(xv,yv,zv); //movsp();
 // ------- Jun 2022 -------
-const st=' Putin'+"'"+'s tyranny and expansionism must be stopped. He cannot justify aggression<br> and crimes against human life forever.'
+const st=' How many lives does Czar Putin demand? <br>  Stop Putin NOW!'
 document.getElementById("centered0").innerHTML=st
 // --------------------------
-  document.querySelector("#input").addEventListener("change",   function () { handleFiles(); } );
-  document.querySelector("#loop").addEventListener("click",  function () { chkLoop(); } );
+  document.querySelector("#input").addEventListener("change", function () { handleFiles() } );
+  document.querySelector("#loop").addEventListener("click",   function () { chkLoop() } );
 
   document.querySelector("#xv").addEventListener("change",
-        function (e) { e.preventDefault(); changeXV(document.querySelector("#xv").value); });
- document.querySelector("#yv").addEventListener("change",
-        function (e) { e.preventDefault(); changeYV(document.querySelector("#yv").value); });
- document.querySelector("#zv").addEventListener("change",
-        function (e) { e.preventDefault(); changeZV(document.querySelector("#zv").value); });
+        function (e) { e.preventDefault(); changeXV(document.querySelector("#xv").valueAsNumber); });
+  document.querySelector("#yv").addEventListener("change",
+        function (e) { e.preventDefault(); changeYV(document.querySelector("#yv").valueAsNumber); });
+  document.querySelector("#zv").addEventListener("change",
+        function (e) { e.preventDefault(); changeZV(document.querySelector("#zv").valueAsNumber); });
 
-  document.getElementById("bass").addEventListener("change",
-        function () { changeBass( document.querySelector("#bass").value ); });
-  document.querySelector("#treble").addEventListener("change",
-        function () { changeTreble(document.querySelector("#treble").value); });
+  document.getElementById("bass").addEventListener("change",function () { changeBass() },false);
+  document.getElementById("treble").addEventListener("change",function () { changeTreble() },false);
  
 }
 
@@ -197,12 +187,12 @@ function loadsrc() {	document.getElementById("centered0").innerHTML=''
 function playGain() {	//  audio with depth information, improved the sound sense of depth : Sep 2021
   source.connect(splitter); 
 
-  splitter.connect(pannerL,0).connect(bassL).connect(trebleL).connect(audioCtx.destination); 		//     RL	              RR
+  splitter.connect(pannerL,0).connect(bassL).connect(trebleL).connect(trebleLH).connect(audioCtx.destination); 		//     RL	              RR
   splitter.connect(gainRL,0).connect(pannerRL).connect(delayRL).connect(audioCtx.destination);				
   splitter.connect(gainBL,0).connect(pannerBL).connect(delayBL).connect(audioCtx.destination);	// BR  BL          L	             R         CR CL	
   splitter.connect(gainCL,0).connect(pannerCL).connect(delayCL).connect(audioCtx.destination);
 											//	    o
-  splitter.connect(pannerR,1).connect(bassR).connect(trebleR).connect(audioCtx.destination); 			
+  splitter.connect(pannerR,1).connect(bassR).connect(trebleR).connect(trebleRH).connect(audioCtx.destination); 			
   splitter.connect(gainRR,1).connect(pannerRR).connect(delayRR).connect(audioCtx.destination);			
   splitter.connect(gainBR,1).connect(pannerBR).connect(delayBR).connect(audioCtx.destination); 
   splitter.connect(gainCR,1).connect(pannerCR).connect(delayCR).connect(audioCtx.destination);
@@ -211,7 +201,7 @@ function playGain() {	//  audio with depth information, improved the sound sense
 }
 
   var RL=[],RR=[],BL=[],BR=[],CL=[],CR=[]
-function setPos(x,y,z) { 	
+function setPos(x,y,z) { 	//x=x/2; 	// 7/6 2022
  var a,b; 	a=1.5; y=y-2; w=x*1.5; v=w+2*x	//x=x/2;w=15+x;v=15-x; 		// a=3	w=x*3	v=x*4	// **2020Mar**(a=2)
  if (fname) { 
   setPan( pannerL, -x, y, z); setPan( pannerRL, -x, y, z*a);	//RL[0]=-x; RL[1]=y; RL[2]=z*a	// -x-(-z), y, z*a
@@ -222,7 +212,8 @@ function setPos(x,y,z) {
 			setPan( pannerCR,   w, y, z);	//CR[0]= w; CR[1]=y; CR[2]=z 	//(   x*4, y, z)
   listener.positionZ.value=-z/5 
   }
-  movsp();   if (fname) { setDelay()  }
+  movsp();   if (fname) { setDelay(); }
+	//trebleL.gain.setValueAtTime(tv,0);trebleR.gain.setValueAtTime(tv,0);}
 }
 
 function setPan( sp, x,y,z ) {
@@ -240,9 +231,9 @@ function setDelay() {		// in seconds
 		//dr =  0.004*Math.sqrt(RL[0]*RL[0]+RL[1]*RL[1]+RL[2]*RL[2])*df; 
 		//dw = 0.004*Math.sqrt(BL[0]*BL[0]+BL[1]*BL[1]+BL[2]*BL[2])*df/2;
 		//dv =  0.004*Math.sqrt(CL[0]*CL[0]+CL[1]*CL[1]+CL[2]*CL[2])*df; 
-	dr =  ( Math.sqrt(xv*xv+9*zv*zv)-Math.sqrt(xv*xv+zv*zv) )/340;		dr=dr*2;		// **2020Mar**(3*zv)
-	dw = ( Math.sqrt(9*xv*xv+zv*zv)-Math.sqrt(xv*xv+zv*zv) )/340;		dw=dw*2;
-	dv=   ( Math.sqrt(16*xv*xv+zv*zv)-Math.sqrt(xv*xv+zv*zv) )/340;		dv=dv*2;
+	dr =  ( Math.sqrt(xv*xv+9*zv*zv)-Math.sqrt(xv*xv+zv*zv) )/340;		//dr=dr*2;		// **2020Mar**(3*zv)
+	dw = ( Math.sqrt(9*xv*xv+zv*zv)-Math.sqrt(xv*xv+zv*zv) )/340;		//dw=dw*2;
+	dv=   ( Math.sqrt(16*xv*xv+zv*zv)-Math.sqrt(xv*xv+zv*zv) )/340;		//dv=dv*2;
 		//console.log(BL[0],dr,dw,dv);	// dw<dv
 	delayRL.delayTime.setValueAtTime( dr,0 );  delayRR.delayTime.setValueAtTime( dr,0 ); 	
 	delayBL.delayTime.setValueAtTime( dw,0 ); delayBR.delayTime.setValueAtTime( dv,0 );
@@ -262,26 +253,26 @@ function defpos() {
  setPos(xv,yv,zv); 
 }
 
-function changeBass(bvalue) { 
-	//bv = document.querySelector("#bass").value+2;
+function changeBass() {
+ var bvalue = document.getElementById("bass").valueAsNumber;
+  bvalue = bvalue +2;
   if (fname) {	
-	bassL.gain.value = bvalue; 
-	bassR.gain.value = bvalue;		// 2020 Jun
+	bassL.gain.setValueAtTime(bvalue,audioCtx.currentTime); 
+	bassR.gain.setValueAtTime(bvalue,audioCtx.currentTime);		// 2020 Jun
   } 
-  //bv = bvalue; 
+  bvalue = bvalue -2; 
     document.getElementById("bassValue").innerHTML="bass = "+ bvalue;
-    //document.querySelector("#bass").value = bvalue;
 }
 	
-function changeTreble(tvalue) {
-	//tv = tvalue;
-  if (fname) {			//console.log( tvalue )
-  	trebleL.gain.setValueAtTime(tvalue,0);  		// 2020 Jun
-  	trebleR.gain.setValueAtTime(tvalue,0); 
+function changeTreble() {
+ var tvalue = document.getElementById("treble").valueAsNumber;
+ tvalue = tvalue;
+  if (fname) {
+  	trebleL.gain.setValueAtTime(tvalue,audioCtx.currentTime);  		// 2020 Jun
+  	trebleR.gain.setValueAtTime(tvalue,audioCtx.currentTime); 
   }
-  //tv = tvalue; 
+  tvalue = tvalue 
     document.getElementById("trebleValue").innerHTML="treble = "+ tvalue;
-    //document.querySelector("#treble").value = tvalue;
 }
 
 function changeXV(x) {
