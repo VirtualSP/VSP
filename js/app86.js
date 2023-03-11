@@ -10,7 +10,7 @@ var AudioContext;		// = new AudioContext();
 var audioCtx, listener, src, source, splitter, audio, fname, fc,flen; 
 var gainL,gainBL,gainR,gainBR, gainRL, gainRR, delayRL, delayRR, gainCL,gainCR,delayCL,delayCR;
 var pannerL,pannerR,pannerBL,pannerBR, pannerRL, pannerRR, pannerCL,pannerCR; 
-var bassL,trebleL,trebleRL,bassR,trebleR,trebleRR;
+var bassL,trebleL,trebleRL,bassR,trebleR,trebleRR, gainALL;
 
 function initCtx() {
  audioCtx = new AudioContext(); 
@@ -30,40 +30,53 @@ function initCtx() {
   bassL.frequency.setValueAtTime(120, 0); 
   bassL.gain.setValueAtTime(bv, 0);				// -40db...40db
  trebleL = audioCtx.createBiquadFilter(); trebleL.type   = 'highshelf';
-  trebleL.frequency.setValueAtTime(8000, 0);
+  trebleL.frequency.setValueAtTime(7500, 0);			// <- 8000
   trebleL.gain.setValueAtTime(tv, 0);
  trebleLH = audioCtx.createBiquadFilter(); trebleLH.type   = 'highshelf';
-  trebleLH.frequency.setValueAtTime(12000, 0);
-  trebleLH.gain.setValueAtTime(tv+4, 0);
+  trebleLH.frequency.setValueAtTime(11000, 0);			// <- 12000
+  trebleLH.gain.setValueAtTime(tv+6, 0);				// <- tv+4
 
  bassR   = audioCtx.createBiquadFilter(); bassR.type   = 'lowshelf';
   bassR.frequency.setValueAtTime(120, 0);
   bassR.gain.setValueAtTime(bv, 0);
  trebleR = audioCtx.createBiquadFilter(); trebleR.type   = 'highshelf';
-  trebleR.frequency.setValueAtTime(8000, 0);
+  trebleR.frequency.setValueAtTime(7500, 0);				// <- 8000
   trebleR.gain.setValueAtTime(tv, 0);
  trebleRH = audioCtx.createBiquadFilter(); trebleRH.type   = 'highshelf';
-  trebleRH.frequency.setValueAtTime(12000, 0);
-  trebleRH.gain.setValueAtTime(tv+4, 0);
+  trebleRH.frequency.setValueAtTime(11000, 0);				// <- 12000
+  trebleRH.gain.setValueAtTime(tv+6, 0);
 
-gainBL = audioCtx.createGain(); gainBL.gain.value = rv;  	
+gainALL = audioCtx.createGain();
+gainBL = audioCtx.createGain(); gainBL.gain.value = rv;  
 gainBR = audioCtx.createGain(); gainBR.gain.value = rv/2; 
 gainCL = audioCtx.createGain(); gainCL.gain.value = rv/2; 
 gainCR = audioCtx.createGain(); gainCR.gain.value = rv;
 
- gainRL = audioCtx.createGain(); gainRL.gain.value = rv; 
- gainRR = audioCtx.createGain(); gainRR.gain.value = rv; 
+ gainRL = audioCtx.createGain(); gainRL.gain.value = rv;		//vol*0.75; // <- rv
+ gainRR = audioCtx.createGain(); gainRR.gain.value = rv;		//vol*0.75; // <- rv
 
 delayCL = audioCtx.createDelay(); delayCR = audioCtx.createDelay();
 delayBL = audioCtx.createDelay(); delayBR = audioCtx.createDelay();
 delayRL = audioCtx.createDelay(); delayRR = audioCtx.createDelay(); 
 //setDelay() 	 
+//
+  splitter.connect(pannerL,0).connect(bassL).connect(trebleL).connect(trebleLH).connect(gainALL); 		//     RL	              RR
+  splitter.connect(gainRL,0).connect(pannerRL).connect(delayRL).connect(gainALL);				
+  splitter.connect(gainBL,0).connect(pannerBL).connect(delayBL).connect(gainALL);	// BR  BL          L	             R         CR CL	
+  splitter.connect(gainCL,0).connect(pannerCL).connect(delayCL).connect(gainALL);
+											//	    o
+  splitter.connect(pannerR,1).connect(bassR).connect(trebleR).connect(trebleRH).connect(gainALL); 			
+  splitter.connect(gainRR,1).connect(pannerRR).connect(delayRR).connect(gainALL);			
+  splitter.connect(gainBR,1).connect(pannerBR).connect(delayBR).connect(gainALL); 
+  splitter.connect(gainCR,1).connect(pannerCR).connect(delayCR).connect(gainALL);
+ gainALL.connect(audioCtx.destination);//
 
 audio = new Audio(src); audio.controls = true; audio.volume=vol;	audio.clientWidth=50;
 audio.crossOrigin = "anonymous";			// +++ for chrome71- CORS access ++++
   //document.body.appendChild(audio); 
  var ip= document.getElementById("vals"); ip.append(audio);
   source = audioCtx.createMediaElementSource(audio); 
+  source.connect(splitter);
  setPos(xv,yv,zv);
 
  audio.addEventListener('ended', savefxyz,false);
@@ -81,10 +94,12 @@ function ini() {
   //loadxyz(); 
   //initCtx();
   initgls(); setPos(xv,yv,zv); //movsp();
-// ------- Jun 2022 -------
-const st=' How many lives does Czar Putin demand? <br>  Stop Putin NOW!'
-document.getElementById("centered0").innerHTML=st
-// --------------------------
+// ------- Jun 2023 -------
+const st='The 21st century emperor Nikolai I, Puchin<br>should go away and Stop the invasion now.<br>Life and Freedom for all the people !'
+  document.getElementById("centered0").innerHTML=st
+//audio = new Audio(src);
+//var ip= document.getElementById("vals"); ip.append(audio);
+//document.body.appendChild(audio);
   document.querySelector("#input").addEventListener("change", function () { handleFiles() } );
   document.querySelector("#loop").addEventListener("click",   function () { chkLoop() } );
 
@@ -138,11 +153,11 @@ function chkLoop() {
 
 function movsp() { 
  var xv2,zv2;
-  xv2 = xv*2; 	zv2=zv*2
+  xv2 = xv*2.5; 	zv2=zv*2;	//xv2 = xv*2; 	zv2=zv*2
   cubeL.position.setX(-xv2); cubeL.position.setY(yv); cubeL.position.setZ(zv2); 
   cubeR.position.setX(xv2);  cubeR.position.setY(yv); cubeR.position.setZ(zv2); 	
     cubeL.rotation.y=Math.atan(-xv2/zv*0.5); cubeR.rotation.y=Math.atan( xv2/zv*0.5); //cubeL.rotation.z=-(zv+10)/1000
-    cubeL.rotation.x=Math.atan(-yv/zv*0.1);   cubeR.rotation.x=Math.atan(-yv/zv*0.1);	
+    cubeL.rotation.x=Math.atan(-yv/zv*0.1);  cubeR.rotation.x=Math.atan(-yv/zv*0.1);	
  renderer.render( scene, camera ); 
 chkLoop();   
 }
@@ -150,7 +165,7 @@ chkLoop();
 function startPlay() {  	
    audio.addEventListener('pause',function() { anf = false; },false);		 
      setPos( xv, yv, zv ); changeBass(bv); changeTreble(tv);
-     playGain(); 
+     audio.play();		//playGain(); 
 } 
    
 function handleFiles() { 
@@ -185,8 +200,8 @@ function loadsrc() {	document.getElementById("centered0").innerHTML=''
 }
 
 function playGain() {	//  audio with depth information, improved the sound sense of depth : Sep 2021
-  source.connect(splitter); 
-
+  //source.connect(splitter); 
+/*
   splitter.connect(pannerL,0).connect(bassL).connect(trebleL).connect(trebleLH).connect(audioCtx.destination); 		//     RL	              RR
   splitter.connect(gainRL,0).connect(pannerRL).connect(delayRL).connect(audioCtx.destination);				
   splitter.connect(gainBL,0).connect(pannerBL).connect(delayBL).connect(audioCtx.destination);	// BR  BL          L	             R         CR CL	
@@ -196,21 +211,24 @@ function playGain() {	//  audio with depth information, improved the sound sense
   splitter.connect(gainRR,1).connect(pannerRR).connect(delayRR).connect(audioCtx.destination);			
   splitter.connect(gainBR,1).connect(pannerBR).connect(delayBR).connect(audioCtx.destination); 
   splitter.connect(gainCR,1).connect(pannerCR).connect(delayCR).connect(audioCtx.destination);
-
- audio.play();
+*/
+ //audio.play();
 }
 
   var RL=[],RR=[],BL=[],BR=[],CL=[],CR=[]
 function setPos(x,y,z) { 	//x=x/2; 	// 7/6 2022
- var a,b; 	a=1.5; y=y-2; w=x*1.5; v=w+2*x	//x=x/2;w=15+x;v=15-x; 		// a=3	w=x*3	v=x*4	// **2020Mar**(a=2)
+ var a,b; 
+ x=x*0.6 
+ a=1.5; y=y-2; w=x*1.5; v=w+2*x	//x=x/2;w=15+x;v=15-x; 	// a=3	w=x*3	v=x*4//a=1.5 2023
  if (fname) { 
-  setPan( pannerL, -x, y, z); setPan( pannerRL, -x, y, z*a);	//RL[0]=-x; RL[1]=y; RL[2]=z*a	// -x-(-z), y, z*a
-  setPan( pannerR,  x, y, z); setPan( pannerRR,  x, y, z*a); //RR[0]= x; RR[1]=y; RR[2]=z*a	//  x-z, y, z*a
+  setPan( pannerL, -x, y, z); setPan( pannerRL, -x, y*a, z*a);	//-x, y, z*a	// -x-(-z), y, z*a
+  setPan( pannerR,  x, y, z); setPan( pannerRR,  x, y*a, z*a); 	//  x-z, y, z*a
+
 			setPan( pannerBL,  -w, y, z); //BL[0]=-w; BL[1]=y; BL[2]=z;	//(  -x*4, y, z)
 			setPan( pannerBR,  -v, y, z); //BR[0]=-v; BR[1]=y; BR[2]=z 	//( -x*2, y, z)
-			setPan( pannerCL,   v, y, z);  	//CL[0]= v; CL[1]=y; CL[2]=z 		//(   x*2, y, z)
+			setPan( pannerCL,   v, y, z); //CL[0]= v; CL[1]=y; CL[2]=z 		//(   x*2, y, z)
 			setPan( pannerCR,   w, y, z);	//CR[0]= w; CR[1]=y; CR[2]=z 	//(   x*4, y, z)
-  listener.positionZ.value=-z/5 
+  listener.positionZ.value=-z/5 		//-z/5 
   }
   movsp();   if (fname) { setDelay(); }
 	//trebleL.gain.setValueAtTime(tv,0);trebleR.gain.setValueAtTime(tv,0);}
@@ -231,7 +249,7 @@ function setDelay() {		// in seconds
 		//dr =  0.004*Math.sqrt(RL[0]*RL[0]+RL[1]*RL[1]+RL[2]*RL[2])*df; 
 		//dw = 0.004*Math.sqrt(BL[0]*BL[0]+BL[1]*BL[1]+BL[2]*BL[2])*df/2;
 		//dv =  0.004*Math.sqrt(CL[0]*CL[0]+CL[1]*CL[1]+CL[2]*CL[2])*df; 
-	dr =  ( Math.sqrt(xv*xv+9*zv*zv)-Math.sqrt(xv*xv+zv*zv) )/340;		//dr=dr*2;		// **2020Mar**(3*zv)
+	dr =  ( Math.sqrt(xv*xv+8*zv*zv)-Math.sqrt(xv*xv+zv*zv) )/340;	//8*zv //dr=dr*2; // **2020Mar**(3*zv)
 	dw = ( Math.sqrt(9*xv*xv+zv*zv)-Math.sqrt(xv*xv+zv*zv) )/340;		//dw=dw*2;
 	dv=   ( Math.sqrt(16*xv*xv+zv*zv)-Math.sqrt(xv*xv+zv*zv) )/340;		//dv=dv*2;
 		//console.log(BL[0],dr,dw,dv);	// dw<dv
@@ -266,12 +284,12 @@ function changeBass() {
 	
 function changeTreble() {
  var tvalue = document.getElementById("treble").valueAsNumber;
- tvalue = tvalue;
+ //tvalue = tvalue;
   if (fname) {
   	trebleL.gain.setValueAtTime(tvalue,audioCtx.currentTime);  		// 2020 Jun
   	trebleR.gain.setValueAtTime(tvalue,audioCtx.currentTime); 
   }
-  tvalue = tvalue 
+  //tvalue = tvalue 
     document.getElementById("trebleValue").innerHTML="treble = "+ tvalue;
 }
 
