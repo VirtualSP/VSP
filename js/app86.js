@@ -30,7 +30,7 @@ function initCtx() {
   bassL.frequency.setValueAtTime(120, 0); 
   bassL.gain.setValueAtTime(bv, 0);				// -40db...40db
  trebleL = audioCtx.createBiquadFilter(); trebleL.type   = 'highshelf';
-  trebleL.frequency.setValueAtTime(7500, 0);			// <- 8000
+  trebleL.frequency.setValueAtTime(7800, 0);			// <- 8000
   trebleL.gain.setValueAtTime(tv, 0);
  trebleLH = audioCtx.createBiquadFilter(); trebleLH.type   = 'highshelf';
   trebleLH.frequency.setValueAtTime(11000, 0);			// <- 12000
@@ -40,7 +40,7 @@ function initCtx() {
   bassR.frequency.setValueAtTime(120, 0);
   bassR.gain.setValueAtTime(bv, 0);
  trebleR = audioCtx.createBiquadFilter(); trebleR.type   = 'highshelf';
-  trebleR.frequency.setValueAtTime(7500, 0);				// <- 8000
+  trebleR.frequency.setValueAtTime(7800, 0);				// <- 8000
   trebleR.gain.setValueAtTime(tv, 0);
  trebleRH = audioCtx.createBiquadFilter(); trebleRH.type   = 'highshelf';
   trebleRH.frequency.setValueAtTime(11000, 0);				// <- 12000
