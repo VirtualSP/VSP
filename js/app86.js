@@ -33,7 +33,7 @@ function initCtx() {
   trebleL.frequency.setValueAtTime(7000, 0);
   trebleL.gain.setValueAtTime(tv, 0);
  trebleLH = audioCtx.createBiquadFilter(); trebleLH.type   = 'highshelf';
-  trebleLH.frequency.setValueAtTime(11000, 0);
+  trebleLH.frequency.setValueAtTime(12000, 0);
   //trebleLH.gain.setValueAtTime(tv+4, 0);
 
  bassR   = audioCtx.createBiquadFilter(); bassR.type   = 'lowshelf';
@@ -43,7 +43,7 @@ function initCtx() {
   trebleR.frequency.setValueAtTime(7000, 0);
   trebleR.gain.setValueAtTime(tv, 0);
  trebleRH = audioCtx.createBiquadFilter(); trebleRH.type   = 'highshelf';
-  trebleRH.frequency.setValueAtTime(11000, 0);
+  trebleRH.frequency.setValueAtTime(12000, 0);
   //trebleRH.gain.setValueAtTime(tv+4, 0);
 
 gainBL = audioCtx.createGain(); gainBL.gain.value = rv;  	
@@ -161,8 +161,8 @@ chkLoop();
 }
 
 function startPlay() {  	
-   audio.addEventListener('pause',function() { anf = false; },false);		 
-     setPos( xv, yv, zv ); changeBass(bv); changeTreble(tv);
+   //audio.addEventListener('pause',function() { anf = false; },false);		 
+     //setPos( xv, yv, zv ); changeBass(bv); changeTreble(tv);
      audio.play();		// <- playGain(); 
 } 
    
@@ -186,6 +186,7 @@ function loadsrc() {	document.getElementById("centered0").innerHTML=''
     src = URL.createObjectURL(document.getElementsByTagName('input')[6].files[fc]);
     fname = document.getElementsByTagName('input')[6].files[fc].name; 
 	loadfxyz();
+		setPos( xv, yv, zv ); changeBass(bv); changeTreble(tv);
     showMetaData(document.getElementsByTagName('input')[6].files[fc]);						
     audio.src=src;	audio.autoplay = true;
   
