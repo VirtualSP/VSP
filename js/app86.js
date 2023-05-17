@@ -7,7 +7,7 @@ var xv, yv, zv, vol, rv, tv,tvv, cv, bv;
  xv = 5.0; yv = 2.0; zv = -10.0;  tv = 0.0; bv = 0.0; 					// tv = 0.5 2021 Mar
 
 var AudioContext;		// = new AudioContext(); 
-var audioCtx, listener, src, source, splitter, audio, fname, fc,flen; 
+var audioCtx, listener, src, source, splitter, audio, fname, fc,flen,  lz; 
 var gainL,gainBL,gainR,gainBR, gainRL, gainRR, delayRL, delayRR, gainCL,gainCR,delayCL,delayCR;
 var pannerL,pannerR,pannerBL,pannerBR, pannerRL, pannerRR, pannerCL,pannerCR; 
 var bassL,trebleL,trebleRL,bassR,trebleR,trebleRR;
@@ -30,21 +30,21 @@ function initCtx() {
   bassL.frequency.setValueAtTime(120, 0); 
   bassL.gain.setValueAtTime(bv, 0);				// -40db...40db
  trebleL = audioCtx.createBiquadFilter(); trebleL.type   = 'highshelf';
-  trebleL.frequency.setValueAtTime(7000, 0);
+  trebleL.frequency.setValueAtTime(8000, 0);
   trebleL.gain.setValueAtTime(tv, 0);
  trebleLH = audioCtx.createBiquadFilter(); trebleLH.type   = 'highshelf';
   trebleLH.frequency.setValueAtTime(12000, 0);
-  //trebleLH.gain.setValueAtTime(tv+4, 0);
+  trebleLH.gain.setValueAtTime(tv+4, 0);		//
 
  bassR   = audioCtx.createBiquadFilter(); bassR.type   = 'lowshelf';
   bassR.frequency.setValueAtTime(120, 0);
   bassR.gain.setValueAtTime(bv, 0);
  trebleR = audioCtx.createBiquadFilter(); trebleR.type   = 'highshelf';
-  trebleR.frequency.setValueAtTime(7000, 0);
+  trebleR.frequency.setValueAtTime(8000, 0);
   trebleR.gain.setValueAtTime(tv, 0);
  trebleRH = audioCtx.createBiquadFilter(); trebleRH.type   = 'highshelf';
   trebleRH.frequency.setValueAtTime(12000, 0);
-  //trebleRH.gain.setValueAtTime(tv+4, 0);
+  trebleRH.gain.setValueAtTime(tv+4, 0);		//
 
 gainBL = audioCtx.createGain(); gainBL.gain.value = rv;  	
 gainBR = audioCtx.createGain(); gainBR.gain.value = rv/2; 
@@ -94,7 +94,7 @@ function ini() {
   initgls(); setPos(xv,yv,zv); //movsp();
 // ------- Jun 2022 -------
 //const st=' How many lives does Czar Putin demand? <br>  Stop Putin NOW!'
-const st='The 21st century emperor Nikolai I, Puchin<br>should go away and Stop the invasion now.<br>Life and Freedom for all the people !'
+const st='Who is leading Russia to collapse? <br>.....Putin himself.<br>Peace for Ukraine, Freedom for Russia.'
 
 document.getElementById("centered0").innerHTML=st
 // --------------------------
@@ -115,25 +115,30 @@ document.getElementById("centered0").innerHTML=st
 
 function loadfxyz() {
   var fxyz=Array();
-  try {
+  //try {
  	fxyz = JSON.parse(localStorage.getItem(fname));
 	if (fxyz) {	
-	 xv = parseFloat(fxyz[0]); yv = parseFloat(fxyz[1]); zv = parseFloat(fxyz[2]);
+	 xv = parseFloat(fxyz[0]); yv = parseFloat(fxyz[1]); zv = parseFloat(fxyz[2]); //console.log(xv,yv,zv)
 		document.getElementById("xValue").innerHTML="pos_x = "+ xv;
    		  document.querySelector("#xv").value = xv;
 		document.getElementById("yValue").innerHTML="pos_y = "+ yv;
     		  document.querySelector("#yv").value = yv;
 		document.getElementById("zValue").innerHTML="pos_z = "+ zv;
     		  document.querySelector("#zv").value = zv; 
-	 vol = parseFloat(fxyz[3]); bv = parseFloat(fxyz[4]); tv = parseFloat(fxyz[5]);		
+	 vol = parseFloat(fxyz[3]); bv = parseFloat(fxyz[4]); tv = parseFloat(fxyz[5]);
+		document.getElementById("trebleValue").innerHTML="pos_t = "+ tv;
+   		  document.querySelector("#treble").value = tv;
+		document.getElementById("bassValue").innerHTML="pos_b = "+ bv;
+   		  document.querySelector("#bass").value = bv;	
 	}
-  } catch(e) { defpos();
-    return false; 
-  }
+	else { defpos() }
+ // } 	
+ // catch(e) { defpos(); console.log(bv,tv);console.log( e.message );
+ //   return false; }
 }
 
 function savefxyz() { 
-  var fxyz=Array();
+  var fxyz=Array();		//console.log( tv,bv)
    try {
 	fxyz[0]=String(xv).substr(0, 5); fxyz[1]=String(yv).substr(0, 5); fxyz[2]=String(zv).substr(0, 5);
 	fxyz[3]=String(vol).substr(0, 5); fxyz[4]=String(bv).substr(0, 5); fxyz[5]=String(tv).substr(0, 5);	// -8
@@ -219,13 +224,13 @@ function playGain() {	//  audio with depth information, improved the sound sense
 function setPos(x,y,z) { 	//x=x/2; 	// 7/6 2022
  var a,b; 	a=1.5; y=y-2; w=x*1.5; v=w+2*x	//x=x/2;w=15+x;v=15-x; 		// a=3	w=x*3	v=x*4	// **2020Mar**(a=2)
  if (fname) { 
-  setPan( pannerL, -x, y, z); setPan( pannerRL, -x, y*a, z*a);	//RL[0]=-x; RL[1]=y; RL[2]=z*a	// -x-(-z), y, z*a
-  setPan( pannerR,  x, y, z); setPan( pannerRR,  x, y*a, z*a); //RR[0]= x; RR[1]=y; RR[2]=z*a	//  x-z, y, z*a
+  setPan( pannerL, -x, y, z); setPan( pannerRL, -x, y, z*a);	//RL[0]=-x; RL[1]=y; RL[2]=z*a	// -x-(-z), y, z*a
+  setPan( pannerR,  x, y, z); setPan( pannerRR,  x, y, z*a); //RR[0]= x; RR[1]=y; RR[2]=z*a	//  x-z, y, z*a
 			setPan( pannerBL,  -w, y, z); //BL[0]=-w; BL[1]=y; BL[2]=z;	//(  -x*4, y, z)
 			setPan( pannerBR,  -v, y, z); //BR[0]=-v; BR[1]=y; BR[2]=z 	//( -x*2, y, z)
 			setPan( pannerCL,   v, y, z);  	//CL[0]= v; CL[1]=y; CL[2]=z 		//(   x*2, y, z)
 			setPan( pannerCR,   w, y, z);	//CR[0]= w; CR[1]=y; CR[2]=z 	//(   x*4, y, z)
-  listener.positionZ.value=-z/5 
+  listener.positionZ.value=-z/5; lz = listener.positionZ.value;
   }
   movsp();   if (fname) { setDelay(); }
 	//trebleL.gain.setValueAtTime(tv,0);trebleR.gain.setValueAtTime(tv,0);}
@@ -242,18 +247,17 @@ function setProperties( sp ) {
 }
 
 function setDelay() {		// in seconds
-  var dr, dv, dw, df = -zv/100;  
-		//dr =  0.004*Math.sqrt(RL[0]*RL[0]+RL[1]*RL[1]+RL[2]*RL[2])*df; 
-		//dw = 0.004*Math.sqrt(BL[0]*BL[0]+BL[1]*BL[1]+BL[2]*BL[2])*df/2;
-		//dv =  0.004*Math.sqrt(CL[0]*CL[0]+CL[1]*CL[1]+CL[2]*CL[2])*df; 
-	dr =  ( Math.sqrt(xv*xv+9*zv*zv)-Math.sqrt(xv*xv+zv*zv) )/340;		//dr=dr*2;		// **2020Mar**(3*zv)
-	dw = ( Math.sqrt(9*xv*xv+zv*zv)-Math.sqrt(xv*xv+zv*zv) )/340;		//dw=dw*2;
-	dv=   ( Math.sqrt(16*xv*xv+zv*zv)-Math.sqrt(xv*xv+zv*zv) )/340;		//dv=dv*2;
-		//console.log(BL[0],dr,dw,dv);	// dw<dv
-	delayRL.delayTime.setValueAtTime( dr,0 );  delayRR.delayTime.setValueAtTime( dr,0 ); 	
+  var dr, dv, dw, df;
+  df = Math.sqrt(xv*xv+yv*yv+(zv-lz)*(zv-lz));  
+	
+	dr = ( Math.sqrt(xv*xv +yv*yv +(zv-lz)*(zv-lz)*2.25)- df )/340;		//w=x*1.5,v=x*3,5;	// **2020Mar**(3*zv)
+	dw = ( Math.sqrt(xv*xv*2.25 +yv*yv +(zv-lz)*(zv-lz))- df )/340;		//dw=dw*2;
+	dv=  ( Math.sqrt(xv*xv*12.25 +yv*yv +(zv-lz)*(zv-lz))- df )/340;		//dv=dv*2;
+		
+	delayRL.delayTime.setValueAtTime( dr,0 ); delayRR.delayTime.setValueAtTime( dr,0 ); 	//rear
 	delayBL.delayTime.setValueAtTime( dw,0 ); delayBR.delayTime.setValueAtTime( dv,0 );
 	delayCL.delayTime.setValueAtTime( dv,0 ); delayCR.delayTime.setValueAtTime( dw,0 ); 
-		//console.log(dr,dv,dw); //-> 0.056 0.0328 0.0201-> 19.04m 11.15m 6.83m
+		//console.log(dr,dv,dw,zv); //-> 0.056 0.0328 0.0201-> 19.04m 11.15m 6.83m
 }
 
 function defpos() {
@@ -264,28 +268,34 @@ function defpos() {
   document.querySelector("#yv").value = yv;
  document.getElementById("zValue").innerHTML="pos_z = "+ zv;
   document.querySelector("#zv").value = zv;
-   if ( fname ) { setDelay() } 	
- setPos(xv,yv,zv); 
+		tv = 0; bv = 0
+		document.getElementById("trebleValue").innerHTML="pos_t = "+ tv;
+   		  document.querySelector("#treble").value = tv;
+		document.getElementById("bassValue").innerHTML="pos_b = "+ bv;
+   		  document.querySelector("#bass").value = bv;
+   //if ( fname ) { setDelay() } 	
+ setPos(xv,yv,zv); changeBass(); changeTreble();
 }
 
 function changeBass() {
- var bvalue = document.getElementById("bass").valueAsNumber;
-  bvalue = bvalue +2;
+ var bvalue = document.getElementById("bass").valueAsNumber, bvL;
+  bv = bvalue; bvL = bv + 2;
   if (fname) {	
-	bassL.gain.setValueAtTime(bvalue,audioCtx.currentTime); 
-	bassR.gain.setValueAtTime(bvalue,audioCtx.currentTime);		// 2020 Jun
+	bassL.gain.setValueAtTime(bv,audioCtx.currentTime); 
+	bassR.gain.setValueAtTime(bv,audioCtx.currentTime);		// 2020 Jun
   } 
-  bvalue = bvalue -2; 
-    document.getElementById("bassValue").innerHTML="bass = "+ bvalue;
+  //bvalue = bvalue -2; 
+    document.getElementById("bassValue").innerHTML="bass = "+ bvalue;	//console.log( bvalue,bv)	
 }
 	
 function changeTreble() {
- var tvalue = document.getElementById("treble").valueAsNumber;
- tv = tvalue+3;
+ var tvalue = document.getElementById("treble").valueAsNumber, tvH;
+ tv = tvalue; tvH = ( 20-tvalue )/5;		//console.log( tvalue,tv)			//
+ //console.log(tv,tvH)
   if (fname) {
   	trebleL.gain.setValueAtTime(tvalue,audioCtx.currentTime);  		// 2020 Jun
   	trebleR.gain.setValueAtTime(tvalue,audioCtx.currentTime); 
-	trebleLH.gain.setValueAtTime(tv,0);trebleRH.gain.setValueAtTime(tv,0);
+	trebleLH.gain.setValueAtTime(tvH,0);trebleRH.gain.setValueAtTime(tvH,0);
   }
   //tvalue = tvalue 
     document.getElementById("trebleValue").innerHTML="treble = "+ tvalue;
