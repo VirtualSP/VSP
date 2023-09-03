@@ -28,24 +28,24 @@ function initCtx() {
  pannerRR = audioCtx.createPanner();	setProperties( pannerRR );
 
  bassL   = audioCtx.createBiquadFilter(); bassL.type   = 'lowshelf'; 
-  bassL.frequency.setValueAtTime(120, 0); 
-  bassL.gain.setValueAtTime(bv, 0);				// -40db...40db
+  bassL.frequency.value = 120;
+  bassL.gain.value = bv; 				// -40db...40db
  trebleL = audioCtx.createBiquadFilter(); trebleL.type   = 'highshelf';
-  trebleL.frequency.setValueAtTime(8000, 0);
-  trebleL.gain.setValueAtTime(tv, 0);
+  trebleL.frequency.value = 8000;
+  trebleL.gain.value = tv;
  trebleLH = audioCtx.createBiquadFilter(); trebleLH.type   = 'highshelf';
-  trebleLH.frequency.setValueAtTime(12000, 0);
-  trebleLH.gain.setValueAtTime(tv+2, 0);		//
+  trebleLH.frequency.value = 12000;
+  trebleLH.gain.value = tv+2;
 
  bassR   = audioCtx.createBiquadFilter(); bassR.type   = 'lowshelf';
-  bassR.frequency.setValueAtTime(120, 0);
-  bassR.gain.setValueAtTime(bv, 0);
+  bassR.frequency.value = 120;
+  bassR.gain.value = bv;
  trebleR = audioCtx.createBiquadFilter(); trebleR.type   = 'highshelf';
-  trebleR.frequency.setValueAtTime(8000, 0);
-  trebleR.gain.setValueAtTime(tv, 0);
+  trebleR.frequency.value = 8000;
+  trebleR.gain.value = tv;
  trebleRH = audioCtx.createBiquadFilter(); trebleRH.type   = 'highshelf';
-  trebleRH.frequency.setValueAtTime(12000, 0);
-  trebleRH.gain.setValueAtTime(tv+2, 0);		//
+  trebleRH.frequency.value = 12000;
+  trebleRH.gain.value = tv+2;
 
 gainBL = audioCtx.createGain(); gainBL.gain.value = rv;  	
 gainBR = audioCtx.createGain(); gainBR.gain.value = rv/2; 
@@ -62,11 +62,11 @@ delayRL = audioCtx.createDelay(); delayRR = audioCtx.createDelay();
 //setDelay() 	 
 
   splitter.connect(pannerL,0).connect(bassL).connect(trebleL).connect(trebleLH)
-    .connect(delayL).connect(audioCtx.destination); 		//     RL	              RR	//0825
+    .connect(delayL).connect(audioCtx.destination); 												//     RL	RR	
   splitter.connect(gainRL,0).connect(pannerRL).connect(delayRL).connect(audioCtx.destination);				
-  splitter.connect(gainBL,0).connect(pannerBL).connect(delayBL).connect(audioCtx.destination);	// BR  BL          L	             R         CR CL	
+  splitter.connect(gainBL,0).connect(pannerBL).connect(delayBL).connect(audioCtx.destination);	// BR BL  L	 R CR CL	
   splitter.connect(gainCL,0).connect(pannerCL).connect(delayCL).connect(audioCtx.destination);
-											//	    o
+																										//	        o
   splitter.connect(pannerR,1).connect(bassR).connect(trebleR).connect(trebleRH)
     .connect(delayR).connect(audioCtx.destination); 			
   splitter.connect(gainRR,1).connect(pannerRR).connect(delayRR).connect(audioCtx.destination);			
@@ -75,7 +75,7 @@ delayRL = audioCtx.createDelay(); delayRR = audioCtx.createDelay();
 
 audio = new Audio(src); audio.controls = true; audio.volume=vol;	audio.clientWidth=50;
 audio.crossOrigin = "anonymous";			// +++ for chrome71- CORS access ++++
-  //document.body.appendChild(audio); 
+
  var ip= document.getElementById("vals"); ip.append(audio);
   source = audioCtx.createMediaElementSource(audio); 
    source.connect(splitter);
@@ -135,7 +135,7 @@ function loadfxyz() {
 }
 
 function savefxyz() { 
-  var fxyz=Array();		//console.log( tv,bv)
+  var fxyz=Array();
  //  try {
 	fxyz[0]=String(xv).substr(0, 5); fxyz[1]=String(yv).substr(0, 5); fxyz[2]=String(zv).substr(0, 5);
 	fxyz[3]=String(vol).substr(0, 5); fxyz[4]=String(bv).substr(0, 5); fxyz[5]=String(tv).substr(0, 5);	// -8
@@ -157,7 +157,7 @@ function movsp() {
   cubeL.position.setX(-xv2); cubeL.position.setY(yv); cubeL.position.setZ(zv2); 
   cubeR.position.setX(xv2);  cubeR.position.setY(yv); cubeR.position.setZ(zv2); 	
     cubeL.rotation.y=Math.atan(-xv2/zv*0.5); cubeR.rotation.y=Math.atan( xv2/zv*0.5);
-    cubeL.rotation.x=Math.atan(-yv/zv*0.1);   cubeR.rotation.x=Math.atan(-yv/zv*0.1);	
+    cubeL.rotation.x=Math.atan(-yv/zv*0.1);  cubeR.rotation.x=Math.atan(-yv/zv*0.1);	
  renderer.render( scene, camera ); 
 chkLoop();   
 }
@@ -190,13 +190,14 @@ function loadsrc() {	document.getElementById("centered0").innerHTML=''
       if ( fc  < flen ) { 
        audio.onended = function() { loadnext(); }
       }
+
     audio.play(); //startPlay();
-   };	//, false);
+   };
 }
 
 function setProperties( sp ) {
   sp.orientationX.value = 0; 	sp.orientationY.value = 0; 	sp.orientationZ.value = 1;
-  sp.rolloffFactor = 0; 	sp.maxDistance = 10000;	sp.refDistance = 0; 
+  sp.rolloffFactor = 0; 	  sp.maxDistance = 10000;	sp.refDistance = 0; 
   sp.panningModel = 'HRTF';  sp.distanceModel = 'linear';
 }
 
@@ -204,7 +205,7 @@ function setPan( sp, x,y,z ) {
   sp.positionX.value = x; sp.positionY.value = y; sp.positionZ.value = z;
 }
 
-function setPos(x,y,z) { 	//x=x/2; 	// 7/6 2022
+function setPos(x,y,z) {
  var a,b, w,v,u; 	
  a=1.5; y=y-2; w=x*1.5; v=w+2*x; u=z*2/3	//x=x/2;w=15+x;v=15-x; 	// a=3	w=x*3	v=x*4
  if (fname) { 
@@ -214,9 +215,9 @@ function setPos(x,y,z) { 	//x=x/2; 	// 7/6 2022
 			setPan( pannerBR,  -v, y, z);							//( -x*2, y, z)
 			setPan( pannerCL,   v, y, z); 							//(   x*2, y, z)
 			setPan( pannerCR,   w, y, z);							//(   x*4, y, z)
-  listener.positionZ.value=-z/5; lz = listener.positionZ.value;
+  listener.positionZ.value=-z/5; lz = listener.positionZ.value;	
   }
-  movsp();   if (fname) { setDelay(); };		//console.log(pannerRL.positionZ.value)
+  movsp();   if (fname) { setDelay(); };
 	//trebleL.gain.setValueAtTime(tv,0);trebleR.gain.setValueAtTime(tv,0);}
 }
 
@@ -232,23 +233,17 @@ function setDelay() {		// in seconds
   xs = pannerCL.positionX.value; ys = pannerCL.positionY.value; zs = pannerCL.positionZ.value
 	dv=  ( Math.sqrt(xs*xs +ys*ys +(zs-lz)*(zs-lz))- df )/340;	
   
-/*  
-  df = Math.sqrt(xv*xv+yv*yv+(zv-lz)*(zv-lz));  	console.log(xv,yv,zv,df)
-	dr = ( Math.sqrt(xv*xv +yv*yv +(zv-lz)*(zv-lz)*2.25)- df )/340;	console.log(xv,yv,zv,df,dr)	//w=x*1.5,v=x*3,5;
-	dw = ( Math.sqrt(xv*xv*2.25 +yv*yv +(zv-lz)*(zv-lz))- df )/340;		//dw=dw*2;
-	dv=  ( Math.sqrt(xv*xv*12.25 +yv*yv +(zv-lz)*(zv-lz))- df )/340;		//dv=dv*2;
-*/		
+	delayL.delayTime.value = df/340;
+	delayR.delayTime.value = df/340;
 
-	delayL.delayTime.setValueAtTime( df/340,0 ); delayR.delayTime.setValueAtTime( df/340,0 );	//0825
-	
-	delayRL.delayTime.setValueAtTime( dr,0 ); delayRR.delayTime.setValueAtTime( dr,0 ); 	//rear
-	delayBL.delayTime.setValueAtTime( dw,0 ); delayBR.delayTime.setValueAtTime( dv,0 );	// dw<dv
-	delayCL.delayTime.setValueAtTime( dv,0 ); delayCR.delayTime.setValueAtTime( dw,0 ); 	// BR-BL L-R CR-CL
-		console.log(dr,dv,dw); //-> 0.072(24.5m) 0.024(9.2m) 0.003(1.0m)
+	delayRL.delayTime.value = dr; delayRR.delayTime.value = dr; 	//rear
+	delayBL.delayTime.value = dw; delayBR.delayTime.value = dv;		// dw<dv
+	delayCL.delayTime.value = dv; delayCR.delayTime.value = dw; 	// BR-BL L-R CR-CL
+
 }
 
 function defpos() {
- xv=5; yv=2; zv=-10; //setPos(xv,yv,zv); 
+ xv=5; yv=2; zv=-10;
  document.getElementById("xValue").innerHTML="pos_x = "+ xv;
   document.querySelector("#xv").value = xv;
  document.getElementById("yValue").innerHTML="pos_y = "+ yv;
@@ -267,24 +262,20 @@ function defpos() {
 function changeBass() {
  var bvalue = document.getElementById("bass").valueAsNumber, bvL;
   bv = bvalue; bvL = bv + 2;
-  if (fname) {	
-	bassL.gain.setValueAtTime(bv,audioCtx.currentTime); 
-	bassR.gain.setValueAtTime(bv,audioCtx.currentTime);	
+  if (fname) {
+	bassL.gain.value = bv; bassR.gain.value = bv;
   } 
-  //bvalue = bvalue -2; 
-    document.getElementById("bassValue").innerHTML="bass = "+ bvalue;	//console.log( bvalue,bv)	
+    document.getElementById("bassValue").innerHTML="bass = "+ bvalue;
 }
 	
 function changeTreble() {
  var tvalue = document.getElementById("treble").valueAsNumber, tvH;
- tv = tvalue; tvH = ( 20-tvalue )/5;		//console.log( tvalue,tv)			//
+ tv = tvalue; tvH = ( 20-tvalue )/5;
 
-  if (fname) {
-  	trebleL.gain.setValueAtTime(tvalue,audioCtx.currentTime);
-  	trebleR.gain.setValueAtTime(tvalue,audioCtx.currentTime); 
-	trebleLH.gain.setValueAtTime(tvH,0);trebleRH.gain.setValueAtTime(tvH,0);
+  if (fname) { 
+  	trebleL.gain.value = tv;   trebleR.gain.value = tv;
+	trebleLH.gain.value = tvH; trebleRH.gain.value = tvH;
   }
-  //tvalue = tvalue 
     document.getElementById("trebleValue").innerHTML="treble = "+ tvalue;
 }
 
@@ -301,7 +292,7 @@ function changeYV(y) {
 function changeZV(z) {	
   zv = z; 
     document.getElementById("zValue").innerHTML="pos_z = "+ zv;
- setPos( xv, yv, zv );	//console.log(pannerRL.positionZ.value)
+ setPos( xv, yv, zv );
 }
 
 //------------------------- init gl ------------------------------------
