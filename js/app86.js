@@ -94,7 +94,8 @@ var wX = 400, wY = 400;
 function ini() {
   initgls(); //setPos(xv,yv,zv); //movsp();
 // ------- Jun 2023 -------
-const st='Stop Putin now...!<br> Otherwise, the 20th century of<br> massacre and destruction will return.'
+//const st='Stop Putin now...!<br> Otherwise, the 20th century of<br> massacre and destruction will return.'
+const st='Putin and Netanyahu, there will be<br> no peace or reconciliation unless you leave.'
 
 document.getElementById("centered0").innerHTML=st
 
