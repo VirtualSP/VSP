@@ -208,29 +208,25 @@ function setPan( sp, x,y,z ) {
 
 var sx,sy,sz
 function setPos(x,y,z) {
- var a,b, w,v,u; 	
- a=1.5; w=x*1.5; v=w+2*x; //u=z*2/3; console.log(w,v,u)	
- //x=x/2;w=15+x;v=15-x; y=y-2	// a=3	w=x*3	v=x*4
- //dx = x/z; dy = -y/Math.sqrt(x*x+z*z)
+ var a,b, w,v; 	
+ a=1.5; w=x*1.5; v=w+2*x;
  if (fname) { 
   setPan( pannerL, -x, y, z); setPan( pannerRL, -x, y*a, z*a ); 
-  setPan( pannerR,  x, y, z); setPan( pannerRR,  x, y*a, z*a ); //setPan( pannerRR,  x*u, y, z*a);
-			setPan( pannerBL,  -w, y*a, z*a);							//(  -x*4, y, z)
-			setPan( pannerBR,  -v, y*a, z*a);							//( -x*2, y, z)
-			setPan( pannerCL,   v, y*a, z*a); 							//(   x*2, y, zz)
-			setPan( pannerCR,   w, y*a, z*a);							//(   x*4, y, z)
-  listener.positionZ.value= z/5; lz = listener.positionZ.value;	
+  setPan( pannerR,  x, y, z); setPan( pannerRR,  x, y*a, z*a );
+			setPan( pannerBL,  -w, y*a, z*a);
+			setPan( pannerBR,  -v, y*a, z*a);
+			setPan( pannerCL,   v, y*a, z*a);
+			setPan( pannerCR,   w, y*a, z*a);
+  listener.positionZ.value= -z/5;
   };	sx=-x*a; sy=y*a; sz=z*a;
-  movsp();   if (fname) { setDelay(); };	//console.log( x,y,z,':',z*dx*a,z*dy*a, z*a );
-	//sx=z*dx*a; sy=z*dy*a; sz=z*a; 
-	//sx=-x*a; sy=y*a; sz=-z*a; console.log( sx,sy,sz )
+  movsp();   if (fname) { setDelay(); };
+
 	//Sphere0.position.x= sx; Sphere0.position.y= sy; Sphere0.position.z= sz;//-6.7 17.5 7.5
-	//trebleL.gain.setValueAtTime(tv,0);trebleR.gain.setValueAtTime(tv,0);}
 }
 
 function setDelay() {		// in seconds
-  var dr, dv, dw, df, xs,ys,zs, wx,wy;
-  
+  var dr, dv, dw, df, xs,ys,zs, lz;
+     lz = listener.positionZ.value;	//console.log(lz)
   xs = pannerR.positionX.value; ys = pannerR.positionY.value; zs = pannerR.positionZ.value
     df = Math.sqrt(xs*xs+ys*ys+(zs+lz)*(zs+lz));
   xs = pannerRR.positionX.value; ys = pannerRR.positionY.value; zs = pannerRR.positionZ.value;
