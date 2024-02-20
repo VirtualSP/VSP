@@ -55,20 +55,20 @@ gainCR = audioCtx.createGain(); gainCR.gain.value = rv;
  gainRL = audioCtx.createGain(); gainRL.gain.value = rv; 					// rv
  gainRR = audioCtx.createGain(); gainRR.gain.value = rv;  				// rv
 
-delayL = audioCtx.createDelay();  delayR = audioCtx.createDelay();
+//delayL = audioCtx.createDelay();  delayR = audioCtx.createDelay();
 delayCL = audioCtx.createDelay(); delayCR = audioCtx.createDelay();
 delayBL = audioCtx.createDelay(); delayBR = audioCtx.createDelay();
 delayRL = audioCtx.createDelay(); delayRR = audioCtx.createDelay(); 
 //setDelay() 	 
 
-  splitter.connect(pannerL,0).connect(bassL).connect(trebleL).connect(trebleLH)
-    .connect(delayL).connect(audioCtx.destination); 											//     RL	RR	
+  splitter.connect(pannerL,0).connect(bassL).connect(trebleL).connect(trebleLH).connect(audioCtx.destination);
+    //.connect(delayL).connect(audioCtx.destination); 											//     RL	RR	
   splitter.connect(gainRL,0).connect(pannerRL).connect(delayRL).connect(audioCtx.destination);				
   splitter.connect(gainBL,0).connect(pannerBL).connect(delayBL).connect(audioCtx.destination);	// BR BL  L	 R CR CL	
   splitter.connect(gainCL,0).connect(pannerCL).connect(delayCL).connect(audioCtx.destination);
 																								//	        o
-  splitter.connect(pannerR,1).connect(bassR).connect(trebleR).connect(trebleRH)
-    .connect(delayR).connect(audioCtx.destination); 			
+  splitter.connect(pannerR,1).connect(bassR).connect(trebleR).connect(trebleRH).connect(audioCtx.destination);
+    //.connect(delayR).connect(audioCtx.destination); 			
   splitter.connect(gainRR,1).connect(pannerRR).connect(delayRR).connect(audioCtx.destination);			
   splitter.connect(gainBR,1).connect(pannerBR).connect(delayBR).connect(audioCtx.destination); 
   splitter.connect(gainCR,1).connect(pannerCR).connect(delayCR).connect(audioCtx.destination);
@@ -84,7 +84,7 @@ audio.crossOrigin = "anonymous";			// +++ for chrome71- CORS access ++++
  audio.addEventListener('ended', savefxyz,false);
  audio.addEventListener('pause', savefxyz,false);
  audio.addEventListener('volumechange', function() { vol=audio.volume },false); 
-}
+}			// ---- end of initCtx() ----
 
 var camera, scene, renderer, canvas,ctx,geometry,material;	
 var cube, plane, light0,Sphere0, meshL,meshR,cubeL, cubeR;	
@@ -111,7 +111,7 @@ document.getElementById("centered0").innerHTML=st
   document.getElementById("bass").addEventListener("change",function () { changeBass() },false);
   document.getElementById("treble").addEventListener("change",function () { changeTreble() },false);
  
-}
+}		// ---- end of ini ----
 
 function loadfxyz() {
   var fxyz=Array();
@@ -153,8 +153,7 @@ function chkLoop() {
 
 function movsp() { 
  var xv2,yv2,zv2;
-  xv2 = xv*2; 	zv2=zv*2; yv2=yv*2
-	Sphere0.position.x= sx*2; Sphere0.position.y= sy; Sphere0.position.z= sz*2;		//************
+  xv2 = xv*2; 	zv2=zv*2; yv2=yv*2;
   cubeL.position.setX(-xv2); cubeL.position.setY(yv); cubeL.position.setZ(zv2); 
   cubeR.position.setX(xv2);  cubeR.position.setY(yv); cubeR.position.setZ(zv2); 	
     cubeL.rotation.y=Math.atan(-xv2/zv*0.5); cubeR.rotation.y=Math.atan( xv2/zv*0.5);
@@ -211,17 +210,16 @@ function setPos(x,y,z) {
  var a,b, w,v; 	
  a=1.5; w=x*1.5; v=w+2*x;
  if (fname) { 
-  setPan( pannerL, -x, y, z); setPan( pannerRL, -x, y*a, z*a ); 
-  setPan( pannerR,  x, y, z); setPan( pannerRR,  x, y*a, z*a );
-			setPan( pannerBL,  -w, y*a, z*a);
-			setPan( pannerBR,  -v, y*a, z*a);
+  setPan( pannerL, -x, y, z); setPan( pannerRL, -x, y*a, z*a ); //console.log(pannerL,pannerR)
+  setPan( pannerR,  x, y, z); setPan( pannerRR,  x, y*a, z*a );	//console.log(pannerRL,pannerRR)
+			setPan( pannerBL,  -w, y*a, z*a);		
+			setPan( pannerBR,  -v, y*a, z*a);		//console.log(pannerBL,pannerBR)
 			setPan( pannerCL,   v, y*a, z*a);
-			setPan( pannerCR,   w, y*a, z*a);
-  listener.positionZ.value= -z/5;
-  };	sx=-x*a; sy=y*a; sz=z*a;
-  movsp();   if (fname) { setDelay(); };
-
-	//Sphere0.position.x= sx; Sphere0.position.y= sy; Sphere0.position.z= sz;//-6.7 17.5 7.5
+			setPan( pannerCR,   w, y*a, z*a);		//console.log(pannerCL,pannerCR)
+  listener.positionZ.value= -z/5;  setDelay();
+  //};	//sx=-x*a; sy=y*a; sz=z*a;
+  }
+  movsp();   //if (fname) { setDelay(); };
 }
 
 function setDelay() {		// in seconds
@@ -230,14 +228,14 @@ function setDelay() {		// in seconds
   xs = pannerR.positionX.value; ys = pannerR.positionY.value; zs = pannerR.positionZ.value
     df = Math.sqrt(xs*xs+ys*ys+(zs+lz)*(zs+lz));
   xs = pannerRR.positionX.value; ys = pannerRR.positionY.value; zs = pannerRR.positionZ.value;
-    dr = ( Math.sqrt(xs*xs+ys*ys +(zs+lz)*(zs+lz)) )/340;		// dr
+    dr = ( Math.sqrt(xs*xs+ys*ys +(zs+lz)*(zs+lz))-df )/340;		// dr
   xs = pannerCR.positionX.value; ys = pannerCR.positionY.value; zs = pannerCR.positionZ.value
-	dw = ( Math.sqrt(xs*xs +ys*ys +(zs+lz)*(zs+lz)) )/340;
+	dw = ( Math.sqrt(xs*xs +ys*ys +(zs+lz)*(zs+lz))-df )/340;
   xs = pannerCL.positionX.value; ys = pannerCL.positionY.value; zs = pannerCL.positionZ.value
-	dv=  ( Math.sqrt(xs*xs +ys*ys +(zs+lz)*(zs+lz)) )/340;	
+	dv=  ( Math.sqrt(xs*xs +ys*ys +(zs+lz)*(zs+lz))-df )/340;	
   
-	delayL.delayTime.value = df/340;	//console.log( df, dr*360,dw*360,dv*360 )
-	delayR.delayTime.value = df/340;
+	//delayL.delayTime.value = df/340;	//console.log( df, dr*360,dw*360,dv*360 )
+	//delayR.delayTime.value = df/340;
 
 	delayRL.delayTime.value = dr; delayRR.delayTime.value = dr; 	//rear
 	delayBL.delayTime.value = dw; delayBR.delayTime.value = dv;		// dw<dv
@@ -315,9 +313,9 @@ scene = new THREE.Scene(); scene.add(camera);  //scene.background = new THREE.Co
     
 var geometry_sph = new THREE.SphereGeometry (0.7, 36, 36);   	// head      
 var material0 = new THREE.MeshLambertMaterial( { color: 0x0088cc } );    
-	Sphere0 = new THREE.Mesh (geometry_sph, material0); 
-	Sphere0.position.x= 0; Sphere0.position.y= 0; Sphere0.position.z= 0; Sphere0.castShadow = true;
-	scene.add( Sphere0 );
+	//Sphere0 = new THREE.Mesh (geometry_sph, material0); 
+	//Sphere0.position.x= 0; Sphere0.position.y= 0; Sphere0.position.z= 0; Sphere0.castShadow = true;
+	//scene.add( Sphere0 );
 
 var geometry_cube = new THREE.BoxGeometry (2, 3, 1.5);
 
