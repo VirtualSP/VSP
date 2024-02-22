@@ -1,15 +1,15 @@
 /*
- *   Virtual Speaker System 		28 Aug. 2023
+ *   Virtual Speaker System 		Feb. 2024		L230 L38 L48 L55 L56
  */						
 
 var xv, yv, zv, vol, rv, tv,tvv, cv, bv;
- vol = 0.5;   rv =0.3;    				//rv =0.3; 			
- xv = 5.0; yv = 2.0; zv = -10.0;  tv = 0.0; bv = 0.0; 					// tv = 0.5 2021 Mar
+ vol = 0.5;   rv =0.3;		
+ xv = 5.0; yv = 2.0; zv = -10.0;  tv = 0.0; bv = 0.0;
 
-var AudioContext;		// = new AudioContext(); 
-var audioCtx, listener, src, source, splitter, audio, fname, fc,flen,  lz; 
-var gainL,gainBL,gainR,gainBR, gainRL, gainRR, delayRL, delayRR, gainCL,gainCR,delayCL,delayCR;
-var delayL, delayR			////0825
+var AudioContext;
+var audioCtx, listener, src, source, splitter, audio, fname, fc,flen, lz; 
+var gainL,gainBL,gainR,gainBR, gainRL, gainRR, gainCL,gainCR;
+var delayL, delayR, delayRL, delayRR, delayCL, delayCR
 var pannerL,pannerR,pannerBL,pannerBR, pannerRL, pannerRR, pannerCL,pannerCR; 
 var bassL,trebleL,trebleRL,bassR,trebleR,trebleRR;
 
@@ -24,8 +24,8 @@ function initCtx() {
  pannerBR = audioCtx.createPanner(); setProperties( pannerBR );
  pannerCL = audioCtx.createPanner(); setProperties( pannerCL );
  pannerCR = audioCtx.createPanner(); setProperties( pannerCR );
- pannerRL = audioCtx.createPanner();	setProperties( pannerRL );
- pannerRR = audioCtx.createPanner();	setProperties( pannerRR );
+ pannerRL = audioCtx.createPanner(); setProperties( pannerRL );
+ pannerRR = audioCtx.createPanner(); setProperties( pannerRR );
 
  bassL   = audioCtx.createBiquadFilter(); bassL.type   = 'lowshelf'; 
   bassL.frequency.value = 120;
@@ -33,9 +33,9 @@ function initCtx() {
  trebleL = audioCtx.createBiquadFilter(); trebleL.type   = 'highshelf';
   trebleL.frequency.value = 8000;
   trebleL.gain.value = tv;
- trebleLH = audioCtx.createBiquadFilter(); trebleLH.type   = 'highshelf';
+ trebleLH = audioCtx.createBiquadFilter(); trebleLH.type = 'highshelf';
   trebleLH.frequency.value = 12000;
-  trebleLH.gain.value = tv+2;
+  trebleLH.gain.value = tv+4;											// +2
 
  bassR   = audioCtx.createBiquadFilter(); bassR.type   = 'lowshelf';
   bassR.frequency.value = 120;
@@ -43,32 +43,32 @@ function initCtx() {
  trebleR = audioCtx.createBiquadFilter(); trebleR.type   = 'highshelf';
   trebleR.frequency.value = 8000;
   trebleR.gain.value = tv;
- trebleRH = audioCtx.createBiquadFilter(); trebleRH.type   = 'highshelf';
+ trebleRH = audioCtx.createBiquadFilter(); trebleRH.type = 'highshelf';
   trebleRH.frequency.value = 12000;
-  trebleRH.gain.value = tv+2;
+  trebleRH.gain.value = tv+4;												// +2
 
 gainBL = audioCtx.createGain(); gainBL.gain.value = rv;  	
 gainBR = audioCtx.createGain(); gainBR.gain.value = rv/2; 
 gainCL = audioCtx.createGain(); gainCL.gain.value = rv/2; 
 gainCR = audioCtx.createGain(); gainCR.gain.value = rv;
 
- gainRL = audioCtx.createGain(); gainRL.gain.value = rv; 
- gainRR = audioCtx.createGain(); gainRR.gain.value = rv; 
+ gainRL = audioCtx.createGain(); gainRL.gain.value = rv; 					// rv
+ gainRR = audioCtx.createGain(); gainRR.gain.value = rv;  				// rv
 
-delayL = audioCtx.createDelay(); delayR = audioCtx.createDelay();
+//delayL = audioCtx.createDelay();  delayR = audioCtx.createDelay();
 delayCL = audioCtx.createDelay(); delayCR = audioCtx.createDelay();
 delayBL = audioCtx.createDelay(); delayBR = audioCtx.createDelay();
 delayRL = audioCtx.createDelay(); delayRR = audioCtx.createDelay(); 
 //setDelay() 	 
 
-  splitter.connect(pannerL,0).connect(bassL).connect(trebleL).connect(trebleLH)
-    .connect(delayL).connect(audioCtx.destination); 												//     RL	RR	
+  splitter.connect(pannerL,0).connect(bassL).connect(trebleL).connect(trebleLH).connect(audioCtx.destination);
+    //.connect(delayL).connect(audioCtx.destination); 											//     RL	RR	
   splitter.connect(gainRL,0).connect(pannerRL).connect(delayRL).connect(audioCtx.destination);				
   splitter.connect(gainBL,0).connect(pannerBL).connect(delayBL).connect(audioCtx.destination);	// BR BL  L	 R CR CL	
   splitter.connect(gainCL,0).connect(pannerCL).connect(delayCL).connect(audioCtx.destination);
-																										//	        o
-  splitter.connect(pannerR,1).connect(bassR).connect(trebleR).connect(trebleRH)
-    .connect(delayR).connect(audioCtx.destination); 			
+																								//	        o
+  splitter.connect(pannerR,1).connect(bassR).connect(trebleR).connect(trebleRH).connect(audioCtx.destination);
+    //.connect(delayR).connect(audioCtx.destination); 			
   splitter.connect(gainRR,1).connect(pannerRR).connect(delayRR).connect(audioCtx.destination);			
   splitter.connect(gainBR,1).connect(pannerBR).connect(delayBR).connect(audioCtx.destination); 
   splitter.connect(gainCR,1).connect(pannerCR).connect(delayCR).connect(audioCtx.destination);
@@ -84,7 +84,7 @@ audio.crossOrigin = "anonymous";			// +++ for chrome71- CORS access ++++
  audio.addEventListener('ended', savefxyz,false);
  audio.addEventListener('pause', savefxyz,false);
  audio.addEventListener('volumechange', function() { vol=audio.volume },false); 
-}
+}			// ---- end of initCtx() ----
 
 var camera, scene, renderer, canvas,ctx,geometry,material;	
 var cube, plane, light0,Sphere0, meshL,meshR,cubeL, cubeR;	
@@ -94,8 +94,7 @@ var wX = 400, wY = 400;
 function ini() {
   initgls(); //setPos(xv,yv,zv); //movsp();
 // ------- Jun 2023 -------
-//const st='Stop Putin now...!<br> Otherwise, the 20th century of<br> massacre and destruction will return.'
-const st='Putin and Netanyahu, there will be<br> no peace or reconciliation unless you leave.'
+const st='Stop Putin,Trump and Netanyahu NOW...!   Otherwise, we will have a repeat<br> of the misery of the 20th century.'
 
 document.getElementById("centered0").innerHTML=st
 
@@ -112,7 +111,7 @@ document.getElementById("centered0").innerHTML=st
   document.getElementById("bass").addEventListener("change",function () { changeBass() },false);
   document.getElementById("treble").addEventListener("change",function () { changeTreble() },false);
  
-}
+}		// ---- end of ini ----
 
 function loadfxyz() {
   var fxyz=Array();
@@ -153,8 +152,8 @@ function chkLoop() {
 }
 
 function movsp() { 
- var xv2,zv2;
-  xv2 = xv*2; 	zv2=zv*2
+ var xv2,yv2,zv2;
+  xv2 = xv*2; 	zv2=zv*2; yv2=yv*2;
   cubeL.position.setX(-xv2); cubeL.position.setY(yv); cubeL.position.setZ(zv2); 
   cubeR.position.setX(xv2);  cubeR.position.setY(yv); cubeR.position.setZ(zv2); 	
     cubeL.rotation.y=Math.atan(-xv2/zv*0.5); cubeR.rotation.y=Math.atan( xv2/zv*0.5);
@@ -192,7 +191,7 @@ function loadsrc() {	document.getElementById("centered0").innerHTML=''
        audio.onended = function() { loadnext(); }
       }
 
-    audio.play(); //startPlay();
+    audio.play(); 		//startPlay();
    };
 }
 
@@ -206,37 +205,38 @@ function setPan( sp, x,y,z ) {
   sp.positionX.value = x; sp.positionY.value = y; sp.positionZ.value = z;
 }
 
+var sx,sy,sz
 function setPos(x,y,z) {
- var a,b, w,v,u; 	
- a=1.5; y=y-2; w=x*1.5; v=w+2*x; u=z*2/3	//x=x/2;w=15+x;v=15-x; 	// a=3	w=x*3	v=x*4
+ var a,b, w,v; 	
+ a=1.5; w=x*1.5; v=w+2*x;
  if (fname) { 
-  setPan( pannerL, -x, y, z); setPan( pannerRL, -x*u, y, z*a);		// -x-(-z), y, z*a
-  setPan( pannerR,  x, y, z); setPan( pannerRR,  x*u, y, z*a);		//  x-z, y, z*a
-			setPan( pannerBL,  -w, y, z);							//(  -x*4, y, z)
-			setPan( pannerBR,  -v, y, z);							//( -x*2, y, z)
-			setPan( pannerCL,   v, y, z); 							//(   x*2, y, z)
-			setPan( pannerCR,   w, y, z);							//(   x*4, y, z)
-  listener.positionZ.value=-z/5; lz = listener.positionZ.value;	
+  setPan( pannerL, -x, y, z); setPan( pannerRL, -x, y*a, z*a ); //console.log(pannerL,pannerR)
+  setPan( pannerR,  x, y, z); setPan( pannerRR,  x, y*a, z*a );	//console.log(pannerRL,pannerRR)
+			setPan( pannerBL,  -w, y*a, z*a);		
+			setPan( pannerBR,  -v, y*a, z*a);		//console.log(pannerBL,pannerBR)
+			setPan( pannerCL,   v, y*a, z*a);
+			setPan( pannerCR,   w, y*a, z*a);		//console.log(pannerCL,pannerCR)
+  listener.positionZ.value= -z/5;  setDelay();
+  //};	//sx=-x*a; sy=y*a; sz=z*a;
   }
-  movsp();   if (fname) { setDelay(); };
-	//trebleL.gain.setValueAtTime(tv,0);trebleR.gain.setValueAtTime(tv,0);}
+  movsp();   //if (fname) { setDelay(); };
 }
 
 function setDelay() {		// in seconds
-  var dr, dv, dw, df, xs,ys,zs, wx,wy;
-  
+  var dr, dv, dw, df, xs,ys,zs, lz, e;
+     lz = listener.positionZ.value;
   xs = pannerR.positionX.value; ys = pannerR.positionY.value; zs = pannerR.positionZ.value
-    df = Math.sqrt(xs*xs+ys*ys+(zs-lz)*(zs-lz)); 
-  xs = pannerRR.positionX.value; ys = pannerRR.positionY.value; zs = pannerRR.positionZ.value
-    dr = ( Math.sqrt(xs*xs +ys*ys +(zs-lz)*(zs-lz))- df )/340;
+    df = Math.sqrt(xs*xs+ys*ys+(zs+lz)*(zs+lz));
+  xs = pannerRR.positionX.value; ys = pannerRR.positionY.value; zs = pannerRR.positionZ.value;
+    dr = ( Math.sqrt(xs*xs+ys*ys +(zs+lz)*(zs+lz))-df )/340;		// dr
   xs = pannerCR.positionX.value; ys = pannerCR.positionY.value; zs = pannerCR.positionZ.value
-	dw = ( Math.sqrt(xs*xs +ys*ys +(zs-lz)*(zs-lz))- df )/340;
+	dw = ( Math.sqrt(xs*xs +ys*ys +(zs+lz)*(zs+lz))-df )/340;
   xs = pannerCL.positionX.value; ys = pannerCL.positionY.value; zs = pannerCL.positionZ.value
-	dv=  ( Math.sqrt(xs*xs +ys*ys +(zs-lz)*(zs-lz))- df )/340;	
+	dv=  ( Math.sqrt(xs*xs +ys*ys +(zs+lz)*(zs+lz))-df )/340;	
   
-	delayL.delayTime.value = df/340;
-	delayR.delayTime.value = df/340;
-
+	//delayL.delayTime.value = df/340;	//console.log( df, dr*360,dw*360,dv*360 )
+	//delayR.delayTime.value = df/340;
+	
 	delayRL.delayTime.value = dr; delayRR.delayTime.value = dr; 	//rear
 	delayBL.delayTime.value = dw; delayBR.delayTime.value = dv;		// dw<dv
 	delayCL.delayTime.value = dv; delayCR.delayTime.value = dw; 	// BR-BL L-R CR-CL
@@ -311,7 +311,7 @@ camera.lookAt( {x:0, y:4, z:-500 } ); 				//z:0
       
 scene = new THREE.Scene(); scene.add(camera);  //scene.background = new THREE.Color( 0xff0000 );
     
-var geometry_sph = new THREE.SphereGeometry (0.7, 36, 36);         
+var geometry_sph = new THREE.SphereGeometry (0.7, 36, 36);   	// head      
 var material0 = new THREE.MeshLambertMaterial( { color: 0x0088cc } );    
 	//Sphere0 = new THREE.Mesh (geometry_sph, material0); 
 	//Sphere0.position.x= 0; Sphere0.position.y= 0; Sphere0.position.z= 0; Sphere0.castShadow = true;
@@ -355,7 +355,7 @@ var geometry_cube = new THREE.BoxGeometry (2, 3, 1.5);
    var gm = new THREE.PlaneBufferGeometry(120, 120, 30, 30);
     plane = new THREE.Mesh( gm,
         new THREE.MeshLambertMaterial({
-            color: 0xE0FA03, transparent: true, opacity: 0.75			// color: 0x888888 opacity: 0.7
+            color: 0xE0FA03, transparent: true, opacity: 0.75		// color: 0x888888 opacity: 0.7
         })
     );	//color: 0x8888ee
     plane.position.y = 0; plane.rotation.x = -Math.PI / 2;
