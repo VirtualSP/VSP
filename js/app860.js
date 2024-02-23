@@ -3,10 +3,10 @@
  */						
 
 var xv, yv, zv, vol, rv, tv,tvv, cv, bv;
- vol = 0.5;   rv =0.3;    				//rv =0.3; 			
+ vol = 0.5;   rv =0.3;		
  xv = 5.0; yv = 2.0; zv = -10.0;  tv = 0.0; bv = 0.0;
 
-var AudioContext;		// = new AudioContext(); 
+var AudioContext;
 var audioCtx, listener, src, source, splitter, audio, fname, fc,flen, lz; 
 var gainL,gainBL,gainR,gainBR, gainRL, gainRR, gainCL,gainCR;
 var delayL, delayR, delayRL, delayRR, delayCL, delayCR
@@ -35,7 +35,7 @@ function initCtx() {
   trebleL.gain.value = tv;
  trebleLH = audioCtx.createBiquadFilter(); trebleLH.type = 'highshelf';
   trebleLH.frequency.value = 12000;
-  trebleLH.gain.value = tv+4;											// +2
+  trebleLH.gain.value = 3; //tv+4;											// +2
 
  bassR   = audioCtx.createBiquadFilter(); bassR.type   = 'lowshelf';
   bassR.frequency.value = 120;
@@ -45,7 +45,7 @@ function initCtx() {
   trebleR.gain.value = tv;
  trebleRH = audioCtx.createBiquadFilter(); trebleRH.type = 'highshelf';
   trebleRH.frequency.value = 12000;
-  trebleRH.gain.value = tv+4;												// +2
+  trebleRH.gain.value = 3; //tv+4;												// +2
 
 gainBL = audioCtx.createGain(); gainBL.gain.value = rv;  	
 gainBR = audioCtx.createGain(); gainBR.gain.value = rv/2; 
@@ -94,7 +94,7 @@ var wX = 400, wY = 400;
 function ini() {
   initgls(); //setPos(xv,yv,zv); //movsp();
 // ------- Jun 2023 -------
-const st='Stop Putin, Stop Netanyahu & Trump now...!<br> Otherwise, the 20th century of<br> massacre and destruction will return.'
+const st='Stop Putin,Trump and Netanyahu NOW...!   Otherwise, we will have a repeat<br> of the misery of the 20th century.'
 
 document.getElementById("centered0").innerHTML=st
 
@@ -223,8 +223,8 @@ function setPos(x,y,z) {
 }
 
 function setDelay() {		// in seconds
-  var dr, dv, dw, df, xs,ys,zs, lz;
-     lz = listener.positionZ.value;	//console.log(lz)
+  var dr, dv, dw, df, xs,ys,zs, lz, e;
+     lz = listener.positionZ.value;
   xs = pannerR.positionX.value; ys = pannerR.positionY.value; zs = pannerR.positionZ.value
     df = Math.sqrt(xs*xs+ys*ys+(zs+lz)*(zs+lz));
   xs = pannerRR.positionX.value; ys = pannerRR.positionY.value; zs = pannerRR.positionZ.value;
@@ -236,7 +236,7 @@ function setDelay() {		// in seconds
   
 	//delayL.delayTime.value = df/340;	//console.log( df, dr*360,dw*360,dv*360 )
 	//delayR.delayTime.value = df/340;
-
+	
 	delayRL.delayTime.value = dr; delayRR.delayTime.value = dr; 	//rear
 	delayBL.delayTime.value = dw; delayBR.delayTime.value = dv;		// dw<dv
 	delayCL.delayTime.value = dv; delayCR.delayTime.value = dw; 	// BR-BL L-R CR-CL
