@@ -35,7 +35,7 @@ function initCtx() {
   trebleL.gain.value = tv;
  trebleLH = audioCtx.createBiquadFilter(); trebleLH.type = 'highshelf';
   trebleLH.frequency.value = 12000;
-  trebleLH.gain.value = tv+4;											// +2
+  trebleLH.gain.value = 3; //tv+4;											// +2
 
  bassR   = audioCtx.createBiquadFilter(); bassR.type   = 'lowshelf';
   bassR.frequency.value = 120;
@@ -45,7 +45,7 @@ function initCtx() {
   trebleR.gain.value = tv;
  trebleRH = audioCtx.createBiquadFilter(); trebleRH.type = 'highshelf';
   trebleRH.frequency.value = 12000;
-  trebleRH.gain.value = tv+4;												// +2
+  trebleRH.gain.value = 3; //tv+4;												// +2
 
 gainBL = audioCtx.createGain(); gainBL.gain.value = rv;  	
 gainBR = audioCtx.createGain(); gainBR.gain.value = rv/2; 
