@@ -3,7 +3,7 @@
  */						
 
 var xv, yv, zv, vol, rv, tv,tvv, cv, bv;
- vol = 0.5;   rv =0.3;		
+ vol = 0.3;   rv =0.2;		
  xv = 5.0; yv = 2.0; zv = -10.0;  tv = 0.0; bv = 0.0;
 
 var AudioContext;
