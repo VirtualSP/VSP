@@ -1,9 +1,8 @@
 /*
  *   Virtual Speaker System 		Feb. 2024		L230 L38 L48 L55 L56
  */						
-
 var xv, yv, zv, vol, rv, tv,tvv, cv, bv;
- vol = 0.5;   rv =0.3;		
+ vol = 0.3;   rv =0.2;		// rv*5 =1 
  xv = 5.0; yv = 2.0; zv = -10.0;  tv = 0.0; bv = 0.0;
 
 var AudioContext;
@@ -52,8 +51,8 @@ gainBR = audioCtx.createGain(); gainBR.gain.value = rv/2;
 gainCL = audioCtx.createGain(); gainCL.gain.value = rv/2; 
 gainCR = audioCtx.createGain(); gainCR.gain.value = rv;
 
- gainRL = audioCtx.createGain(); gainRL.gain.value = rv; 					// rv
- gainRR = audioCtx.createGain(); gainRR.gain.value = rv;  				// rv
+ gainRL = audioCtx.createGain(); gainRL.gain.value = rv; //rv; 					// rv
+ gainRR = audioCtx.createGain(); gainRR.gain.value = rv; //rv;  				// rv
 
 //delayL = audioCtx.createDelay();  delayR = audioCtx.createDelay();
 delayCL = audioCtx.createDelay(); delayCR = audioCtx.createDelay();
