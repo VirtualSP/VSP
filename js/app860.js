@@ -109,6 +109,8 @@ document.getElementById("centered0").innerHTML=st
 
   document.getElementById("bass").addEventListener("change",function () { changeBass() },false);
   document.getElementById("treble").addEventListener("change",function () { changeTreble() },false);
+  
+	document.getElementById("spv").addEventListener("change",function () { changeSPv() },false); //******
  
 }		// ---- end of ini ----
 
@@ -204,10 +206,11 @@ function setPan( sp, x,y,z ) {
   sp.positionX.value = x; sp.positionY.value = y; sp.positionZ.value = z;
 }
 
-var sx,sy,sz
+var sx,sy,sz, spv=1.5									//*************
 function setPos(x,y,z) {
  var a,b, w,v; 	
- a=1.5; w=x*1.5; v=w+2*x;
+ a=1.5; 			a=spv;
+ w=x*1.5; v=w+2*x;	console.log(a,w,v)		//*************
  if (fname) { 
   setPan( pannerL, -x, y, z); setPan( pannerRL, -x, y*a, z*a ); //console.log(pannerL,pannerR)
   setPan( pannerR,  x, y, z); setPan( pannerRR,  x, y*a, z*a );	//console.log(pannerRL,pannerRR)
@@ -233,7 +236,7 @@ function setDelay() {		// in seconds
   xs = pannerCL.positionX.value; ys = pannerCL.positionY.value; zs = pannerCL.positionZ.value
 	dv=  ( Math.sqrt(xs*xs +ys*ys +(zs+lz)*(zs+lz))-df )/340;	
   
-	//delayL.delayTime.value = df/340;	//console.log( df, dr*360,dw*360,dv*360 )
+	console.log( df, dr*360,dw*360,dv*360 )
 	//delayR.delayTime.value = df/340;
 	
 	delayRL.delayTime.value = dr; delayRR.delayTime.value = dr; 	//rear
@@ -294,6 +297,9 @@ function changeZV(z) {
     document.getElementById("zValue").innerHTML="pos_z = "+ zv;
  setPos( xv, yv, zv );
 }
+function changeSPv() {	
+	spv = document.getElementById("spv").value; 
+	document.getElementById("spVal").innerHTML=spv; setPos( xv, yv, zv ) }	//*************
 
 //------------------------- init gl ------------------------------------
 function initgls() {
