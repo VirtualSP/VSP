@@ -2,7 +2,7 @@
  *   Virtual Speaker System 		Feb. 2024		L230 L38 L48 L55 L56
  */						
 var xv, yv, zv, vol, rv, tv,tvv, cv, bv;
- vol = 0.3;   rv =0.2;		// rv*5 =1 
+ vol = 0.3;   rv =0.25;		// rv*5 =1 rv =0.25;	********
  xv = 5.0; yv = 2.0; zv = -10.0;  tv = 0.0; bv = 0.0;
 
 var AudioContext;
@@ -47,8 +47,8 @@ function initCtx() {
   trebleRH.gain.value = 3; //tv+4;												// +2
 
 gainBL = audioCtx.createGain(); gainBL.gain.value = rv;  	
-gainBR = audioCtx.createGain(); gainBR.gain.value = rv/2; 
-gainCL = audioCtx.createGain(); gainCL.gain.value = rv/2; 
+gainBR = audioCtx.createGain(); gainBR.gain.value = rv*0.8; 	//********
+gainCL = audioCtx.createGain(); gainCL.gain.value = rv*0.8; 	//********
 gainCR = audioCtx.createGain(); gainCR.gain.value = rv;
 
  gainRL = audioCtx.createGain(); gainRL.gain.value = rv; //rv; 					// rv
@@ -298,7 +298,7 @@ function changeZV(z) {
  setPos( xv, yv, zv );
 }
 function changeSPv() {	
-	spv = document.getElementById("spv").value; 
+	spv = document.getElementById("spv").value; console.log(gainCL.gain.value)
 	document.getElementById("spVal").innerHTML=spv; setPos( xv, yv, zv ) }	//*************
 
 //------------------------- init gl ------------------------------------
