@@ -208,17 +208,18 @@ function setPan( sp, x,y,z ) {
 
 var sx,sy,sz, spv=1.5									//*************
 function setPos(x,y,z) {
- var a,b, w,v; 	
- a=1.5; 			a=spv;
- w=x*1.5; v=w+2*x;	console.log(a,w,v)		//*************
+ var a,b, w,v, lz,dy; 	
+  a=1.5; lz = listener.positionZ.value= -z/5; dy = y/( z+lz )*a; //z=(z-2)*16
+ //a=1.5; 			a=spv;
+ w=x*1.5; v=w+2*x;	//console.log(a,w,v)		//*************
  if (fname) { 
-  setPan( pannerL, -x, y, z); setPan( pannerRL, -x, y*a, z*a ); //console.log(pannerL,pannerR)
-  setPan( pannerR,  x, y, z); setPan( pannerRR,  x, y*a, z*a );	//console.log(pannerRL,pannerRR)
-			setPan( pannerBL,  -w, y*a, z*a);		
-			setPan( pannerBR,  -v, y*a, z*a);		//console.log(pannerBL,pannerBR)
-			setPan( pannerCL,   v, y*a, z*a);
-			setPan( pannerCR,   w, y*a, z*a);		//console.log(pannerCL,pannerCR)
-  listener.positionZ.value= -z/5;  setDelay();
+  setPan( pannerL, -x, y, z); setPan( pannerRL, -x, z*dy, z*a ); 	//y*a
+  setPan( pannerR,  x, y, z); setPan( pannerRR,  x, z*dy, z*a );	console.log( x,z*dy, z*a )
+			setPan( pannerBL,  -w, z*dy, z*a);		//y*a
+			setPan( pannerBR,  -v, z*dy, z*a);		
+			setPan( pannerCL,   v, z*dy, z*a);
+			setPan( pannerCR,   w, z*dy, z*a);		
+  //listener.positionZ.value= -z/5;  setDelay();
   //};	//sx=-x*a; sy=y*a; sz=z*a;
   }
   movsp();   //if (fname) { setDelay(); };
