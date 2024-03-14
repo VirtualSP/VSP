@@ -110,7 +110,7 @@ document.getElementById("centered0").innerHTML=st
   document.getElementById("bass").addEventListener("change",function () { changeBass() },false);
   document.getElementById("treble").addEventListener("change",function () { changeTreble() },false);
   
-	document.getElementById("spv").addEventListener("change",function () { changeSPv() },false); //******
+	//document.getElementById("spv").addEventListener("change",function () { changeSPv() },false); //******
  
 }		// ---- end of ini ----
 
@@ -119,7 +119,7 @@ function loadfxyz() {
 
  	fxyz = JSON.parse(localStorage.getItem(fname));
 	if (fxyz) {	
-	 xv = parseFloat(fxyz[0]); yv = parseFloat(fxyz[1]); zv = parseFloat(fxyz[2]); //console.log(xv,yv,zv)
+	 xv = parseFloat(fxyz[0]); yv = parseFloat(fxyz[1]); zv = parseFloat(fxyz[2]);
 		document.getElementById("xValue").innerHTML="pos_x = "+ xv;
    		  document.querySelector("#xv").value = xv;
 		document.getElementById("yValue").innerHTML="pos_y = "+ yv;
@@ -214,12 +214,12 @@ function setPos(x,y,z) {
  w=x*1.5; v=w+2*x;	//console.log(a,w,v)		//*************
  if (fname) { 
   setPan( pannerL, -x, y, z); setPan( pannerRL, -x, z*dy, z*a ); 	//y*a
-  setPan( pannerR,  x, y, z); setPan( pannerRR,  x, z*dy, z*a );	console.log( x,z*dy, z*a )
+  setPan( pannerR,  x, y, z); setPan( pannerRR,  x, z*dy, z*a );	//console.log( x,z*dy, z*a )
 			setPan( pannerBL,  -w, z*dy, z*a);		//y*a
 			setPan( pannerBR,  -v, z*dy, z*a);		
 			setPan( pannerCL,   v, z*dy, z*a);
 			setPan( pannerCR,   w, z*dy, z*a);		
-  //listener.positionZ.value= -z/5;  setDelay();
+  setDelay();
   //};	//sx=-x*a; sy=y*a; sz=z*a;
   }
   movsp();   //if (fname) { setDelay(); };
@@ -237,7 +237,7 @@ function setDelay() {		// in seconds
   xs = pannerCL.positionX.value; ys = pannerCL.positionY.value; zs = pannerCL.positionZ.value
 	dv=  ( Math.sqrt(xs*xs +ys*ys +(zs+lz)*(zs+lz))-df )/340;	
   
-	console.log( df, dr*360,dw*360,dv*360 )
+	//console.log( df, dr*360,dw*360,dv*360 )
 	//delayR.delayTime.value = df/340;
 	
 	delayRL.delayTime.value = dr; delayRR.delayTime.value = dr; 	//rear
@@ -298,9 +298,9 @@ function changeZV(z) {
     document.getElementById("zValue").innerHTML="pos_z = "+ zv;
  setPos( xv, yv, zv );
 }
-function changeSPv() {	
-	spv = document.getElementById("spv").value; console.log(gainCL.gain.value)
-	document.getElementById("spVal").innerHTML=spv; setPos( xv, yv, zv ) }	//*************
+//function changeSPv() {	
+//	spv = document.getElementById("spv").value; console.log(gainCL.gain.value)
+//	document.getElementById("spVal").innerHTML=spv; setPos( xv, yv, zv ) }	//*************
 
 //------------------------- init gl ------------------------------------
 function initgls() {
