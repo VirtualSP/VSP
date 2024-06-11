@@ -1,9 +1,8 @@
 /*
- *   Virtual Speaker System 		Feb. 2024		L230 L38 L48 L55 L56
+ *   Virtual Speaker System 		Jun. 2024		L230 L38 L48 L55 L56
  */						
-
 var xv, yv, zv, vol, rv, tv,tvv, cv, bv;
- vol = 0.3;   rv =0.2;		
+ vol = 0.3;   rv =0.25;		// rv*5 =1 rv =0.25;	********
  xv = 5.0; yv = 2.0; zv = -10.0;  tv = 0.0; bv = 0.0;
 
 var AudioContext;
@@ -48,12 +47,12 @@ function initCtx() {
   trebleRH.gain.value = 3; //tv+4;												// +2
 
 gainBL = audioCtx.createGain(); gainBL.gain.value = rv;  	
-gainBR = audioCtx.createGain(); gainBR.gain.value = rv/2; 
-gainCL = audioCtx.createGain(); gainCL.gain.value = rv/2; 
+gainBR = audioCtx.createGain(); gainBR.gain.value = rv*0.8; 	//********
+gainCL = audioCtx.createGain(); gainCL.gain.value = rv*0.8; 	//********
 gainCR = audioCtx.createGain(); gainCR.gain.value = rv;
 
- gainRL = audioCtx.createGain(); gainRL.gain.value = rv; 					// rv
- gainRR = audioCtx.createGain(); gainRR.gain.value = rv;  				// rv
+ gainRL = audioCtx.createGain(); gainRL.gain.value = rv; //rv; 					// rv
+ gainRR = audioCtx.createGain(); gainRR.gain.value = rv; //rv;  				// rv
 
 //delayL = audioCtx.createDelay();  delayR = audioCtx.createDelay();
 delayCL = audioCtx.createDelay(); delayCR = audioCtx.createDelay();
@@ -93,8 +92,8 @@ var wX = 400, wY = 400;
 
 function ini() {
   initgls(); //setPos(xv,yv,zv); //movsp();
-// ------- Jun 2023 -------
-const st='Stop Putin,Trump and Netanyahu NOW...!   Otherwise, we will have a repeat<br> of the misery of the 20th century.'
+// ------- Jun 2024 -------
+const st='Stop Putin,Trump and Netanyahu NOW...!<br>&emsp; The essence of their beliefs is<br>&emsp;&emsp; murder and violence.'
 
 document.getElementById("centered0").innerHTML=st
 
@@ -110,6 +109,8 @@ document.getElementById("centered0").innerHTML=st
 
   document.getElementById("bass").addEventListener("change",function () { changeBass() },false);
   document.getElementById("treble").addEventListener("change",function () { changeTreble() },false);
+  
+	//document.getElementById("spv").addEventListener("change",function () { changeSPv() },false); //******
  
 }		// ---- end of ini ----
 
@@ -118,7 +119,7 @@ function loadfxyz() {
 
  	fxyz = JSON.parse(localStorage.getItem(fname));
 	if (fxyz) {	
-	 xv = parseFloat(fxyz[0]); yv = parseFloat(fxyz[1]); zv = parseFloat(fxyz[2]); //console.log(xv,yv,zv)
+	 xv = parseFloat(fxyz[0]); yv = parseFloat(fxyz[1]); zv = parseFloat(fxyz[2]);
 		document.getElementById("xValue").innerHTML="pos_x = "+ xv;
    		  document.querySelector("#xv").value = xv;
 		document.getElementById("yValue").innerHTML="pos_y = "+ yv;
@@ -205,18 +206,20 @@ function setPan( sp, x,y,z ) {
   sp.positionX.value = x; sp.positionY.value = y; sp.positionZ.value = z;
 }
 
-var sx,sy,sz
+var sx,sy,sz, spv=1.5									//*************
 function setPos(x,y,z) {
- var a,b, w,v; 	
- a=1.5; w=x*1.5; v=w+2*x;
+ var a,b, w,v, lz,dy; 	
+  a=1.5; lz = listener.positionZ.value= -z/5; dy = y/( z+lz )*a; //z=(z-2)*16
+ //a=1.5; 			a=spv;
+ w=x*1.5; v=w+2*x;	//console.log(a,w,v)		//*************
  if (fname) { 
-  setPan( pannerL, -x, y, z); setPan( pannerRL, -x, y*a, z*a ); //console.log(pannerL,pannerR)
-  setPan( pannerR,  x, y, z); setPan( pannerRR,  x, y*a, z*a );	//console.log(pannerRL,pannerRR)
-			setPan( pannerBL,  -w, y*a, z*a);		
-			setPan( pannerBR,  -v, y*a, z*a);		//console.log(pannerBL,pannerBR)
-			setPan( pannerCL,   v, y*a, z*a);
-			setPan( pannerCR,   w, y*a, z*a);		//console.log(pannerCL,pannerCR)
-  listener.positionZ.value= -z/5;  setDelay();
+  setPan( pannerL, -x, y, z); setPan( pannerRL, -x, z*dy, z*a ); 	//y*a
+  setPan( pannerR,  x, y, z); setPan( pannerRR,  x, z*dy, z*a );	//console.log( x,z*dy, z*a )
+			setPan( pannerBL,  -w, z*dy, z*a);		//y*a
+			setPan( pannerBR,  -v, z*dy, z*a);		
+			setPan( pannerCL,   v, z*dy, z*a);
+			setPan( pannerCR,   w, z*dy, z*a);		
+  setDelay();
   //};	//sx=-x*a; sy=y*a; sz=z*a;
   }
   movsp();   //if (fname) { setDelay(); };
@@ -234,7 +237,7 @@ function setDelay() {		// in seconds
   xs = pannerCL.positionX.value; ys = pannerCL.positionY.value; zs = pannerCL.positionZ.value
 	dv=  ( Math.sqrt(xs*xs +ys*ys +(zs+lz)*(zs+lz))-df )/340;	
   
-	//delayL.delayTime.value = df/340;	//console.log( df, dr*360,dw*360,dv*360 )
+	//console.log( df, dr*360,dw*360,dv*360 )
 	//delayR.delayTime.value = df/340;
 	
 	delayRL.delayTime.value = dr; delayRR.delayTime.value = dr; 	//rear
@@ -295,6 +298,9 @@ function changeZV(z) {
     document.getElementById("zValue").innerHTML="pos_z = "+ zv;
  setPos( xv, yv, zv );
 }
+//function changeSPv() {	
+//	spv = document.getElementById("spv").value; console.log(gainCL.gain.value)
+//	document.getElementById("spVal").innerHTML=spv; setPos( xv, yv, zv ) }	//*************
 
 //------------------------- init gl ------------------------------------
 function initgls() {
