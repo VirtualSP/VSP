@@ -1,5 +1,5 @@
 /*
- *   Virtual Speaker System 		Feb. 2024		L230 L38 L48 L55 L56
+ *   Virtual Speaker System 		Jun. 2024		L230 L38 L48 L55 L56
  */						
 var xv, yv, zv, vol, rv, tv,tvv, cv, bv;
  vol = 0.3;   rv =0.25;		// rv*5 =1 rv =0.25;	********
@@ -11,10 +11,12 @@ var gainL,gainBL,gainR,gainBR, gainRL, gainRR, gainCL,gainCR;
 var delayL, delayR, delayRL, delayRR, delayCL, delayCR
 var pannerL,pannerR,pannerBL,pannerBR, pannerRL, pannerRR, pannerCL,pannerCR; 
 var bassL,trebleL,trebleRL,bassR,trebleR,trebleRR;
-
+	var analyserL,spectrumsL,analyserR,spectrumsR, tm, sampleRate = 48000; fftSize = 512;
+	var merger, dest
+	
 function initCtx() {
  audioCtx = new AudioContext(); 
- splitter = audioCtx.createChannelSplitter(2);
+ splitter = audioCtx.createChannelSplitter(8);
  listener = audioCtx.listener;			
 
  pannerL  = audioCtx.createPanner(); setProperties( pannerL );
@@ -34,7 +36,7 @@ function initCtx() {
   trebleL.gain.value = tv;
  trebleLH = audioCtx.createBiquadFilter(); trebleLH.type = 'highshelf';
   trebleLH.frequency.value = 12000;
-  trebleLH.gain.value = 3; //tv+4;											// +2
+  trebleLH.gain.value = tv+4;											// +2
 
  bassR   = audioCtx.createBiquadFilter(); bassR.type   = 'lowshelf';
   bassR.frequency.value = 120;
@@ -44,34 +46,66 @@ function initCtx() {
   trebleR.gain.value = tv;
  trebleRH = audioCtx.createBiquadFilter(); trebleRH.type = 'highshelf';
   trebleRH.frequency.value = 12000;
-  trebleRH.gain.value = 3; //tv+4;												// +2
+  trebleRH.gain.value = tv+4;												// +2
 
 gainBL = audioCtx.createGain(); gainBL.gain.value = rv;  	
 gainBR = audioCtx.createGain(); gainBR.gain.value = rv*0.8; 	//********
 gainCL = audioCtx.createGain(); gainCL.gain.value = rv*0.8; 	//********
 gainCR = audioCtx.createGain(); gainCR.gain.value = rv;
 
- gainRL = audioCtx.createGain(); gainRL.gain.value = rv; //rv; 					// rv
- gainRR = audioCtx.createGain(); gainRR.gain.value = rv; //rv;  				// rv
+ gainRL = audioCtx.createGain(); gainRL.gain.value = rv; //rv; 
+ gainRR = audioCtx.createGain(); gainRR.gain.value = rv; //rv;
 
 //delayL = audioCtx.createDelay();  delayR = audioCtx.createDelay();
 delayCL = audioCtx.createDelay(); delayCR = audioCtx.createDelay();
 delayBL = audioCtx.createDelay(); delayBR = audioCtx.createDelay();
 delayRL = audioCtx.createDelay(); delayRR = audioCtx.createDelay(); 
-//setDelay() 	 
-
-  splitter.connect(pannerL,0).connect(bassL).connect(trebleL).connect(trebleLH).connect(audioCtx.destination);
-    //.connect(delayL).connect(audioCtx.destination); 											//     RL	RR	
-  splitter.connect(gainRL,0).connect(pannerRL).connect(delayRL).connect(audioCtx.destination);				
+	merger = audioCtx.createChannelMerger(8);
+	//dest = audioCtx.createMediaStreamDestination();
+//setDelay() 	
+	analyserL = audioCtx.createAnalyser();	// analizer +++++++++++++++++++++++++++++++++++++++
+	analyserL.fftSize = fftSize;
+	analyserL.minDecibels = -100;  // Default -100 dB
+	analyserL.maxDecibels =    -30;  // Default  -30 dB
+	analyserR = audioCtx.createAnalyser();	// analizer +++++++++++++++++++++++++++++++++++++++
+	analyserR.fftSize = fftSize;
+	analyserR.minDecibels = -100;  // Default -100 dB
+	analyserR.maxDecibels =    -30;  // Default  -30 dB
+  var fsDivN = audioCtx.sampleRate / analyserL.fftSize; 
+	dt = sampleRate/fftSize ; // fftSize = 1024  smpRate = 48000 dt = 46.875 ( 8000Hz=170.6f)
+	fc8k = Math.floor(8000/dt); fc12k = Math.floor(12000/dt);	//fftSize = 1024;  sampleRate = 48000
+	spectrumsL = new Uint8Array(analyserL.frequencyBinCount);	
+	spectrumsR = new Uint8Array(analyserR.frequencyBinCount);
+	//tm = setInterval( renderA, 16 );	// +++++++++++++++++++++++++++++
+/*
+  splitter.connect(pannerL,0).connect(bassL).connect(trebleL).connect(trebleLH).connect(merger,0,0)
+	//.connect(audioCtx.destination); 											//     RL	RR	
+	//.connect(merger,0).connect(dest)	//connect(destination, outputIndex, inputIndex)
+  splitter.connect(gainRL,0).connect(pannerRL).connect(delayRL).connect(merger,0,0); //connect(audioCtx.destination);				
+  splitter.connect(gainBL,0).connect(pannerBL).connect(delayBL).connect(merger,0,0); //connect(audioCtx.destination);	// BR BL  L	 R CR CL	
+  splitter.connect(gainCL,0).connect(pannerCL).connect(delayCL).connect(merger,0,0); //connect(audioCtx.destination);
+																								//	        o
+  splitter.connect(pannerR,1).connect(bassR).connect(trebleR).connect(trebleRH).connect(merger,0,1); 
+	//connect(audioCtx.destination);
+    //.connect(delayR).connect(audioCtx.destination); 			
+  splitter.connect(gainRR,1).connect(pannerRR).connect(delayRR).connect(merger,0,1); //connect(audioCtx.destination);			
+  splitter.connect(gainBR,1).connect(pannerBR).connect(delayBR).connect(merger,0,1); //connect(audioCtx.destination); 
+  splitter.connect(gainCR,1).connect(pannerCR).connect(delayCR).connect(merger,0,1); //connect(audioCtx.destination);
+  
+  merger.connect(analyserLR).connect(audioCtx.destination);
+*/
+  splitter.connect(pannerL,0).connect(bassL).connect(trebleL).connect(trebleLH).
+	connect(analyserL).connect(audioCtx.destination); 			//     RL	RR	
+  splitter.connect(gainRL).connect(pannerRL).connect(delayRL).connect(audioCtx.destination);				
   splitter.connect(gainBL,0).connect(pannerBL).connect(delayBL).connect(audioCtx.destination);	// BR BL  L	 R CR CL	
   splitter.connect(gainCL,0).connect(pannerCL).connect(delayCL).connect(audioCtx.destination);
 																								//	        o
-  splitter.connect(pannerR,1).connect(bassR).connect(trebleR).connect(trebleRH).connect(audioCtx.destination);
-    //.connect(delayR).connect(audioCtx.destination); 			
-  splitter.connect(gainRR,1).connect(pannerRR).connect(delayRR).connect(audioCtx.destination);			
+  splitter.connect(pannerR,1).connect(bassR).connect(trebleR).connect(trebleRH).
+	connect(analyserR).connect(audioCtx.destination);		
+  splitter.connect(gainRR).connect(pannerRR).connect(delayRR).connect(audioCtx.destination);			
   splitter.connect(gainBR,1).connect(pannerBR).connect(delayBR).connect(audioCtx.destination); 
   splitter.connect(gainCR,1).connect(pannerCR).connect(delayCR).connect(audioCtx.destination);
-
+//  
 audio = new Audio(src); audio.controls = true; audio.volume=vol;	audio.clientWidth=50;
 audio.crossOrigin = "anonymous";			// +++ for chrome71- CORS access ++++
 
@@ -82,6 +116,7 @@ audio.crossOrigin = "anonymous";			// +++ for chrome71- CORS access ++++
 
  audio.addEventListener('ended', savefxyz,false);
  audio.addEventListener('pause', savefxyz,false);
+ audio.addEventListener('pause', function() { tm = setInterval( renderA, 16 ) },false);
  audio.addEventListener('volumechange', function() { vol=audio.volume },false); 
 }			// ---- end of initCtx() ----
 
@@ -92,8 +127,8 @@ var wX = 400, wY = 400;
 
 function ini() {
   initgls(); //setPos(xv,yv,zv); //movsp();
-// ------- Jun 2023 -------
-const st='Stop Putin,Trump and Netanyahu NOW...!   Otherwise, we will have a repeat<br> of the misery of the 20th century.'
+// ------- Jun 2024 -------
+const st='Stop Putin,Trump and Netanyahu NOW...!<br>&emsp; The essence of their beliefs is<br>&emsp;&emsp; murder and violence.'
 
 document.getElementById("centered0").innerHTML=st
 
@@ -141,6 +176,7 @@ function savefxyz() {
 	fxyz[0]=String(xv).substr(0, 5); fxyz[1]=String(yv).substr(0, 5); fxyz[2]=String(zv).substr(0, 5);
 	fxyz[3]=String(vol).substr(0, 5); fxyz[4]=String(bv).substr(0, 5); fxyz[5]=String(tv).substr(0, 5);	// -8
 	localStorage.setItem(fname, JSON.stringify(fxyz));
+		clearInterval( tm ); //console.log(max8k,max12k)		// +++++++++++++++++++++++++
 //  } catch(e) {
 //    return false; 
 //  }	
@@ -185,7 +221,7 @@ function loadsrc() {	document.getElementById("centered0").innerHTML=''
 	loadfxyz();
 		setPos( xv, yv, zv ); changeBass(bv); changeTreble(tv);
     showMetaData(document.getElementsByTagName('input')[6].files[fc]);						
-    audio.src=src;	audio.autoplay = true;
+    audio.src=src;	audio.autoplay = true;	tm = setInterval( renderA, 16 );
   
     audio.oncanplaythrough  = (event) => {			//onloadeddata
       if ( fc  < flen ) { 
@@ -274,7 +310,7 @@ function changeBass() {
 	
 function changeTreble() {
  var tvalue = document.getElementById("treble").valueAsNumber, tvH;
- tv = tvalue; tvH = ( 20-tvalue )/5;
+ tv = tvalue; tvH = ( 20-tvalue )/5;	console.log(tv,tvH,tv+tvH)
 
   if (fname) { 
   	trebleL.gain.value = tv;   trebleR.gain.value = tv;
@@ -310,6 +346,7 @@ renderer.setSize (wX,wY);
 renderer.setClearColor(0x3333ff, 0.5);						// 0x3333cc, 0.1
 	canvasB = document.getElementById("canvasB"); ctxB = canvasB.getContext("2d");
 	canvasC = document.getElementById("canvasC"); ctxC = canvasC.getContext("2d");
+		canvasA = document.getElementById("canvasA"); ctxA = canvasA.getContext("2d");	//+++++++
          
 camera = new THREE.PerspectiveCamera (60, 1, 1, 1000);  
 camera.position.x=0; camera.position.y=5; camera.position.z=6;   	//z:5
@@ -395,3 +432,20 @@ function showMetaData(data) {
 	document.getElementById("centered").innerHTML=result.title+"<br>"+result.artist[0];  } 
       });
     }
+// ------------- analizer --------------------------------
+var fq, cSize = fftSize/2, len=512,	max8k, max12k;	//fftSize = 1024;
+	//maxIndex = numArray.indexOf(Math.max(...numArray)); //animals.slice(2, 4)
+function renderA() {
+  var sL,sR,sLR, dtf,maxL,maxF;
+    fq = 0; max8k=0; max12k=0
+	 analyserL.getByteFrequencyData(spectrumsL); analyserR.getByteFrequencyData(spectrumsR);
+		ctxA.clearRect(0, 220, canvasA.width, 80);
+	while ( fq<cSize ) { 		// len=512
+     	sL = spectrumsL[fq]; sR = spectrumsR[fq]; sLR = ( sL+sR )/2
+			if ( fq<128 && sLR>max8k ) { max8k = sLR } //fq*dt }
+			if ( fq>128 && sLR>max12k ) { max12k = sLR } //fq*dt }
+		hue = fq/len * 360; ctxA.strokeStyle = 'hsl(' + hue + ',100%, 65%)';
+			 ctxA.strokeRect( fq+72, 300, 1, -sLR/10);
+		fq++;	
+   } 	
+}
