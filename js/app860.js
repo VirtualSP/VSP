@@ -15,7 +15,7 @@ var bassL,trebleL,trebleRL,bassR,trebleR,trebleRR;
 	var merger, dest
 	
 function initCtx() {
- audioCtx = new AudioContext(); 
+ audioCtx = new AudioContext(); 	sampleRate = audioCtx.sampleRate; //48000
  splitter = audioCtx.createChannelSplitter(8);
  listener = audioCtx.listener;			
 
@@ -35,8 +35,8 @@ function initCtx() {
   trebleL.frequency.value = 8000;
   trebleL.gain.value = tv;
  trebleLH = audioCtx.createBiquadFilter(); trebleLH.type = 'highshelf';
-  trebleLH.frequency.value = 12000;
-  trebleLH.gain.value = tv+4;											// +2
+  trebleLH.frequency.value = 16000;
+  trebleLH.gain.value = tv+8;											// +2
 
  bassR   = audioCtx.createBiquadFilter(); bassR.type   = 'lowshelf';
   bassR.frequency.value = 120;
@@ -45,8 +45,8 @@ function initCtx() {
   trebleR.frequency.value = 8000;
   trebleR.gain.value = tv;
  trebleRH = audioCtx.createBiquadFilter(); trebleRH.type = 'highshelf';
-  trebleRH.frequency.value = 12000;
-  trebleRH.gain.value = tv+4;												// +2
+  trebleRH.frequency.value = 16000;
+  trebleRH.gain.value = tv+8;												// +2
 
 gainBL = audioCtx.createGain(); gainBL.gain.value = rv;  	
 gainBR = audioCtx.createGain(); gainBR.gain.value = rv*0.8; 	//********
@@ -94,15 +94,13 @@ delayRL = audioCtx.createDelay(); delayRR = audioCtx.createDelay();
   
   merger.connect(analyserLR).connect(audioCtx.destination);
 */
-  splitter.connect(pannerL,0).connect(bassL).connect(trebleL).connect(trebleLH).
-	connect(analyserL).connect(audioCtx.destination); 			//     RL	RR	
-  splitter.connect(gainRL).connect(pannerRL).connect(delayRL).connect(audioCtx.destination);				
+  splitter.connect(pannerL,0).connect(bassL).connect(trebleL).connect(analyserL).connect(audioCtx.destination); 			//     RL	RR	
+  splitter.connect(gainRL,0).connect(pannerRL).connect(delayRL).connect(trebleLH).connect(audioCtx.destination);				
   splitter.connect(gainBL,0).connect(pannerBL).connect(delayBL).connect(audioCtx.destination);	// BR BL  L	 R CR CL	
   splitter.connect(gainCL,0).connect(pannerCL).connect(delayCL).connect(audioCtx.destination);
 																								//	        o
-  splitter.connect(pannerR,1).connect(bassR).connect(trebleR).connect(trebleRH).
-	connect(analyserR).connect(audioCtx.destination);		
-  splitter.connect(gainRR).connect(pannerRR).connect(delayRR).connect(audioCtx.destination);			
+  splitter.connect(pannerR,1).connect(bassR).connect(trebleR).connect(analyserR).connect(audioCtx.destination);		
+  splitter.connect(gainRR,1).connect(pannerRR).connect(delayRR).connect(trebleRH).connect(audioCtx.destination);			
   splitter.connect(gainBR,1).connect(pannerBR).connect(delayBR).connect(audioCtx.destination); 
   splitter.connect(gainCR,1).connect(pannerCR).connect(delayCR).connect(audioCtx.destination);
 //  
@@ -273,8 +271,8 @@ function setDelay() {		// in seconds
   xs = pannerCL.positionX.value; ys = pannerCL.positionY.value; zs = pannerCL.positionZ.value
 	dv=  ( Math.sqrt(xs*xs +ys*ys +(zs+lz)*(zs+lz))-df )/340;	
   
-	//console.log( df, dr*360,dw*360,dv*360 )
-	//delayR.delayTime.value = df/340;
+	dr=dr*2;dw=dw*2;dv=dv*2; //console.log( df, dr*360,dw*360,dv*360 )
+	//delayR.delayTime.value = df/340;	in seconds
 	
 	delayRL.delayTime.value = dr; delayRR.delayTime.value = dr; 	//rear
 	delayBL.delayTime.value = dw; delayBR.delayTime.value = dv;		// dw<dv
