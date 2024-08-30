@@ -2,7 +2,7 @@
  *   Virtual Speaker System 		Jun. 2024		L230 L38 L48 L55 L56
  */						
 var xv, yv, zv, vol, rv, tv,tvv, cv, bv;
- vol = 0.3;   rv =0.25;		// rv*5 =1 rv =0.25;	********
+ vol = 0.3;   rv =0.28;		// rv*5 =1 rv =0.25;	********
  xv = 5.0; yv = 2.0; zv = -10.0;  tv = 0.0; bv = 0.0;
 
 var AudioContext;
@@ -271,7 +271,7 @@ function setDelay() {		// in seconds
   xs = pannerCL.positionX.value; ys = pannerCL.positionY.value; zs = pannerCL.positionZ.value
 	dv=  ( Math.sqrt(xs*xs +ys*ys +(zs+lz)*(zs+lz))-df )/340;	
   
-	dr=dr*2;dw=dw*2;dv=dv*2; //console.log( df, dr*360,dw*360,dv*360 )
+	dr=dr*3;dw=dw*2;dv=dv*2; //console.log( df, dr*360,dw*360,dv*360 )
 	//delayR.delayTime.value = df/340;	in seconds
 	
 	delayRL.delayTime.value = dr; delayRR.delayTime.value = dr; 	//rear
@@ -439,11 +439,11 @@ function renderA() {
 	 analyserL.getByteFrequencyData(spectrumsL); analyserR.getByteFrequencyData(spectrumsR);
 		ctxA.clearRect(0, 220, canvasA.width, 80);
 	while ( fq<cSize ) { 		// len=512
-     	sL = spectrumsL[fq]; sR = spectrumsR[fq]; sLR = ( sL+sR )/2
-			if ( fq<128 && sLR>max8k ) { max8k = sLR } //fq*dt }
-			if ( fq>128 && sLR>max12k ) { max12k = sLR } //fq*dt }
+     	sL = spectrumsL[fq]; sR = spectrumsR[fq]; sLR = Math.floor( ( sL+sR )/20 )
+			//if ( fq<128 && sLR>max8k ) { max8k = sLR } //fq*dt }
+			//if ( fq>128 && sLR>max12k ) { max12k = sLR } //fq*dt }
 		hue = fq/len * 360; ctxA.strokeStyle = 'hsl(' + hue + ',100%, 65%)';
-			 ctxA.strokeRect( fq+72, 300, 1, -sLR/10);
+			 ctxA.strokeRect( fq+72, 300, 1, -sLR);
 		fq++;	
    } 	
 }
