@@ -242,18 +242,19 @@ function setPan( sp, x,y,z ) {
 
 var sx,sy,sz, spv=1.5									//*************
 function setPos(x,y,z) {
- var a,b, w,v, lz,dy; 	
-  a=1.5; lz = listener.positionZ.value= -z/5; dy = y/( z+lz )*a; //z=(z-2)*16
- //a=1.5; 			a=spv;
- w=x*1.5; v=w+2*x;	//console.log(a,w,v)		//*************
+ var a,b, w,v, lz,dy, zdy; 	
+  a=1.5; lz = listener.positionZ.value= camera.position.z; //-z; // -z/5 a=1.5 camera.position.z=6
+  dy = 2/( -z+lz ); //=y/( -z+lz )*a;	//console.log(dy,y,-z,lz); //z=(z-2)*16
+ //x = x/2; //a=1.5; 			a=spv;
+ w=x*1.5; v=w+2*x; zdy = (-z+lz)*dy;	//console.log(a,w,v)		//*************
  if (fname) { 
-  setPan( pannerL, -x, y, z); setPan( pannerRL, -x, z*dy, z*a ); 	//y*a
-  setPan( pannerR,  x, y, z); setPan( pannerRR,  x, z*dy, z*a );	//console.log( x,z*dy, z*a )
-			setPan( pannerBL,  -w, z*dy, z*a);		//y*a
-			setPan( pannerBR,  -v, z*dy, z*a);		
-			setPan( pannerCL,   v, z*dy, z*a);
-			setPan( pannerCR,   w, z*dy, z*a);		
-  setDelay();
+  setPan( pannerL, -x, y, z); setPan( pannerRL, -x, zdy, z*a ); 	//y*a
+  setPan( pannerR,  x, y, z); setPan( pannerRR,  x, zdy, z*a );	//console.log( z,dy )
+			setPan( pannerBL,  -w, zdy, z);		//y*a
+			setPan( pannerBR,  -v, zdy, z);		
+			setPan( pannerCL,   v, zdy, z);
+			setPan( pannerCR,   w, zdy, z);		
+  setDelay();	//console.log(pannerBL,pannerBR)
   //};	//sx=-x*a; sy=y*a; sz=z*a;
   }
   movsp();   //if (fname) { setDelay(); };
@@ -261,17 +262,17 @@ function setPos(x,y,z) {
 
 function setDelay() {		// in seconds
   var dr, dv, dw, df, xs,ys,zs, lz, e;
-     lz = listener.positionZ.value;
-  xs = pannerR.positionX.value; ys = pannerR.positionY.value; zs = pannerR.positionZ.value
-    df = Math.sqrt(xs*xs+ys*ys+(zs+lz)*(zs+lz));
-  xs = pannerRR.positionX.value; ys = pannerRR.positionY.value; zs = pannerRR.positionZ.value;
-    dr = ( Math.sqrt(xs*xs+ys*ys +(zs+lz)*(zs+lz))-df )/340;		// dr
-  xs = pannerCR.positionX.value; ys = pannerCR.positionY.value; zs = pannerCR.positionZ.value
+     lz = listener.positionZ.value;	lz=6
+  xs = pannerR.positionX.value; ys = pannerR.positionY.value; zs = -pannerR.positionZ.value; 
+    df = Math.sqrt(xs*xs+ys*ys+(zs+lz)*(zs+lz));	//console.log( zs,lz)
+  xs = pannerRR.positionX.value; ys = pannerRR.positionY.value; zs = -pannerRR.positionZ.value;
+    dr = ( Math.sqrt(xs*xs+ys*ys +(zs+lz)*(zs+lz))-df )/340;	//console.log(xs,ys,zs,dr)	// dr
+  xs = pannerCR.positionX.value; ys = pannerCR.positionY.value; zs = -pannerCR.positionZ.value
 	dw = ( Math.sqrt(xs*xs +ys*ys +(zs+lz)*(zs+lz))-df )/340;
-  xs = pannerCL.positionX.value; ys = pannerCL.positionY.value; zs = pannerCL.positionZ.value
+  xs = pannerCL.positionX.value; ys = pannerCL.positionY.value; zs = -pannerCL.positionZ.value
 	dv=  ( Math.sqrt(xs*xs +ys*ys +(zs+lz)*(zs+lz))-df )/340;	
   
-	dr=dr*3;dw=dw*2;dv=dv*2; //console.log( df, dr*360,dw*360,dv*360 )
+	dr=dr*3;dw=dw*3;dv=dv*3; //console.log( dr*340,dw*340,dv*340 )
 	//delayR.delayTime.value = df/340;	in seconds
 	
 	delayRL.delayTime.value = dr; delayRR.delayTime.value = dr; 	//rear
@@ -308,7 +309,7 @@ function changeBass() {
 	
 function changeTreble() {
  var tvalue = document.getElementById("treble").valueAsNumber, tvH;
- tv = tvalue; tvH = ( 20-tvalue )/5;	console.log(tv,tvH,tv+tvH)
+ tv = tvalue; tvH = ( 20-tvalue )/5;	//console.log(tv,tvH,tv+tvH)
 
   if (fname) { 
   	trebleL.gain.value = tv;   trebleR.gain.value = tv;
