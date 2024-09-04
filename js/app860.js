@@ -76,7 +76,7 @@ delayRL = audioCtx.createDelay(); delayRR = audioCtx.createDelay();
 	fc8k = Math.floor(8000/dt); fc12k = Math.floor(12000/dt);	//fftSize = 1024;  sampleRate = 48000
 	spectrumsL = new Uint8Array(analyserL.frequencyBinCount);	
 	spectrumsR = new Uint8Array(analyserR.frequencyBinCount);
-	//tm = setInterval( renderA, 16 );	// +++++++++++++++++++++++++++++
+	tm = 0; //setInterval( renderA, 16 );	// +++++++++++++++++++++++++++++
 /*
   splitter.connect(pannerL,0).connect(bassL).connect(trebleL).connect(trebleLH).connect(merger,0,0)
 	//.connect(audioCtx.destination); 											//     RL	RR	
@@ -94,15 +94,16 @@ delayRL = audioCtx.createDelay(); delayRR = audioCtx.createDelay();
   
   merger.connect(analyserLR).connect(audioCtx.destination);
 */
-  splitter.connect(pannerL,0).connect(bassL).connect(trebleL).connect(analyserL).connect(audioCtx.destination); 			//     RL	RR	
+  splitter.connect(pannerL,0).connect(bassL).connect(trebleL).connect(audioCtx.destination); 			//     RL	RR	
   splitter.connect(gainRL,0).connect(pannerRL).connect(delayRL).connect(trebleLH).connect(audioCtx.destination);				
   splitter.connect(gainBL,0).connect(pannerBL).connect(delayBL).connect(audioCtx.destination);	// BR BL  L	 R CR CL	
   splitter.connect(gainCL,0).connect(pannerCL).connect(delayCL).connect(audioCtx.destination);
-																								//	        o
-  splitter.connect(pannerR,1).connect(bassR).connect(trebleR).connect(analyserR).connect(audioCtx.destination);		
+	trebleL.connect(analyserL)																							//	        o
+  splitter.connect(pannerR,1).connect(bassR).connect(trebleR).connect(audioCtx.destination);		
   splitter.connect(gainRR,1).connect(pannerRR).connect(delayRR).connect(trebleRH).connect(audioCtx.destination);			
   splitter.connect(gainBR,1).connect(pannerBR).connect(delayBR).connect(audioCtx.destination); 
   splitter.connect(gainCR,1).connect(pannerCR).connect(delayCR).connect(audioCtx.destination);
+	trebleR.connect(analyserR)
 //  
 audio = new Audio(src); audio.controls = true; audio.volume=vol;	audio.clientWidth=50;
 audio.crossOrigin = "anonymous";			// +++ for chrome71- CORS access ++++
@@ -114,7 +115,7 @@ audio.crossOrigin = "anonymous";			// +++ for chrome71- CORS access ++++
 
  audio.addEventListener('ended', savefxyz,false);
  audio.addEventListener('pause', savefxyz,false);
- audio.addEventListener('pause', function() { tm = setInterval( renderA, 16 ) },false);
+ //audio.addEventListener('pause', function() { tm = setInterval( renderA, 16 ) },false);
  audio.addEventListener('volumechange', function() { vol=audio.volume },false); 
 }			// ---- end of initCtx() ----
 
@@ -126,9 +127,9 @@ var wX = 400, wY = 400;
 function ini() {
   initgls(); //setPos(xv,yv,zv); //movsp();
 // ------- Jun 2024 -------
-const st='Stop Putin,Trump and Netanyahu NOW...!<br>&emsp; The essence of their beliefs is<br>&emsp;&emsp; murder and violence.'
+const st='Stop Putin,Netanyahu and Trump NOW...!<br>&emsp;No future in self-preservation tyranny.'
 
-document.getElementById("centered0").innerHTML=st
+document.getElementById("centered0").innerHTML=st	//&emsp;
 
   document.querySelector("#input").addEventListener("change", function () { handleFiles() } );
   document.querySelector("#loop").addEventListener("click",   function () { chkLoop() } );
@@ -174,16 +175,18 @@ function savefxyz() {
 	fxyz[0]=String(xv).substr(0, 5); fxyz[1]=String(yv).substr(0, 5); fxyz[2]=String(zv).substr(0, 5);
 	fxyz[3]=String(vol).substr(0, 5); fxyz[4]=String(bv).substr(0, 5); fxyz[5]=String(tv).substr(0, 5);	// -8
 	localStorage.setItem(fname, JSON.stringify(fxyz));
-		clearInterval( tm ); //console.log(max8k,max12k)		// +++++++++++++++++++++++++
+		//clearInterval( tm ); console.log(max8k,max12k)		// +++++++++++++++++++++++++
 //  } catch(e) {
 //    return false; 
 //  }	
 }
 
 var lp = false;
-function chkLoop() { 
-  if ( document.getElementById('loop').checked ) { lp = true;  }
-  else { lp = false;}
+function chkLoop() {
+  if ( document.getElementById('loop').checked ) { lp = true; tm = setInterval( renderA, 16 ); }
+	//trebleL.disconnect(); trebleL.connect(audioCtx.destination); 
+	//trebleR.disconnect(); trebleR.connect(audioCtx.destination); }
+  else { lp = false; clearInterval(tm); ctxA.clearRect(0, 220, canvasA.width, 81) }
 }
 
 function movsp() { 
@@ -194,7 +197,7 @@ function movsp() {
     cubeL.rotation.y=Math.atan(-xv2/zv*0.5); cubeR.rotation.y=Math.atan( xv2/zv*0.5);
     cubeL.rotation.x=Math.atan(-yv/zv*0.1);  cubeR.rotation.x=Math.atan(-yv/zv*0.1);	
  renderer.render( scene, camera ); 
-chkLoop();   
+//chkLoop();   
 }
 
 function handleFiles() { 
@@ -219,7 +222,7 @@ function loadsrc() {	document.getElementById("centered0").innerHTML=''
 	loadfxyz();
 		setPos( xv, yv, zv ); changeBass(bv); changeTreble(tv);
     showMetaData(document.getElementsByTagName('input')[6].files[fc]);						
-    audio.src=src;	audio.autoplay = true;	tm = setInterval( renderA, 16 );
+    audio.src=src;	audio.autoplay = true;	//tm = setInterval( renderA, 16 );
   
     audio.oncanplaythrough  = (event) => {			//onloadeddata
       if ( fc  < flen ) { 
@@ -272,7 +275,7 @@ function setDelay() {		// in seconds
   xs = pannerCL.positionX.value; ys = pannerCL.positionY.value; zs = -pannerCL.positionZ.value
 	dv=  ( Math.sqrt(xs*xs +ys*ys +(zs+lz)*(zs+lz))-df )/340;	
   
-	dr=dr*3;dw=dw*3;dv=dv*3; //console.log( dr*340,dw*340,dv*340 )
+	dr=dr*4;dw=dw*4;dv=dv*4; //console.log( dr*340,dw*340,dv*340 )
 	//delayR.delayTime.value = df/340;	in seconds
 	
 	delayRL.delayTime.value = dr; delayRR.delayTime.value = dr; 	//rear
@@ -440,11 +443,13 @@ function renderA() {
 	 analyserL.getByteFrequencyData(spectrumsL); analyserR.getByteFrequencyData(spectrumsR);
 		ctxA.clearRect(0, 220, canvasA.width, 80);
 	while ( fq<cSize ) { 		// len=512
-     	sL = spectrumsL[fq]; sR = spectrumsR[fq]; sLR = Math.floor( ( sL+sR )/20 )
+     	sL = spectrumsL[fq]/10; sR = spectrumsR[fq]/10; sLR = Math.floor( ( sL+sR )/20 )
 			//if ( fq<128 && sLR>max8k ) { max8k = sLR } //fq*dt }
 			//if ( fq>128 && sLR>max12k ) { max12k = sLR } //fq*dt }
 		hue = fq/len * 360; ctxA.strokeStyle = 'hsl(' + hue + ',100%, 65%)';
-			 ctxA.strokeRect( fq+72, 300, 1, -sLR);
+			 ctxA.strokeRect( fq+72, 280, 1, -sL);
+		//hue = fq/len * 360; ctxA.strokeStyle = 'hsl(' + hue + ',100%, 65%)';
+			 ctxA.strokeRect( fq+72, 280, 1, sR);
 		fq++;	
    } 	
 }
