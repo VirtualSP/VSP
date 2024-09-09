@@ -107,9 +107,9 @@ var cube, plane, light0,Sphere0, meshL,meshR,cubeL, cubeR;
 var wX = 400, wY = 400;   
 
 function ini() {
-  initgls(); //setPos(xv,yv,zv); //movsp();
+  initgls(); quarter(); //setPos(xv,yv,zv); //movsp();
 // ------- Jun 2024 -------
-const st='Stop Putin,Netanyahu and Trump NOW...!<br>&emsp;No future in self-preservation tyranny.'
+const st='Stop Putin,Netanyahu and Trump !<br> They believe in the imperial tyranny<br> of the last century.'
 
 document.getElementById("centered0").innerHTML=st	//&emsp;
 
@@ -431,4 +431,9 @@ function renderA() {
 			 //ctxA.strokeRect( 400-fq/2-52, 280, 1, -sR);
 		fq++;	
    } 	
+}
+
+function quarter() {	
+ var screenAvailWidth = window.screen.availWidth; console.log(window.screen.availHeight)
+  window.resizeTo(window.screen.availWidth / 8, window.screen.availHeight / 8);
 }
