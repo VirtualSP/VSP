@@ -136,16 +136,16 @@ function loadfxyz() {
  	fxyz = JSON.parse(localStorage.getItem(fname));
 	if (fxyz) {	
 	 xv = parseFloat(fxyz[0]); yv = parseFloat(fxyz[1]); zv = parseFloat(fxyz[2]);
-		document.getElementById("xValue").innerHTML="pos_x = "+ xv;
+		document.getElementById("xValue").innerHTML="sp_x = "+ xv;
    		  document.querySelector("#xv").value = xv;
-		document.getElementById("yValue").innerHTML="pos_y = "+ yv;
+		document.getElementById("yValue").innerHTML="sp_y = "+ yv;
     		  document.querySelector("#yv").value = yv;
-		document.getElementById("zValue").innerHTML="pos_z = "+ zv;
+		document.getElementById("zValue").innerHTML="sp_z = "+ zv;
     		  document.querySelector("#zv").value = zv; 
 	 vol = parseFloat(fxyz[3]); bv = parseFloat(fxyz[4]); tv = parseFloat(fxyz[5]);
-		document.getElementById("trebleValue").innerHTML="pos_t = "+ tv;
+		document.getElementById("trebleValue").innerHTML="treble = "+ tv;
    		  document.querySelector("#treble").value = tv;
-		document.getElementById("bassValue").innerHTML="pos_b = "+ bv;
+		document.getElementById("bassValue").innerHTML="bass = "+ bv;
    		  document.querySelector("#bass").value = bv;	
 	}
 	else { defpos() }
@@ -273,9 +273,9 @@ function defpos() {
  document.getElementById("zValue").innerHTML="pos_z = "+ zv;
   document.querySelector("#zv").value = zv;
 		tv = 0; bv = 0
-		document.getElementById("trebleValue").innerHTML="pos_t = "+ tv;
+		document.getElementById("trebleValue").innerHTML="treble = "+ tv;
    		  document.querySelector("#treble").value = tv;
-		document.getElementById("bassValue").innerHTML="pos_b = "+ bv;
+		document.getElementById("bassValue").innerHTML="bass = "+ bv;
    		  document.querySelector("#bass").value = bv;
    //if ( fname ) { setDelay() } 	
  setPos(xv,yv,zv); changeBass(); changeTreble();
@@ -434,6 +434,6 @@ function renderA() {
 }
 
 function quarter() {	
- var screenAvailWidth = window.screen.availWidth; console.log(window.screen.availHeight)
+ //var screenAvailWidth = window.screen.availWidth; console.log(window.screen.availHeight)
   window.resizeTo(window.screen.availWidth / 8, window.screen.availHeight / 8);
 }
