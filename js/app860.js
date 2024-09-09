@@ -136,11 +136,11 @@ function loadfxyz() {
  	fxyz = JSON.parse(localStorage.getItem(fname));
 	if (fxyz) {	
 	 xv = parseFloat(fxyz[0]); yv = parseFloat(fxyz[1]); zv = parseFloat(fxyz[2]);
-		document.getElementById("xValue").innerHTML="sp_x = "+ xv;
+		document.getElementById("xValue").innerHTML="pos_x = "+ xv;
    		  document.querySelector("#xv").value = xv;
-		document.getElementById("yValue").innerHTML="sp_y = "+ yv;
+		document.getElementById("yValue").innerHTML="pos_y = "+ yv;
     		  document.querySelector("#yv").value = yv;
-		document.getElementById("zValue").innerHTML="sp_z = "+ zv;
+		document.getElementById("zValue").innerHTML="pos_z = "+ zv;
     		  document.querySelector("#zv").value = zv; 
 	 vol = parseFloat(fxyz[3]); bv = parseFloat(fxyz[4]); tv = parseFloat(fxyz[5]);
 		document.getElementById("trebleValue").innerHTML="treble = "+ tv;
@@ -165,8 +165,8 @@ function savefxyz() {
 
 var lp = false;
 function chkLoop() {
-  if ( document.getElementById('loop').checked ) { lp = true; tm = setInterval( renderA, 16 ); }
-  else { lp = false; clearInterval(tm); ctxA.clearRect(0, 220, canvasA.width, 81) }
+  if ( document.getElementById('loop').checked ) { lp = true } // tm = setInterval( renderA, 16 ); }
+  else { lp = false } // clearInterval(tm); ctxA.clearRect(0, 220, canvasA.width, 81) }
 }
 
 function movsp() { 
