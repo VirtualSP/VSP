@@ -2,7 +2,7 @@
  *   Virtual Speaker System 		Jun. 2024		L230 L38 L48 L55 L56
  */						
 var xv, yv, zv, vol, rv, tv,tvv, cv, bv;
- vol = 0.3;   rv =0.25;		// rv*5 =1 rv =0.25;	********
+ vol = 0.3;   rv =0.28;		// rv*5 =1 rv =0.25;	********
  xv = 5.0; yv = 2.0; zv = -10.0;  tv = 0.0; bv = 0.0;
 
 var AudioContext;
@@ -11,10 +11,11 @@ var gainL,gainBL,gainR,gainBR, gainRL, gainRR, gainCL,gainCR;
 var delayL, delayR, delayRL, delayRR, delayCL, delayCR
 var pannerL,pannerR,pannerBL,pannerBR, pannerRL, pannerRR, pannerCL,pannerCR; 
 var bassL,trebleL,trebleRL,bassR,trebleR,trebleRR;
-
+	var analyserL,spectrumsL,analyserR,spectrumsR, tm, sampleRate = 48000; fftSize = 512;
+	
 function initCtx() {
- audioCtx = new AudioContext(); 
- splitter = audioCtx.createChannelSplitter(2);
+ audioCtx = new AudioContext(); 	sampleRate = audioCtx.sampleRate; //48000
+ splitter = audioCtx.createChannelSplitter(8);
  listener = audioCtx.listener;			
 
  pannerL  = audioCtx.createPanner(); setProperties( pannerL );
@@ -33,8 +34,8 @@ function initCtx() {
   trebleL.frequency.value = 8000;
   trebleL.gain.value = tv;
  trebleLH = audioCtx.createBiquadFilter(); trebleLH.type = 'highshelf';
-  trebleLH.frequency.value = 12000;
-  trebleLH.gain.value = 3; //tv+4;											// +2
+  trebleLH.frequency.value = 16000;
+  trebleLH.gain.value = tv+8;											// +2
 
  bassR   = audioCtx.createBiquadFilter(); bassR.type   = 'lowshelf';
   bassR.frequency.value = 120;
@@ -43,35 +44,49 @@ function initCtx() {
   trebleR.frequency.value = 8000;
   trebleR.gain.value = tv;
  trebleRH = audioCtx.createBiquadFilter(); trebleRH.type = 'highshelf';
-  trebleRH.frequency.value = 12000;
-  trebleRH.gain.value = 3; //tv+4;												// +2
+  trebleRH.frequency.value = 16000;
+  trebleRH.gain.value = tv+8;												// +2
 
 gainBL = audioCtx.createGain(); gainBL.gain.value = rv;  	
 gainBR = audioCtx.createGain(); gainBR.gain.value = rv*0.8; 	//********
 gainCL = audioCtx.createGain(); gainCL.gain.value = rv*0.8; 	//********
 gainCR = audioCtx.createGain(); gainCR.gain.value = rv;
 
- gainRL = audioCtx.createGain(); gainRL.gain.value = rv; //rv; 					// rv
- gainRR = audioCtx.createGain(); gainRR.gain.value = rv; //rv;  				// rv
+ gainRL = audioCtx.createGain(); gainRL.gain.value = rv; //rv; 
+ gainRR = audioCtx.createGain(); gainRR.gain.value = rv; //rv;
 
 //delayL = audioCtx.createDelay();  delayR = audioCtx.createDelay();
 delayCL = audioCtx.createDelay(); delayCR = audioCtx.createDelay();
 delayBL = audioCtx.createDelay(); delayBR = audioCtx.createDelay();
 delayRL = audioCtx.createDelay(); delayRR = audioCtx.createDelay(); 
-//setDelay() 	 
 
-  splitter.connect(pannerL,0).connect(bassL).connect(trebleL).connect(trebleLH).connect(audioCtx.destination);
-    //.connect(delayL).connect(audioCtx.destination); 											//     RL	RR	
-  splitter.connect(gainRL,0).connect(pannerRL).connect(delayRL).connect(audioCtx.destination);				
-  splitter.connect(gainBL,0).connect(pannerBL).connect(delayBL).connect(audioCtx.destination);	// BR BL  L	 R CR CL	
+//setDelay() 	
+	analyserL = audioCtx.createAnalyser();	// analizer +++++++++++++++++++++++++++++++++++++++
+	analyserL.fftSize = fftSize;
+	analyserL.minDecibels = -100;  // Default -100 dB
+	analyserL.maxDecibels =    -30;  // Default  -30 dB
+	analyserR = audioCtx.createAnalyser();	// analizer +++++++++++++++++++++++++++++++++++++++
+	analyserR.fftSize = fftSize;
+	analyserR.minDecibels = -100;  // Default -100 dB
+	analyserR.maxDecibels =    -30;  // Default  -30 dB
+  var fsDivN = audioCtx.sampleRate / analyserL.fftSize; 
+	dt = sampleRate/fftSize ; // fftSize = 1024  smpRate = 48000 dt = 46.875 ( 8000Hz=170.6f)
+	fc8k = Math.floor(8000/dt); fc12k = Math.floor(12000/dt);
+	spectrumsL = new Uint8Array(analyserL.frequencyBinCount);	
+	spectrumsR = new Uint8Array(analyserR.frequencyBinCount);
+	tm = 0; //setInterval( renderA, 16 );	// +++++++++++++++++++++++++++++
+//
+  splitter.connect(pannerL,0).connect(bassL).connect(trebleL).connect(audioCtx.destination); 	//     RL	RR	
+  splitter.connect(gainRL,0).connect(pannerRL).connect(delayRL).connect(trebleLH).connect(audioCtx.destination);				
+  splitter.connect(gainBL,0).connect(pannerBL).connect(delayBL).connect(audioCtx.destination);	// BR BL L	R CR CL	
   splitter.connect(gainCL,0).connect(pannerCL).connect(delayCL).connect(audioCtx.destination);
-																								//	        o
-  splitter.connect(pannerR,1).connect(bassR).connect(trebleR).connect(trebleRH).connect(audioCtx.destination);
-    //.connect(delayR).connect(audioCtx.destination); 			
-  splitter.connect(gainRR,1).connect(pannerRR).connect(delayRR).connect(audioCtx.destination);			
+	trebleLH.connect(analyserL)																							//	        o
+  splitter.connect(pannerR,1).connect(bassR).connect(trebleR).connect(audioCtx.destination);		
+  splitter.connect(gainRR,1).connect(pannerRR).connect(delayRR).connect(trebleRH).connect(audioCtx.destination);			
   splitter.connect(gainBR,1).connect(pannerBR).connect(delayBR).connect(audioCtx.destination); 
   splitter.connect(gainCR,1).connect(pannerCR).connect(delayCR).connect(audioCtx.destination);
-
+	trebleRH.connect(analyserR)
+//  
 audio = new Audio(src); audio.controls = true; audio.volume=vol;	audio.clientWidth=50;
 audio.crossOrigin = "anonymous";			// +++ for chrome71- CORS access ++++
 
@@ -82,6 +97,7 @@ audio.crossOrigin = "anonymous";			// +++ for chrome71- CORS access ++++
 
  audio.addEventListener('ended', savefxyz,false);
  audio.addEventListener('pause', savefxyz,false);
+ //audio.addEventListener('pause', function() { tm = setInterval( renderA, 16 ) },false);
  audio.addEventListener('volumechange', function() { vol=audio.volume },false); 
 }			// ---- end of initCtx() ----
 
@@ -91,11 +107,11 @@ var cube, plane, light0,Sphere0, meshL,meshR,cubeL, cubeR;
 var wX = 400, wY = 400;   
 
 function ini() {
-  initgls(); //setPos(xv,yv,zv); //movsp();
+  initgls(); quarter(); //setPos(xv,yv,zv); //movsp();
 // ------- Jun 2024 -------
-const st='Stop Putin,Trump and Netanyahu NOW...!<br>&emsp; The essence of their beliefs is<br>&emsp;&emsp; murder and violence.'
+const st='Stop Putin,Netanyahu and Trump !<br> They believe in the imperial tyranny<br> of the last century.'
 
-document.getElementById("centered0").innerHTML=st
+document.getElementById("centered0").innerHTML=st	//&emsp;
 
   document.querySelector("#input").addEventListener("change", function () { handleFiles() } );
   document.querySelector("#loop").addEventListener("click",   function () { chkLoop() } );
@@ -127,9 +143,9 @@ function loadfxyz() {
 		document.getElementById("zValue").innerHTML="pos_z = "+ zv;
     		  document.querySelector("#zv").value = zv; 
 	 vol = parseFloat(fxyz[3]); bv = parseFloat(fxyz[4]); tv = parseFloat(fxyz[5]);
-		document.getElementById("trebleValue").innerHTML="pos_t = "+ tv;
+		document.getElementById("trebleValue").innerHTML="treble = "+ tv;
    		  document.querySelector("#treble").value = tv;
-		document.getElementById("bassValue").innerHTML="pos_b = "+ bv;
+		document.getElementById("bassValue").innerHTML="bass = "+ bv;
    		  document.querySelector("#bass").value = bv;	
 	}
 	else { defpos() }
@@ -141,15 +157,16 @@ function savefxyz() {
 	fxyz[0]=String(xv).substr(0, 5); fxyz[1]=String(yv).substr(0, 5); fxyz[2]=String(zv).substr(0, 5);
 	fxyz[3]=String(vol).substr(0, 5); fxyz[4]=String(bv).substr(0, 5); fxyz[5]=String(tv).substr(0, 5);	// -8
 	localStorage.setItem(fname, JSON.stringify(fxyz));
+		//clearInterval( tm ); console.log(max8k,max12k)		// +++++++++++++++++++++++++
 //  } catch(e) {
 //    return false; 
 //  }	
 }
 
 var lp = false;
-function chkLoop() { 
-  if ( document.getElementById('loop').checked ) { lp = true;  }
-  else { lp = false;}
+function chkLoop() {
+  if ( document.getElementById('loop').checked ) { lp = true } // tm = setInterval( renderA, 16 ); }
+  else { lp = false } // clearInterval(tm); ctxA.clearRect(0, 220, canvasA.width, 81) }
 }
 
 function movsp() { 
@@ -160,7 +177,7 @@ function movsp() {
     cubeL.rotation.y=Math.atan(-xv2/zv*0.5); cubeR.rotation.y=Math.atan( xv2/zv*0.5);
     cubeL.rotation.x=Math.atan(-yv/zv*0.1);  cubeR.rotation.x=Math.atan(-yv/zv*0.1);	
  renderer.render( scene, camera ); 
-chkLoop();   
+//chkLoop();   
 }
 
 function handleFiles() { 
@@ -185,7 +202,7 @@ function loadsrc() {	document.getElementById("centered0").innerHTML=''
 	loadfxyz();
 		setPos( xv, yv, zv ); changeBass(bv); changeTreble(tv);
     showMetaData(document.getElementsByTagName('input')[6].files[fc]);						
-    audio.src=src;	audio.autoplay = true;
+    audio.src=src;	audio.autoplay = true;	//tm = setInterval( renderA, 16 );
   
     audio.oncanplaythrough  = (event) => {			//onloadeddata
       if ( fc  < flen ) { 
@@ -208,37 +225,38 @@ function setPan( sp, x,y,z ) {
 
 var sx,sy,sz, spv=1.5									//*************
 function setPos(x,y,z) {
- var a,b, w,v, lz,dy; 	
-  a=1.5; lz = listener.positionZ.value= -z/5; dy = y/( z+lz )*a; //z=(z-2)*16
- //a=1.5; 			a=spv;
- w=x*1.5; v=w+2*x;	//console.log(a,w,v)		//*************
+ var a,b, w,v, lz,dy, zdy; 	
+  a=1.5; lz = listener.positionZ.value= camera.position.z; //-z; // -z/5 a=1.5 camera.position.z=6
+  dy = 2/( -z+lz ); //=y/( -z+lz )*a;	 //z=(z-2)*16
+ //x = x/2;			a=spv;
+ w=x*1.5; v=w+2*x; zdy = (-z+lz)*dy;	//*************
  if (fname) { 
-  setPan( pannerL, -x, y, z); setPan( pannerRL, -x, z*dy, z*a ); 	//y*a
-  setPan( pannerR,  x, y, z); setPan( pannerRR,  x, z*dy, z*a );	//console.log( x,z*dy, z*a )
-			setPan( pannerBL,  -w, z*dy, z*a);		//y*a
-			setPan( pannerBR,  -v, z*dy, z*a);		
-			setPan( pannerCL,   v, z*dy, z*a);
-			setPan( pannerCR,   w, z*dy, z*a);		
+  setPan( pannerL, -x, y, z); setPan( pannerRL, -x, zdy, z*a ); 	//y*a
+  setPan( pannerR,  x, y, z); setPan( pannerRR,  x, zdy, z*a );
+			setPan( pannerBL,  -w, zdy, z);		//y*a
+			setPan( pannerBR,  -v, zdy, z);		
+			setPan( pannerCL,   v, zdy, z);
+			setPan( pannerCR,   w, zdy, z);		
   setDelay();
-  //};	//sx=-x*a; sy=y*a; sz=z*a;
+		//sx=-x*a; sy=y*a; sz=z*a;
   }
   movsp();   //if (fname) { setDelay(); };
 }
 
 function setDelay() {		// in seconds
   var dr, dv, dw, df, xs,ys,zs, lz, e;
-     lz = listener.positionZ.value;
-  xs = pannerR.positionX.value; ys = pannerR.positionY.value; zs = pannerR.positionZ.value
+     lz = listener.positionZ.value;	lz=6
+  xs = pannerR.positionX.value; ys = pannerR.positionY.value; zs = -pannerR.positionZ.value; 
     df = Math.sqrt(xs*xs+ys*ys+(zs+lz)*(zs+lz));
-  xs = pannerRR.positionX.value; ys = pannerRR.positionY.value; zs = pannerRR.positionZ.value;
-    dr = ( Math.sqrt(xs*xs+ys*ys +(zs+lz)*(zs+lz))-df )/340;		// dr
-  xs = pannerCR.positionX.value; ys = pannerCR.positionY.value; zs = pannerCR.positionZ.value
+  xs = pannerRR.positionX.value; ys = pannerRR.positionY.value; zs = -pannerRR.positionZ.value;
+    dr = ( Math.sqrt(xs*xs+ys*ys +(zs+lz)*(zs+lz))-df )/340;	// dr
+  xs = pannerCR.positionX.value; ys = pannerCR.positionY.value; zs = -pannerCR.positionZ.value
 	dw = ( Math.sqrt(xs*xs +ys*ys +(zs+lz)*(zs+lz))-df )/340;
-  xs = pannerCL.positionX.value; ys = pannerCL.positionY.value; zs = pannerCL.positionZ.value
+  xs = pannerCL.positionX.value; ys = pannerCL.positionY.value; zs = -pannerCL.positionZ.value
 	dv=  ( Math.sqrt(xs*xs +ys*ys +(zs+lz)*(zs+lz))-df )/340;	
   
-	//console.log( df, dr*360,dw*360,dv*360 )
-	//delayR.delayTime.value = df/340;
+	dr=dr*4;dw=dw*4;dv=dv*4; //console.log( dr*340,dw*340,dv*340 )
+	//delayR.delayTime.value = df/340;	in seconds
 	
 	delayRL.delayTime.value = dr; delayRR.delayTime.value = dr; 	//rear
 	delayBL.delayTime.value = dw; delayBR.delayTime.value = dv;		// dw<dv
@@ -255,9 +273,9 @@ function defpos() {
  document.getElementById("zValue").innerHTML="pos_z = "+ zv;
   document.querySelector("#zv").value = zv;
 		tv = 0; bv = 0
-		document.getElementById("trebleValue").innerHTML="pos_t = "+ tv;
+		document.getElementById("trebleValue").innerHTML="treble = "+ tv;
    		  document.querySelector("#treble").value = tv;
-		document.getElementById("bassValue").innerHTML="pos_b = "+ bv;
+		document.getElementById("bassValue").innerHTML="bass = "+ bv;
    		  document.querySelector("#bass").value = bv;
    //if ( fname ) { setDelay() } 	
  setPos(xv,yv,zv); changeBass(); changeTreble();
@@ -274,7 +292,7 @@ function changeBass() {
 	
 function changeTreble() {
  var tvalue = document.getElementById("treble").valueAsNumber, tvH;
- tv = tvalue; tvH = ( 20-tvalue )/5;
+ tv = tvalue; tvH = tv+16; //( 20-tvalue )/5;	//console.log(tv,tvH,tv+tvH)
 
   if (fname) { 
   	trebleL.gain.value = tv;   trebleR.gain.value = tv;
@@ -310,6 +328,7 @@ renderer.setSize (wX,wY);
 renderer.setClearColor(0x3333ff, 0.5);						// 0x3333cc, 0.1
 	canvasB = document.getElementById("canvasB"); ctxB = canvasB.getContext("2d");
 	canvasC = document.getElementById("canvasC"); ctxC = canvasC.getContext("2d");
+		canvasA = document.getElementById("canvasA"); ctxA = canvasA.getContext("2d");	//+++++++
          
 camera = new THREE.PerspectiveCamera (60, 1, 1, 1000);  
 camera.position.x=0; camera.position.y=5; camera.position.z=6;   	//z:5
@@ -395,3 +414,26 @@ function showMetaData(data) {
 	document.getElementById("centered").innerHTML=result.title+"<br>"+result.artist[0];  } 
       });
     }
+// ------------- analizer --------------------------------
+var fq, cSize = fftSize/2, len=512,	max8k, max12k;	//fftSize = 1024;
+	//maxIndex = numArray.indexOf(Math.max(...numArray)); //animals.slice(2, 4)
+function renderA() {
+  var sL,sR,sLR, dtf,maxL,maxF;
+    fq = 0; max8k=0; max12k=0
+	 analyserL.getByteFrequencyData(spectrumsL); analyserR.getByteFrequencyData(spectrumsR);
+		ctxA.clearRect(0, 220, canvasA.width, 80);
+	while ( fq<cSize ) { 		// len=512
+     	sL = spectrumsL[fq]/5; sR = spectrumsR[fq]/5; sLR = Math.floor( ( sL+sR )/20 )
+			//if ( fq<128 && sLR>max8k ) { max8k = sLR } //fq*dt }
+			//if ( fq>128 && sLR>max12k ) { max12k = sLR } //fq*dt }
+		hue = fq/len * 360; ctxA.strokeStyle = 'hsl(' + hue + ',100%, 65%)';
+			 ctxA.strokeRect( fq+52, 280, 1, -sL);
+			 //ctxA.strokeRect( 400-fq/2-52, 280, 1, -sR);
+		fq++;	
+   } 	
+}
+
+function quarter() {	
+ //var screenAvailWidth = window.screen.availWidth; console.log(window.screen.availHeight)
+  window.resizeTo(window.screen.availWidth / 8, window.screen.availHeight / 8);
+}
