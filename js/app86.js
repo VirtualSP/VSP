@@ -28,7 +28,7 @@ function initCtx() {
  pannerRR = audioCtx.createPanner(); setProperties( pannerRR );
 
  bassL   = audioCtx.createBiquadFilter(); bassL.type   = 'lowshelf'; 
-  bassL.frequency.value = 120;
+  bassL.frequency.value = 80;
   bassL.gain.value = bv; 				// -40db...40db
  trebleL = audioCtx.createBiquadFilter(); trebleL.type   = 'highshelf';
   trebleL.frequency.value = 8000;
@@ -38,7 +38,7 @@ function initCtx() {
   trebleLH.gain.value = tv+8;											// +2
 
  bassR   = audioCtx.createBiquadFilter(); bassR.type   = 'lowshelf';
-  bassR.frequency.value = 120;
+  bassR.frequency.value = 80;
   bassR.gain.value = bv;
  trebleR = audioCtx.createBiquadFilter(); trebleR.type   = 'highshelf';
   trebleR.frequency.value = 8000;
@@ -109,7 +109,7 @@ var wX = 400, wY = 400;
 function ini() {
   initgls(); quarter(); //setPos(xv,yv,zv); //movsp();
 // ------- Jun 2024 -------
-const st='Stop Putin,Netanyahu and Trump !<br> They believe in the imperial tyranny<br> of the last century.'
+const st='Stop Putin,Netanyahu and Trump !<br> They will lead the world to war again.'
 
 document.getElementById("centered0").innerHTML=st	//&emsp;
 
@@ -196,13 +196,13 @@ function loadnext() {
    } 
 }
 
-function loadsrc() {	document.getElementById("centered0").innerHTML=''	
-    src = URL.createObjectURL(document.getElementsByTagName('input')[6].files[fc]);
+function loadsrc() {	document.getElementById("centered0").innerHTML=''
+    src = URL.createObjectURL(document.getElementsByTagName('input')[6].files[fc]); 
     fname = document.getElementsByTagName('input')[6].files[fc].name; 
 	loadfxyz();
 		setPos( xv, yv, zv ); changeBass(bv); changeTreble(tv);
     showMetaData(document.getElementsByTagName('input')[6].files[fc]);						
-    audio.src=src;	audio.autoplay = true;	//tm = setInterval( renderA, 16 );
+    audio.src=src;	audio.autoplay = true;	 //console.log( audio.volume );	 //tm = setInterval( renderA, 16 );
   
     audio.oncanplaythrough  = (event) => {			//onloadeddata
       if ( fc  < flen ) { 
@@ -229,10 +229,10 @@ function setPos(x,y,z) {
   a=1.5; lz = listener.positionZ.value= camera.position.z; //-z; // -z/5 a=1.5 camera.position.z=6
   dy = 2/( -z+lz ); //=y/( -z+lz )*a;	 //z=(z-2)*16
  //x = x/2;			a=spv;
- w=x*1.5; v=w+2*x; zdy = (-z+lz)*dy;	//*************
+ w=x*1.5; v=w+2*x; zdy = (-z+lz)*dy-4;	//*************
  if (fname) { 
-  setPan( pannerL, -x, y, z); setPan( pannerRL, -x, zdy, z*a ); 	//y*a
-  setPan( pannerR,  x, y, z); setPan( pannerRR,  x, zdy, z*a );
+  setPan( pannerL, -x, y-4, z); setPan( pannerRL, -x, zdy, z*a ); 	//y*a -4
+  setPan( pannerR,  x, y-4, z); setPan( pannerRR,  x, zdy, z*a );
 			setPan( pannerBL,  -w, zdy, z);		//y*a
 			setPan( pannerBR,  -v, zdy, z);		
 			setPan( pannerCL,   v, zdy, z);
@@ -255,7 +255,7 @@ function setDelay() {		// in seconds
   xs = pannerCL.positionX.value; ys = pannerCL.positionY.value; zs = -pannerCL.positionZ.value
 	dv=  ( Math.sqrt(xs*xs +ys*ys +(zs+lz)*(zs+lz))-df )/340;	
   
-	dr=dr*4;dw=dw*4;dv=dv*4; //console.log( dr*340,dw*340,dv*340 )
+	dr=dr*4;dw=dw*4;dv=dv*4; //console.log( dr*340,dw*340,dv*340 ) 19.1 3.6 27.6
 	//delayR.delayTime.value = df/340;	in seconds
 	
 	delayRL.delayTime.value = dr; delayRR.delayTime.value = dr; 	//rear
