@@ -108,7 +108,7 @@ audio.crossOrigin = "anonymous";			// +++ for chrome71- CORS access ++++
  audio.addEventListener('ended', savefxyz,false);
  audio.addEventListener('pause', savefxyz,false);
  //audio.addEventListener('pause', function() { tm = setInterval( renderA, 16 ) },false);
- audio.addEventListener('volumechange', function() { vol=audio.volume },false); 
+ audio.addEventListener('volumechange', function() { vol=audio.volume },false);
 }			// ---- end of initCtx() ----
 
 var camera, scene, renderer, canvas,ctx,geometry,material;	
@@ -140,11 +140,14 @@ document.getElementById("centered0").innerHTML=st	//&emsp;
  
 }		// ---- end of ini ----
 
+var prevf = ['5', '2', '-10', '0.3', '0', '0'];
 function loadfxyz() {
-  var fxyz=Array();
+  var fxyz= new Array();
 
- 	fxyz = JSON.parse(localStorage.getItem(fname));
-	if (fxyz) {	
+ 	fxyz = JSON.parse(localStorage.getItem(fname)); 
+	if ( fxyz==null ) { fxyz = prevf.concat(); console.log('null',fxyz) }
+	//if (fxyz) {	 
+	//prevf = fxyz; console.log(fxyz)
 	 xv = parseFloat(fxyz[0]); yv = parseFloat(fxyz[1]); zv = parseFloat(fxyz[2]);
 		document.getElementById("xValue").innerHTML="pos_x = "+ xv;
    		  document.querySelector("#xv").value = xv;
@@ -156,18 +159,21 @@ function loadfxyz() {
 		document.getElementById("trebleValue").innerHTML="treble = "+ tv;
    		  document.querySelector("#treble").value = tv;
 		document.getElementById("bassValue").innerHTML="bass = "+ bv;
-   		  document.querySelector("#bass").value = bv;	
-	}
-	else { defpos() }
+   		  document.querySelector("#bass").value = bv;
+	//prevf = fxyz.concat(); //console.log(prevf)
+	//}
+	//else { defpos() }
+	//console.log(prevf,fxyz)
 }
-
+	
 function savefxyz() { 
-  var fxyz=Array();
+  var fxyz=new Array();
  //  try {
 	fxyz[0]=String(xv).substr(0, 5); fxyz[1]=String(yv).substr(0, 5); fxyz[2]=String(zv).substr(0, 5);
 	fxyz[3]=String(vol).substr(0, 5); fxyz[4]=String(bv).substr(0, 5); fxyz[5]=String(tv).substr(0, 5);	// -8
 	localStorage.setItem(fname, JSON.stringify(fxyz));
-		//clearInterval( tm ); console.log(max8k,max12k)		// +++++++++++++++++++++++++
+		prevf = fxyz.concat(); //console.log(prevf)
+		console.log('saved:',fxyz,prevf); //clearInterval( tm ); console.log(max8k,max12k)		// +++++++++++++++++++++++++
 //  } catch(e) {
 //    return false; 
 //  }	
@@ -208,7 +214,7 @@ function loadnext() {
 
 function loadsrc() {	document.getElementById("centered0").innerHTML=''
     src = URL.createObjectURL(document.getElementsByTagName('input')[6].files[fc]); 
-    fname = document.getElementsByTagName('input')[6].files[fc].name; 
+    fname = document.getElementsByTagName('input')[6].files[fc].name;
 	loadfxyz();
 		setPos( xv, yv, zv ); changeBass(bv); changeTreble(tv);
     showMetaData(document.getElementsByTagName('input')[6].files[fc]);						
@@ -225,7 +231,7 @@ function loadsrc() {	document.getElementById("centered0").innerHTML=''
 
 function setProperties( sp, fl ) {
   sp.orientationX.value = 0; 	sp.orientationY.value = 0; 	sp.orientationZ.value = 1;
-  sp.rolloffFactor = 0.1; 	  sp.maxDistance = 24;	sp.refDistance = 0; 
+  sp.rolloffFactor = 0.5; 	  sp.maxDistance = 24;	sp.refDistance = 0; 
   if ( fl==1 ) { sp.panningModel = 'HRTF'; } else { sp.panningModel = 'equalpower' } 
   sp.distanceModel = 'linear';	//equalpower HRTF
 }
@@ -248,7 +254,7 @@ function setPos(x,y,z) {
 			setPan( pannerBR,  -v, zdy, z);		
 			setPan( pannerCL,   v, zdy, z);
 			setPan( pannerCR,   w, zdy, z);		
-  setDelay();	console.log(z)
+  setDelay();	//console.log(z,v,w)
 		//sx=-x*a; sy=y*a; sz=z*a;
   }
   movsp();   //if (fname) { setDelay(); };
