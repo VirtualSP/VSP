@@ -15,7 +15,7 @@ var bassL,trebleL,trebleRL,bassR,trebleR,trebleRR;
 	
 function initCtx() {
  audioCtx = new AudioContext(); 	sampleRate = audioCtx.sampleRate; //48000
- splitter = audioCtx.createChannelSplitter(8);
+ splitter = audioCtx.createChannelSplitter(2);
  listener = audioCtx.listener;			
 
  pannerL  = audioCtx.createPanner(); setProperties( pannerL,1 );
@@ -45,7 +45,7 @@ function initCtx() {
   trebleR.gain.value = tv;
  trebleRH = audioCtx.createBiquadFilter(); trebleRH.type = 'highshelf';
   trebleRH.frequency.value = 16000;
-  trebleRH.gain.value = tv+4;												// +2
+  trebleRH.gain.value = tv+4;											// +2
 
 gainBL = audioCtx.createGain(); gainBL.gain.value = rv;  	
 gainBR = audioCtx.createGain(); gainBR.gain.value = rv*0.8; 	//********
@@ -75,7 +75,7 @@ delayRL = audioCtx.createDelay(); delayRR = audioCtx.createDelay();
 	spectrumsL = new Uint8Array(analyserL.frequencyBinCount);	
 	spectrumsR = new Uint8Array(analyserR.frequencyBinCount);
 	tm = 0; //setInterval( renderA, 16 );	// +++++++++++++++++++++++++++++
-//
+/*
   splitter.connect(pannerL,0).connect(bassL).connect(trebleL).connect(audioCtx.destination); 	//     RL	RR	
   splitter.connect(gainRL,0).connect(pannerRL).connect(delayRL).connect(trebleLH).connect(audioCtx.destination);				
   splitter.connect(gainBL,0).connect(pannerBL).connect(delayBL).connect(audioCtx.destination);	// BR BL L	R CR CL	
@@ -86,17 +86,17 @@ delayRL = audioCtx.createDelay(); delayRR = audioCtx.createDelay();
   splitter.connect(gainBR,1).connect(pannerBR).connect(delayBR).connect(audioCtx.destination); 
   splitter.connect(gainCR,1).connect(pannerCR).connect(delayCR).connect(audioCtx.destination);
 	//trebleRH.connect(analyserR)
-//  
-/*
-  //splitter.connect(pannerL,0).connect(bassL).connect(trebleL).connect(audioCtx.destination); 	//     RL	RR	
-  splitter.connect(pannerRL,0).connect(gainRL).connect(delayRL).connect(trebleLH).connect(audioCtx.destination);				
-  splitter.connect(pannerBL,0).connect(gainBL).connect(delayBL).connect(audioCtx.destination);	// BR BL L	R CR CL	
-  splitter.connect(pannerCL,0).connect(gainCL).connect(delayCL).connect(audioCtx.destination);																						//	        o
-  //splitter.connect(pannerR,1).connect(bassR).connect(trebleR).connect(audioCtx.destination);		
-  splitter.connect(pannerRR,1).connect(gainRR).connect(delayRR).connect(trebleRH).connect(audioCtx.destination);			
-  splitter.connect(pannerBR,1).connect(gainBR).connect(delayBR).connect(audioCtx.destination); 
-  splitter.connect(pannerCR,1).connect(gainCR).connect(delayCR).connect(audioCtx.destination);
 */  
+//
+  splitter.connect(pannerL,0).connect(bassL).connect(trebleL).connect(audioCtx.destination); 	//     RL	RR	
+  splitter.connect(pannerRL,0).connect(delayRL).connect(trebleLH).connect(audioCtx.destination);				
+  splitter.connect(pannerBL,0).connect(delayBL).connect(audioCtx.destination);	// BR BL L	R CR CL	
+  splitter.connect(pannerCL,0).connect(delayCL).connect(audioCtx.destination);																						//	        o
+  splitter.connect(pannerR,1).connect(bassR).connect(trebleR).connect(audioCtx.destination);		
+  splitter.connect(pannerRR,1).connect(delayRR).connect(trebleRH).connect(audioCtx.destination);			
+  splitter.connect(pannerBR,1).connect(delayBR).connect(audioCtx.destination); 
+  splitter.connect(pannerCR,1).connect(delayCR).connect(audioCtx.destination);
+//  
 audio = new Audio(src); audio.controls = true; audio.volume=vol;	audio.clientWidth=50;
 audio.crossOrigin = "anonymous";			// +++ for chrome71- CORS access ++++
 
@@ -141,13 +141,13 @@ document.getElementById("centered0").innerHTML=st	//&emsp;
 }		// ---- end of ini ----
 
 var prevf = ['5', '2', '-10', '0.3', '0', '0'];
+//If speaker position, bass, or treble is not specified, the previous settings will be applied.
 function loadfxyz() {
   var fxyz= new Array();
 
  	fxyz = JSON.parse(localStorage.getItem(fname)); 
-	if ( fxyz==null ) { fxyz = prevf.concat(); console.log('null',fxyz) }
+		if ( fxyz==null ) { fxyz = prevf.concat() }
 	//if (fxyz) {	 
-	//prevf = fxyz; console.log(fxyz)
 	 xv = parseFloat(fxyz[0]); yv = parseFloat(fxyz[1]); zv = parseFloat(fxyz[2]);
 		document.getElementById("xValue").innerHTML="pos_x = "+ xv;
    		  document.querySelector("#xv").value = xv;
@@ -160,10 +160,8 @@ function loadfxyz() {
    		  document.querySelector("#treble").value = tv;
 		document.getElementById("bassValue").innerHTML="bass = "+ bv;
    		  document.querySelector("#bass").value = bv;
-	//prevf = fxyz.concat(); //console.log(prevf)
 	//}
 	//else { defpos() }
-	//console.log(prevf,fxyz)
 }
 	
 function savefxyz() { 
@@ -172,8 +170,8 @@ function savefxyz() {
 	fxyz[0]=String(xv).substr(0, 5); fxyz[1]=String(yv).substr(0, 5); fxyz[2]=String(zv).substr(0, 5);
 	fxyz[3]=String(vol).substr(0, 5); fxyz[4]=String(bv).substr(0, 5); fxyz[5]=String(tv).substr(0, 5);	// -8
 	localStorage.setItem(fname, JSON.stringify(fxyz));
-		prevf = fxyz.concat(); //console.log(prevf)
-		console.log('saved:',fxyz,prevf); //clearInterval( tm ); console.log(max8k,max12k)		// +++++++++++++++++++++++++
+		prevf = fxyz.concat();
+				//clearInterval( tm );
 //  } catch(e) {
 //    return false; 
 //  }	
@@ -244,17 +242,17 @@ var sx,sy,sz, spv=1.5									//*************
 function setPos(x,y,z) {
  var a,b, w,v, lz,dy, zdy; 	
   a=1.5; lz = 0; listener.positionZ.value = 0; //camera.position.z; // -z/5 a=1.5 camera.position.z=6
-  dy = 2/( -z+lz ); //=y/( -z+lz )*a;	 //z=(z-2)*16
+  dy = y-4; //2/( -z+lz ); //=y/( -z+lz )*a;	 //z=(z-2)*16
  //x = x/2;			a=spv;
  w=x*1.5; v=w+2*x; zdy = (-z+lz)*dy-4;	//*************
  if (fname) { 		//b=50; x=x*b;y=y*b; z=z*b
-  setPan( pannerL, -x, y-4, z); setPan( pannerRL, -x, zdy, z*a ); 	//y*a -4
-  setPan( pannerR,  x, y-4, z); setPan( pannerRR,  x, zdy, z*a );
-			setPan( pannerBL,  -w, zdy, z);		//y*a
-			setPan( pannerBR,  -v, zdy, z);		
-			setPan( pannerCL,   v, zdy, z);
-			setPan( pannerCR,   w, zdy, z);		
-  setDelay();	//console.log(z,v,w)
+  setPan( pannerL, -x, dy, z); setPan( pannerRL, -x, dy, z*a ); 	//y*a -4
+  setPan( pannerR,  x, dy, z); setPan( pannerRR,  x, dy, z*a );
+			setPan( pannerBL,  -w, dy, z);		//y*a
+			setPan( pannerBR,  -v, dy, z);		
+			setPan( pannerCL,   v, dy, z);
+			setPan( pannerCR,   w, dy, z);		
+  setDelay();	b=Math.sqrt(w*w+dy*dy+z*z); //console.log(dy,b )
 		//sx=-x*a; sy=y*a; sz=z*a;
   }
   movsp();   //if (fname) { setDelay(); };
@@ -262,7 +260,7 @@ function setPos(x,y,z) {
 
 function setDelay() {		// in seconds
   var dr, dv, dw, df, xs,ys,zs, lz, e;
-     lz = listener.positionZ.value;	lz=6
+     lz = listener.positionZ.value;	lz=0
   xs = pannerR.positionX.value; ys = pannerR.positionY.value; zs = -pannerR.positionZ.value; 
     df = Math.sqrt(xs*xs+ys*ys+(zs+lz)*(zs+lz));
   xs = pannerRR.positionX.value; ys = pannerRR.positionY.value; zs = -pannerRR.positionZ.value;
@@ -272,7 +270,7 @@ function setDelay() {		// in seconds
   xs = pannerCL.positionX.value; ys = pannerCL.positionY.value; zs = -pannerCL.positionZ.value
 	dv=  ( Math.sqrt(xs*xs +ys*ys +(zs+lz)*(zs+lz))-df )/340;	
   
-	dr=dr*2;dw=dw*2;dv=dv*2; //console.log( dr,dw,dv ) //19.1 3.6 27.6
+	dr=dr;dw=dw;dv=dv; // *2 console.log( dr,dw,dv ) //19.1 3.6 27.6
 	//delayR.delayTime.value = df/340;	in seconds
 	
 	delayRL.delayTime.value = dr; delayRR.delayTime.value = dr; 	//rear
@@ -309,7 +307,7 @@ function changeBass() {
 	
 function changeTreble() {
  var tvalue = document.getElementById("treble").valueAsNumber, tvH;
- tv = tvalue; tvH = tv+4; //( 20-tvalue )/5;	//console.log(tv,tvH,tv+tvH)
+ tv = tvalue; if ( tv>0 ) { tvH = tv+4 } else { tvH = 4 } //( 20-tvalue )/5;	//console.log(tv,tvH,tv+tvH)
 
   if (fname) { 
   	trebleL.gain.value = tv;   trebleR.gain.value = tv;
