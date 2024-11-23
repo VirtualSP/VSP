@@ -2,7 +2,7 @@
  *   Virtual Speaker System 		Jun. 2024		L230 L38 L48 L55 L56
  */						
 var xv, yv, zv, vol, rv, tv,tvv, cv, bv;
- vol = 0.3;   rv =0.3;		// rv*5 =1 rv =0.25;	********
+ vol = 0.3;   rv =0.3;		// rv*5 =1 rv =0.25;						// ***2.0***
  xv = 5.0; yv = 2.0; zv = -10.0;  tv = 0.0; bv = 0.0;
 
 var AudioContext;
@@ -15,7 +15,8 @@ var bassL,trebleL,trebleRL,bassR,trebleR,trebleRR;
 	
 function initCtx() {
  audioCtx = new AudioContext(); 	sampleRate = audioCtx.sampleRate; //48000
- splitter = audioCtx.createChannelSplitter(2);
+ //console.log(audioCtx.destination.maxChannelCount)=2
+ splitter = audioCtx.createChannelSplitter(2);					// ***2.0***
  listener = audioCtx.listener;			
 
  pannerL  = audioCtx.createPanner(); setProperties( pannerL,1 );
@@ -48,12 +49,12 @@ function initCtx() {
   trebleRH.gain.value = tv+4;											// +2
 
 gainBL = audioCtx.createGain(); gainBL.gain.value = rv;  	
-gainBR = audioCtx.createGain(); gainBR.gain.value = rv*0.8; 	//********
-gainCL = audioCtx.createGain(); gainCL.gain.value = rv*0.8; 	//********
+gainBR = audioCtx.createGain(); gainBR.gain.value = rv; 	//*<-0.8**	// ***2.0***	
+gainCL = audioCtx.createGain(); gainCL.gain.value = rv; 	//********	// ***2.0***
 gainCR = audioCtx.createGain(); gainCR.gain.value = rv;
 
- gainRL = audioCtx.createGain(); gainRL.gain.value = rv; //rv; 
- gainRR = audioCtx.createGain(); gainRR.gain.value = rv; //rv;
+ gainRL = audioCtx.createGain(); gainRL.gain.value = rv; 
+ gainRR = audioCtx.createGain(); gainRR.gain.value = rv;
 
 //delayL = audioCtx.createDelay();  delayR = audioCtx.createDelay();
 delayCL = audioCtx.createDelay(); delayCR = audioCtx.createDelay();
@@ -87,7 +88,7 @@ delayRL = audioCtx.createDelay(); delayRR = audioCtx.createDelay();
   splitter.connect(gainCR,1).connect(pannerCR).connect(delayCR).connect(audioCtx.destination);
 	//trebleRH.connect(analyserR)
 */  
-//
+//		// ***2.0***
   splitter.connect(pannerL,0).connect(bassL).connect(trebleL).connect(audioCtx.destination); 	//     RL	RR	
   splitter.connect(pannerRL,0).connect(delayRL).connect(trebleLH).connect(audioCtx.destination);				
   splitter.connect(pannerBL,0).connect(delayBL).connect(audioCtx.destination);	// BR BL L	R CR CL	
@@ -119,7 +120,7 @@ var wX = 400, wY = 400;
 function ini() { 
   initgls(); quarter(); //setPos(xv,yv,zv); //movsp();
 // ------- Jun 2024 -------
-const st='Stop Putin,Netanyahu and Trump !<br> Test var App860'
+const st='Stop Putin,Netanyahu and Trump !<br>Unite against the Emperors of the 21c !'
 
 document.getElementById("centered0").innerHTML=st	//&emsp;
 
@@ -140,14 +141,14 @@ document.getElementById("centered0").innerHTML=st	//&emsp;
  
 }		// ---- end of ini ----
 
-var prevf = ['5', '2', '-10', '0.3', '0', '0'];
+var prevf = ['5', '2', '-10', '0.3', '0', '0'];				// ***2.0***
 //If speaker position, bass, or treble is not specified, the previous settings will be applied.
 function loadfxyz() {
   var fxyz= new Array();
 
  	fxyz = JSON.parse(localStorage.getItem(fname)); 
 		if ( fxyz==null ) { fxyz = prevf.concat() }
-	//if (fxyz) {	 
+	//if (fxyz) {	 										// ***2.0***
 	 xv = parseFloat(fxyz[0]); yv = parseFloat(fxyz[1]); zv = parseFloat(fxyz[2]);
 		document.getElementById("xValue").innerHTML="pos_x = "+ xv;
    		  document.querySelector("#xv").value = xv;
@@ -170,7 +171,7 @@ function savefxyz() {
 	fxyz[0]=String(xv).substr(0, 5); fxyz[1]=String(yv).substr(0, 5); fxyz[2]=String(zv).substr(0, 5);
 	fxyz[3]=String(vol).substr(0, 5); fxyz[4]=String(bv).substr(0, 5); fxyz[5]=String(tv).substr(0, 5);	// -8
 	localStorage.setItem(fname, JSON.stringify(fxyz));
-		prevf = fxyz.concat();
+		prevf = fxyz.concat();								// ***2.0***
 				//clearInterval( tm );
 //  } catch(e) {
 //    return false; 
@@ -227,7 +228,7 @@ function loadsrc() {	document.getElementById("centered0").innerHTML=''
    };
 }
 
-function setProperties( sp, fl ) {
+function setProperties( sp, fl ) {					// ***2.0***
   sp.orientationX.value = 0; 	sp.orientationY.value = 0; 	sp.orientationZ.value = 1;
   sp.rolloffFactor = 0.5; 	  sp.maxDistance = 24;	sp.refDistance = 0; 
   if ( fl==1 ) { sp.panningModel = 'HRTF'; } else { sp.panningModel = 'equalpower' } 
@@ -235,14 +236,14 @@ function setProperties( sp, fl ) {
 }
 
 function setPan( sp, x,y,z ) {
-  sp.positionX.value = x; sp.positionY.value = y; sp.positionZ.value = z;
+  sp.positionX.value = x/2; sp.positionY.value = y; sp.positionZ.value = z;
 }
 
 var sx,sy,sz, spv=1.5									//*************
-function setPos(x,y,z) {
+function setPos(x,y,z) {				
  var a,b, w,v, lz,dy, zdy; 	
   a=1.5; lz = 0; listener.positionZ.value = 0; //camera.position.z; // -z/5 a=1.5 camera.position.z=6
-  dy = y-4; //2/( -z+lz ); //=y/( -z+lz )*a;	 //z=(z-2)*16
+  dy = y-4; //2/( -z+lz ); //=y/( -z+lz )*a;	 //z=(z-2)*16		// ***2.0***
  //x = x/2;			a=spv;
  w=x*1.5; v=w+2*x; zdy = (-z+lz)*dy-4;	//*************
  if (fname) { 		//b=50; x=x*b;y=y*b; z=z*b
@@ -252,7 +253,7 @@ function setPos(x,y,z) {
 			setPan( pannerBR,  -v, dy, z);		
 			setPan( pannerCL,   v, dy, z);
 			setPan( pannerCR,   w, dy, z);		
-  setDelay();	b=Math.sqrt(w*w+dy*dy+z*z); //console.log(dy,b )
+  setDelay();	//b=Math.sqrt(w*w+dy*dy+z*z); //console.log(dy,b )
 		//sx=-x*a; sy=y*a; sz=z*a;
   }
   movsp();   //if (fname) { setDelay(); };
@@ -260,8 +261,8 @@ function setPos(x,y,z) {
 
 function setDelay() {		// in seconds
   var dr, dv, dw, df, xs,ys,zs, lz, e;
-     lz = listener.positionZ.value;	lz=0
-  xs = pannerR.positionX.value; ys = pannerR.positionY.value; zs = -pannerR.positionZ.value; 
+     lz = 0; //listener.positionZ.value;	lz=0				// ***2.0***
+  xs = pannerR.positionX.value; ys = pannerR.positionY.value; zs = -pannerR.positionZ.value;
     df = Math.sqrt(xs*xs+ys*ys+(zs+lz)*(zs+lz));
   xs = pannerRR.positionX.value; ys = pannerRR.positionY.value; zs = -pannerRR.positionZ.value;
     dr = ( Math.sqrt(xs*xs+ys*ys +(zs+lz)*(zs+lz))-df )/340;	// dr
