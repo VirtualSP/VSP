@@ -236,7 +236,7 @@ function setProperties( sp, fl ) {					// ***2.0***
 }
 
 function setPan( sp, x,y,z ) {
-  sp.positionX.value = x/2; sp.positionY.value = y; sp.positionZ.value = z;
+  sp.positionX.value = x/3*2; sp.positionY.value = y; sp.positionZ.value = z;
 }
 
 var sx,sy,sz, spv=1.5									//*************
