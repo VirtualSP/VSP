@@ -15,7 +15,7 @@ var bassL,trebleL,trebleRL,bassR,trebleR,trebleRR;
 	
 function initCtx() {
  audioCtx = new AudioContext(); 	sampleRate = audioCtx.sampleRate; //48000
- //console.log(audioCtx.destination.maxChannelCount)=2
+ //console.log(audioCtx.destination.maxChannelCount)
  splitter = audioCtx.createChannelSplitter(2);					// ***2.0***
  listener = audioCtx.listener;			
 
