@@ -124,7 +124,7 @@ var wX = 400, wY = 400;
 function ini() { 
   initgls(); quarter(); //setPos(xv,yv,zv); //movsp();
 // ------- Jun 2024 -------
-const st='Stop Putin,Netanyahu and Trump !<br>Unite against the Emperors of the 21c !'
+const st='Stop Putin = Trump+Musk and Netanyahu !<br>Unite against the Emperors of the 21c !'
 
 document.getElementById("centered0").innerHTML=st	//&emsp;
 
