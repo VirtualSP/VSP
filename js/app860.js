@@ -1,6 +1,10 @@
-/*
- *   Virtual Speaker System 		Jun. 2024		L230 L38 L48 L55 L56
- */						
+/* ---------------------------------------------------------------------------------
+ *   Virtual Speaker System 		Dec. 2024		L230 L38 L48 L55 L56
+ *								© 2024 bobie820g@gmail.com 	
+ *								Released under the MIT license
+ *								https://opensource.org/licenses/mit-license.php 	
+ * ----------------------------------------------------------------------------------*/
+
 var xv, yv, zv, vol, rv, tv,tvv, cv, bv;
  vol = 0.3;   rv =0.3;		// rv*5 =1 rv =0.25;						// ***2.0***
  xv = 5.0; yv = 2.0; zv = -10.0;  tv = 0.0; bv = 0.0;
@@ -120,7 +124,7 @@ var wX = 400, wY = 400;
 function ini() { 
   initgls(); quarter(); //setPos(xv,yv,zv); //movsp();
 // ------- Jun 2024 -------
-const st='Stop Putin,Netanyahu and Trump !<br>Unite against the Emperors of the 21c !'
+const st='Stop War of Putin and Netanyahu !<br>Make America Democratic Again !'
 
 document.getElementById("centered0").innerHTML=st	//&emsp;
 
@@ -217,7 +221,7 @@ function loadsrc() {	document.getElementById("centered0").innerHTML=''
 	loadfxyz();
 		setPos( xv, yv, zv ); changeBass(bv); changeTreble(tv);
     showMetaData(document.getElementsByTagName('input')[6].files[fc]);						
-    audio.src=src;	audio.autoplay = true;	 //console.log( audio.volume );	 //tm = setInterval( renderA, 16 );
+    audio.src=src;	audio.autoplay = true; //tm = setInterval( renderA, 16 );
   
     audio.oncanplaythrough  = (event) => {			//onloadeddata
       if ( fc  < flen ) { 
@@ -242,10 +246,10 @@ function setPan( sp, x,y,z ) {
 var sx,sy,sz, spv=1.5									//*************
 function setPos(x,y,z) {				
  var a,b, w,v, lz,dy, zdy; 	
-  a=1.5; lz = 0; listener.positionZ.value = 0; //camera.position.z; // -z/5 a=1.5 camera.position.z=6
+  a=3.0; lz = 0; listener.positionZ.value = 0; // a=1.5 camera.position.z;
   dy = y-4; //2/( -z+lz ); //=y/( -z+lz )*a;	 //z=(z-2)*16		// ***2.0***
  //x = x/2;			a=spv;
- w=x*1.5; v=w+2*x; zdy = (-z+lz)*dy-4;	//*************
+ w=x*1.5; v=w+2*x; //zdy = (-z+lz)*dy-4;	//*************
  if (fname) { 		//b=50; x=x*b;y=y*b; z=z*b
   setPan( pannerL, -x, dy, z); setPan( pannerRL, -x, dy, z*a ); 	//y*a -4
   setPan( pannerR,  x, dy, z); setPan( pannerRR,  x, dy, z*a );
@@ -253,7 +257,7 @@ function setPos(x,y,z) {
 			setPan( pannerBR,  -v, dy, z);		
 			setPan( pannerCL,   v, dy, z);
 			setPan( pannerCR,   w, dy, z);		
-  setDelay();	//b=Math.sqrt(w*w+dy*dy+z*z); //console.log(dy,b )
+  setDelay();	//b=Math.sqrt(w*w+dy*dy+z*z);
 		//sx=-x*a; sy=y*a; sz=z*a;
   }
   movsp();   //if (fname) { setDelay(); };
