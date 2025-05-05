@@ -246,7 +246,7 @@ function setPan( sp, x,y,z ) {
 var sx,sy,sz, spv=1.5									//*************
 function setPos(x,y,z) {				
  var a,b, w,v, lz,dy, zdy; 	
-  a=3.0; lz = 0; listener.positionZ.value = 0; // a=1.5 camera.position.z;
+  a=3.0; lz = 0; listener.positionZ.value = 0; // <- a=1.5 (2025 May)	camera.position.z;
   dy = y-4; //2/( -z+lz ); //=y/( -z+lz )*a;	 //z=(z-2)*16		// ***2.0***
  //x = x/2;			a=spv;
  w=x*1.5; v=w+2*x; //zdy = (-z+lz)*dy-4;	//*************
@@ -275,7 +275,7 @@ function setDelay() {		// in seconds
   xs = pannerCL.positionX.value; ys = pannerCL.positionY.value; zs = -pannerCL.positionZ.value
 	dv=  ( Math.sqrt(xs*xs +ys*ys +(zs+lz)*(zs+lz))-df )/340;	
   
-	dr=dr/2;dw=dw/2;dv=dv/2; // /2(2025 May) *2 console.log( dr,dw,dv ) //19.1 3.6 27.6 
+	dr=dr*2;//dw=dw;dv=dv; // (2025 May) *2 	console.log( dr,dw,dv ) //19.1 3.6 27.6 
 	//delayR.delayTime.value = df/340;	in seconds
 	
 	delayRL.delayTime.value = dr; delayRR.delayTime.value = dr; 	//rear
