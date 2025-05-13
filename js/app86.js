@@ -33,23 +33,23 @@ function initCtx() {
  pannerRR = audioCtx.createPanner(); setProperties( pannerRR,1 );
 
  bassL   = audioCtx.createBiquadFilter(); bassL.type   = 'lowshelf'; 
-  bassL.frequency.value = 160;
-  bassL.gain.value = bv; 				// -40db...40db
+  bassL.frequency.value = 800	//160;
+  bassL.gain.value = bv-2; 				// bv-0 -40db...40db -> L308
  trebleL = audioCtx.createBiquadFilter(); trebleL.type   = 'highshelf';
-  trebleL.frequency.value = 6000;
+  trebleL.frequency.value = 8000	//6000;
   trebleL.gain.value = tv;
  trebleLH = audioCtx.createBiquadFilter(); trebleLH.type = 'highshelf';
-  trebleLH.frequency.value = 12000;
+  trebleLH.frequency.value = 14000	//12000;
   trebleLH.gain.value = tv+2;											// +2
 
  bassR   = audioCtx.createBiquadFilter(); bassR.type   = 'lowshelf';
-  bassR.frequency.value = 160;
-  bassR.gain.value = bv;
+  bassR.frequency.value = 800	//160;
+  bassR.gain.value = bv-2;
  trebleR = audioCtx.createBiquadFilter(); trebleR.type   = 'highshelf';
-  trebleR.frequency.value = 6000;
+  trebleR.frequency.value = 8000	//6000;
   trebleR.gain.value = tv;
  trebleRH = audioCtx.createBiquadFilter(); trebleRH.type = 'highshelf';
-  trebleRH.frequency.value = 12000;
+  trebleRH.frequency.value = 14000	//12000;
   trebleRH.gain.value = tv+2;											// +2
 
 gainBL = audioCtx.createGain(); gainBL.gain.value = rv;  	
@@ -305,7 +305,7 @@ function changeBass() {
  var bvalue = document.getElementById("bass").valueAsNumber, bvL;
   bv = bvalue; bvL = bv + 2;
   if (fname) {
-	bassL.gain.value = bv; bassR.gain.value = bv;
+	bassL.gain.value = bv-2; bassR.gain.value = bv-2;
   } 
     document.getElementById("bassValue").innerHTML="bass = "+ bvalue;
 }
