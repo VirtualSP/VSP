@@ -246,7 +246,7 @@ function setPan( sp, x,y,z ) {
 var sx,sy,sz, spv=1.5									//*************
 function setPos(x,y,z) {				
  var a,b, w,v, lz,dy, zdy; 	
-  a=3.0; lz = 0; listener.positionZ.value = 0; // <- a=1.5 (2025 May)	camera.position.z;
+  a=3.0; lz = 0; //listener.positionZ.value = 0; // <- a=1.5 (2025 May)	camera.position.z;
   dy = y-4; //2/( -z+lz ); //=y/( -z+lz )*a;	 //z=(z-2)*16		// ***2.0***
  //x = x/2;			a=spv;
  w=x*1.5; v=w+2*x; //zdy = (-z+lz)*dy-4;	//*************
