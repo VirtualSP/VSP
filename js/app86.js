@@ -124,7 +124,7 @@ var wX = 400, wY = 400;
 function ini() { 
   initgls(); quarter(); //setPos(xv,yv,zv); //movsp();
 // ------- Jun 2024 -------
-const st='May Peace to Ukraine and Gaza,<br>Make America Democratic Again !'
+const st='Bring Ukraine and Gaza Peace Back !<br>Make America Democratic Again !'
 
 document.getElementById("centered0").innerHTML=st	//&emsp;
 
@@ -265,7 +265,7 @@ function setPos(x,y,z) {
 
 function setDelay() {		// in seconds
   var dr, dv, dw, df, xs,ys,zs, lz, e;
-     lz = 0; //listener.positionZ.value;	lz=0				// ***2.0***
+     lz = 0; //listener.positionZ.value=0;	lz=0				// ***2.0***
   xs = pannerR.positionX.value; ys = pannerR.positionY.value; zs = -pannerR.positionZ.value;
     df = Math.sqrt(xs*xs+ys*ys+(zs+lz)*(zs+lz));
   xs = pannerRR.positionX.value; ys = pannerRR.positionY.value; zs = -pannerRR.positionZ.value;
@@ -275,7 +275,7 @@ function setDelay() {		// in seconds
   xs = pannerCL.positionX.value; ys = pannerCL.positionY.value; zs = -pannerCL.positionZ.value
 	dv=  ( Math.sqrt(xs*xs +ys*ys +(zs+lz)*(zs+lz))-df )/340;	
   
-	dr=dr*1.5;//dw=dw;dv=dv; // (2025 May) *2 	console.log( dr,dw,dv ) //19.1 3.6 27.6 
+	dr=dr*1.2;  // <-1.5 dw=dw;dv=dv; // (2025 May) *2 	console.log( dr,dw,dv ) //19.1 3.6 27.6 
 	//delayR.delayTime.value = df/340;	in seconds
 	
 	delayRL.delayTime.value = dr; delayRR.delayTime.value = dr; 	//rear
