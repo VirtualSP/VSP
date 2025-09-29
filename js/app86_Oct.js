@@ -3,7 +3,7 @@
  *								© 2024 bobie820g@gmail.com 	
  *								Released under the MIT license
  *								https://opensource.org/licenses/mit-license.php 
-		Oct L10 L279
+		Oct L10 L279 L43,53 L251
  * ----------------------------------------------------------------------------------*/
 
 var xv, yv, zv, vol, rv, tv,tvv, cv, bv;
@@ -40,7 +40,7 @@ function initCtx() {
   trebleL.frequency.value = 8000	//6000;
   trebleL.gain.value = tv;
  trebleLH = audioCtx.createBiquadFilter(); trebleLH.type = 'highshelf';
-  trebleLH.frequency.value = 14000	//12000;
+  trebleLH.frequency.value = 16000	// <-14000;
   trebleLH.gain.value = tv+2;											// +2
 
  bassR   = audioCtx.createBiquadFilter(); bassR.type   = 'lowshelf';
@@ -50,7 +50,7 @@ function initCtx() {
   trebleR.frequency.value = 8000	//6000;
   trebleR.gain.value = tv;
  trebleRH = audioCtx.createBiquadFilter(); trebleRH.type = 'highshelf';
-  trebleRH.frequency.value = 14000	//12000;
+  trebleRH.frequency.value = 16000	// <-14000;
   trebleRH.gain.value = tv+2;											// +2
 
 gainBL = audioCtx.createGain(); gainBL.gain.value = rv;  	
@@ -247,8 +247,8 @@ function setPan( sp, x,y,z ) {
 var sx,sy,sz, spv=1.5									//*************
 function setPos(x,y,z) {				
  var a,b, w,v, lz,dy, zdy; 	
-  a=30.0; lz = 0; //listener.positionZ.value = 0; // <- a=1.5 (2025 May)	camera.position.z;
-  dy = y-4; //2/( -z+lz ); //=y/( -z+lz )*a;	 //z=(z-2)*16		// ***2.0***
+  a=30.0; lz = 0; //listener.positionZ.value = 0; // <- a=1.5 (2025 May)	camera.position.z;// <-1.2 Oct ++++++++++++
+  dy = y*2-12; // <- y-4  2/( -z+lz ); //=y/( -z+lz )*a; //z=(z-2)*16	// ***2.0***
  //x = x/2;			a=spv;
  w=x*1.5; v=w+2*x; //zdy = (-z+lz)*dy-4;	//*************
  if (fname) { 		//b=50; x=x*b;y=y*b; z=z*b
