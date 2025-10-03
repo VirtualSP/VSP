@@ -7,7 +7,7 @@
  * ----------------------------------------------------------------------------------*/
 
 var xv, yv, zv, vol, rv, tv,tvv, cv, bv;
- vol = 0.3;   rv =0.1;		// rv*5 =1 rv =0.25;						// ***2.0 rv =0.3 ***
+ vol = 0.3;   rv =0.15;		// rv*5 =1 rv =0.25;						// ***2.0 rv =0.3 ***
  xv = 5.0; yv = 2.0; zv = -10.0;  tv = 0.0; bv = 0.0;
 
 var AudioContext;
@@ -40,7 +40,7 @@ function initCtx() {
   trebleL.frequency.value = 8000	//6000;
   trebleL.gain.value = tv;
  trebleLH = audioCtx.createBiquadFilter(); trebleLH.type = 'highshelf';
-  trebleLH.frequency.value = 16000	// <-14000;
+  trebleLH.frequency.value = 15000	// <-14000;
   trebleLH.gain.value = tv+2;											// +2
 
  bassR   = audioCtx.createBiquadFilter(); bassR.type   = 'lowshelf';
@@ -50,7 +50,7 @@ function initCtx() {
   trebleR.frequency.value = 8000	//6000;
   trebleR.gain.value = tv;
  trebleRH = audioCtx.createBiquadFilter(); trebleRH.type = 'highshelf';
-  trebleRH.frequency.value = 16000	// <-14000;
+  trebleRH.frequency.value = 15000	// <-14000;
   trebleRH.gain.value = tv+2;											// +2
 
 gainBL = audioCtx.createGain(); gainBL.gain.value = rv;  	
