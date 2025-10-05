@@ -7,7 +7,7 @@
  * ----------------------------------------------------------------------------------*/
 
 var xv, yv, zv, vol, rv, tv,tvv, cv, bv;
- vol = 0.3;   rv =0.15;		// rv*5 =1 rv =0.25;						// ***2.0 rv =0.3 ***
+ vol = 0.3;   rv =0.2;		// rv*5 =1 rv =0.25;						// ***2.0 rv =0.3 ***
  xv = 5.0; yv = 2.0; zv = -10.0;  tv = 0.0; bv = 0.0;
 
 var AudioContext;
@@ -247,7 +247,7 @@ function setPan( sp, x,y,z ) {
 var sx,sy,sz, spv=1.5									//*************
 function setPos(x,y,z) {				
  var a,b, w,v, lz,dy, zdy; 	
-  a=30.0; lz = 0; //listener.positionZ.value = 0; // <- a=1.5 (2025 May)	camera.position.z;// <-1.2 Oct ++++++++++++
+  a=3.0; lz = 0; //listener.positionZ.value = 0; // <- a=1.5 (2025 May)	camera.position.z;// <-1.2 Oct ++++++++++++
   dy = y*2-12; // <- y-4  2/( -z+lz ); //=y/( -z+lz )*a; //z=(z-2)*16	// ***2.0***
  //x = x/2;			a=spv;
  w=x*1.5; v=w+2*x; //zdy = (-z+lz)*dy-4;	//*************
@@ -276,7 +276,7 @@ function setDelay() {		// in seconds
   xs = pannerCL.positionX.value; ys = pannerCL.positionY.value; zs = -pannerCL.positionZ.value
 	dv=  ( Math.sqrt(xs*xs +ys*ys +(zs+lz)*(zs+lz))-df )/340;	
   
-	dr=dr*0.05;  			//<-1.5 dw=dw;dv=dv; // (2025 May) *2		// <-1.2 Oct +++++++++++++++++++++++++++
+	dr=dr*0.5;  			//<-1.5 dw=dw;dv=dv; // (2025 May) *2		// <-1.2 Oct +++++++++++++++++++++++++++
 	//delayR.delayTime.value = df/340;	in seconds
 	
 	delayRL.delayTime.value = dr; delayRR.delayTime.value = dr; 	//rear
