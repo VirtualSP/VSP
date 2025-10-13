@@ -10,7 +10,7 @@
 
 var xv, yv, zv, vol, rv, tv,tvv, cv, bv;
  vol = 0.3;   rv =0.2;		// rv*5 =1 rv =0.25;						// ***2.0 rv =0.3 ***
- xv = 5.0; yv = 2.0; zv = -10.0;  tv = 0.0; bv = 0.0;
+ xv = 5.0; yv = 2.0; zv = 10.0;  tv = 0.0; bv = 0.0;	//*********************************************************
 
 var AudioContext;
 var audioCtx, listener, src, source, splitter, audio, fname, fc,flen, lz; 
@@ -69,11 +69,11 @@ delayBL = audioCtx.createDelay(); delayBR = audioCtx.createDelay();
 delayRL = audioCtx.createDelay(); delayRR = audioCtx.createDelay(); 
 
 //setDelay() 	
-	analyserL = audioCtx.createAnalyser();	// analizer +++++++++++++++++++++++++++++++++++++++
+	analyserL = audioCtx.createAnalyser();	// analizer
 	analyserL.fftSize = fftSize;
 	analyserL.minDecibels = -100;  // Default -100 dB
 	analyserL.maxDecibels =    -30;  // Default  -30 dB
-	analyserR = audioCtx.createAnalyser();	// analizer +++++++++++++++++++++++++++++++++++++++
+	analyserR = audioCtx.createAnalyser();	// analizer
 	analyserR.fftSize = fftSize;
 	analyserR.minDecibels = -100;  // Default -100 dB
 	analyserR.maxDecibels =    -30;  // Default  -30 dB
@@ -156,7 +156,7 @@ function loadfxyz() {
  	fxyz = JSON.parse(localStorage.getItem(fname)); 
 		if ( fxyz==null ) { fxyz = prevf.concat() }
 	//if (fxyz) {	 										// ***2.0***
-	 xv = parseFloat(fxyz[0]); yv = parseFloat(fxyz[1]); zv = parseFloat(fxyz[2]);
+	 xv = parseFloat(fxyz[0]); yv = parseFloat(fxyz[1]); zv = parseFloat(fxyz[2])
 		document.getElementById("xValue").innerHTML="pos_x = "+ xv;
    		  document.querySelector("#xv").value = xv;
 		document.getElementById("yValue").innerHTML="pos_y = "+ yv;
@@ -193,10 +193,10 @@ function chkLoop() {
 
 function movsp() { 
  var xv2,yv2,zv2;
-  xv2 = xv*2; 	zv2=zv*2; yv2=yv*2;
+  xv2 = xv*2; 	zv2=-zv*2; yv2=yv*2;		//***********************************************************
   cubeL.position.setX(-xv2); cubeL.position.setY(yv); cubeL.position.setZ(zv2); 
   cubeR.position.setX(xv2);  cubeR.position.setY(yv); cubeR.position.setZ(zv2); 	
-    cubeL.rotation.y=Math.atan(-xv2/zv*0.5); cubeR.rotation.y=Math.atan( xv2/zv*0.5);
+    cubeL.rotation.y=Math.atan(-xv2/-zv*0.5); cubeR.rotation.y=Math.atan( xv2/-zv*0.5);
     cubeL.rotation.x=Math.atan(-yv/zv*0.1);  cubeR.rotation.x=Math.atan(-yv/zv*0.1);	
  renderer.render( scene, camera ); 
 //chkLoop();   
@@ -246,10 +246,10 @@ function setPan( sp, x,y,z ) {
   sp.positionX.value = x/3*2; sp.positionY.value = y; sp.positionZ.value = z;
 }
 
-var sx,sy,sz, spv=1.5									//*************
+var sx,sy,sz, spv=1.5				
 function setPos(x,y,z) {				
  var a,b, w,v, lz,dy, zdy; 	
-  a=3.0; lz = 0; //listener.positionZ.value = 0; // <- a=1.5 (2025 May)	camera.position.z;// <-1.2 Oct ++++++++++++
+  a=3.0; lz = 0; //listener.positionZ.value = 0; // <- a=1.5 (2025 May)	camera.position.z;// <-1.2 Oct
   dy = y*2-4; // <- y-4  2/( -z+lz ); //=y/( -z+lz )*a; //z=(z-2)*16	// ***2.0***
  //x = x/2;			a=spv;
  w=x*1.5; v=w+2*x; //zdy = (-z+lz)*dy-4;	//*************
@@ -278,7 +278,7 @@ function setDelay() {		// in seconds
   xs = pannerCL.positionX.value; ys = pannerCL.positionY.value; zs = -pannerCL.positionZ.value
 	dv=  ( Math.sqrt(xs*xs +ys*ys +(zs+lz)*(zs+lz))-df )/340;	
   
-	//dr=dr*0.5;  			//<-1.5 dw=dw;dv=dv; // (2025 May) *2		// <-1.2 Oct +++++++++++++++++++++++++++
+	//dr=dr*0.5;  			//<-1.5 dw=dw;dv=dv; // (2025 May) *2		// <-1.2 Oct
 	//delayR.delayTime.value = df/340;	in seconds
 	
 	delayRL.delayTime.value = dr; delayRR.delayTime.value = dr; 	//rear
@@ -288,7 +288,7 @@ function setDelay() {		// in seconds
 }
 
 function defpos() {
- xv=5; yv=2; zv=-10;
+ xv=5; yv=2; zv=10;				//*********************************************************
  document.getElementById("xValue").innerHTML="pos_x = "+ xv;
   document.querySelector("#xv").value = xv;
  document.getElementById("yValue").innerHTML="pos_y = "+ yv;
