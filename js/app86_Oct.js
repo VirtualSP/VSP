@@ -156,7 +156,7 @@ function loadfxyz() {
  	fxyz = JSON.parse(localStorage.getItem(fname)); 
 		if ( fxyz==null ) { fxyz = prevf.concat() }
 	//if (fxyz) {	 										// ***2.0***
-	 xv = parseFloat(fxyz[0]); yv = parseFloat(fxyz[1]); zv = parseFloat(fxyz[2])
+	 xv = parseFloat(fxyz[0]); yv = parseFloat(fxyz[1]); zv = -parseFloat(fxyz[2])
 		document.getElementById("xValue").innerHTML="pos_x = "+ xv;
    		  document.querySelector("#xv").value = xv;
 		document.getElementById("yValue").innerHTML="pos_y = "+ yv;
