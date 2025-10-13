@@ -1,13 +1,15 @@
 /* ---------------------------------------------------------------------------------
- *   Virtual Speaker System 		Dec. 2024		L230 L38 L48 L55 L56
+ *   Virtual Speaker System 		Oct. 2025
  *								© 2024 bobie820g@gmail.com 	
  *								Released under the MIT license
  *								https://opensource.org/licenses/mit-license.php 
-		Oct L10 L279 L43,53 L251
+		May L230 L38 L48 L55 L56	Oct L10 L279 L43,53 L251
+		Trump, envious of Putin and Xi, follows their lead toward dictatorship. 
+		Let us unite in resistance against tyranny.
  * ----------------------------------------------------------------------------------*/
 
 var xv, yv, zv, vol, rv, tv,tvv, cv, bv;
- vol = 0.3;   rv =0.25;		// rv*5 =1 rv =0.25;						// ***2.0 rv =0.3 ***
+ vol = 0.3;   rv =0.2;		// rv*5 =1 rv =0.25;						// ***2.0 rv =0.3 ***
  xv = 5.0; yv = 2.0; zv = -10.0;  tv = 0.0; bv = 0.0;
 
 var AudioContext;
@@ -40,7 +42,7 @@ function initCtx() {
   trebleL.frequency.value = 8000	//6000;
   trebleL.gain.value = tv;
  trebleLH = audioCtx.createBiquadFilter(); trebleLH.type = 'highshelf';
-  trebleLH.frequency.value = 15000	// <-14000;
+  trebleLH.frequency.value = 16000	// <-14000;
   trebleLH.gain.value = tv+2;											// +2
 
  bassR   = audioCtx.createBiquadFilter(); bassR.type   = 'lowshelf';
@@ -50,13 +52,13 @@ function initCtx() {
   trebleR.frequency.value = 8000	//6000;
   trebleR.gain.value = tv;
  trebleRH = audioCtx.createBiquadFilter(); trebleRH.type = 'highshelf';
-  trebleRH.frequency.value = 15000	// <-14000;
+  trebleRH.frequency.value = 16000	// <-14000;
   trebleRH.gain.value = tv+2;											// +2
 
-gainBL = audioCtx.createGain(); gainBL.gain.value = rv;  	
-gainBR = audioCtx.createGain(); gainBR.gain.value = rv; 	//*<-0.8**	// ***2.0***	
-gainCL = audioCtx.createGain(); gainCL.gain.value = rv; 	//********	// ***2.0***
-gainCR = audioCtx.createGain(); gainCR.gain.value = rv;
+gainBL = audioCtx.createGain(); gainBL.gain.value = rv/2;  	
+gainBR = audioCtx.createGain(); gainBR.gain.value = rv/2; 	//*<-0.8**	// ***2.0***	
+gainCL = audioCtx.createGain(); gainCL.gain.value = rv/2; 	//********	// ***2.0***
+gainCR = audioCtx.createGain(); gainCR.gain.value = rv/2;
 
  gainRL = audioCtx.createGain(); gainRL.gain.value = rv; 
  gainRR = audioCtx.createGain(); gainRR.gain.value = rv;
@@ -125,7 +127,7 @@ var wX = 400, wY = 400;
 function ini() { 
   initgls(); quarter(); //setPos(xv,yv,zv); //movsp();
 // ------- Jun 2024 -------
-const st='Bring Ukraine and Gaza Peace Back !<br>Make America Democratic Again !'
+const st='NO KINGS! Trump admires Putin and Xi, aspiring<br> to follow their path to ascend to imperial power.<br>Let us unite against their global carve-up,<br> against dictatorship and oppression.'
 
 document.getElementById("centered0").innerHTML=st	//&emsp;
 
