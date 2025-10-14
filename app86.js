@@ -1,13 +1,16 @@
 /* ---------------------------------------------------------------------------------
- *   Virtual Speaker System 		Dec. 2024		L230 L38 L48 L55 L56
+ *   Virtual Speaker System 		Oct. 2025
  *								© 2024 bobie820g@gmail.com 	
  *								Released under the MIT license
- *								https://opensource.org/licenses/mit-license.php 	
+ *								https://opensource.org/licenses/mit-license.php 
+		May L230 L38 L48 L55 L56	Oct L10 L279 L43,53 L251
+		Trump, envious of Putin and Xi, follows their lead toward dictatorship. 
+		Let us unite in resistance against tyranny.
  * ----------------------------------------------------------------------------------*/
 
 var xv, yv, zv, vol, rv, tv,tvv, cv, bv;
- vol = 0.3;   rv =0.3;		// rv*5 =1 rv =0.25;						// ***2.0***
- xv = 5.0; yv = 2.0; zv = -10.0;  tv = 0.0; bv = 0.0;
+ vol = 0.3;   rv =0.2;		// rv*5 =1 rv =0.25;						// ***2.0 rv =0.3 ***
+ xv = 5.0; yv = 2.0; zv = 10.0;  tv = 0.0; bv = 0.0;	//*********************************************************
 
 var AudioContext;
 var audioCtx, listener, src, source, splitter, audio, fname, fc,flen, lz; 
@@ -33,29 +36,29 @@ function initCtx() {
  pannerRR = audioCtx.createPanner(); setProperties( pannerRR,1 );
 
  bassL   = audioCtx.createBiquadFilter(); bassL.type   = 'lowshelf'; 
-  bassL.frequency.value = 160;
-  bassL.gain.value = bv; 				// -40db...40db
+  bassL.frequency.value = 800	//160;
+  bassL.gain.value = bv-2; 				// bv-0 -40db...40db -> L308
  trebleL = audioCtx.createBiquadFilter(); trebleL.type   = 'highshelf';
-  trebleL.frequency.value = 6000;
+  trebleL.frequency.value = 8000	//6000;
   trebleL.gain.value = tv;
  trebleLH = audioCtx.createBiquadFilter(); trebleLH.type = 'highshelf';
-  trebleLH.frequency.value = 12000;
+  trebleLH.frequency.value = 16000	// <-14000;
   trebleLH.gain.value = tv+2;											// +2
 
  bassR   = audioCtx.createBiquadFilter(); bassR.type   = 'lowshelf';
-  bassR.frequency.value = 160;
-  bassR.gain.value = bv;
+  bassR.frequency.value = 800	//160;
+  bassR.gain.value = bv-2;
  trebleR = audioCtx.createBiquadFilter(); trebleR.type   = 'highshelf';
-  trebleR.frequency.value = 6000;
+  trebleR.frequency.value = 8000	//6000;
   trebleR.gain.value = tv;
  trebleRH = audioCtx.createBiquadFilter(); trebleRH.type = 'highshelf';
-  trebleRH.frequency.value = 12000;
+  trebleRH.frequency.value = 16000	// <-14000;
   trebleRH.gain.value = tv+2;											// +2
 
-gainBL = audioCtx.createGain(); gainBL.gain.value = rv;  	
-gainBR = audioCtx.createGain(); gainBR.gain.value = rv; 	//*<-0.8**	// ***2.0***	
-gainCL = audioCtx.createGain(); gainCL.gain.value = rv; 	//********	// ***2.0***
-gainCR = audioCtx.createGain(); gainCR.gain.value = rv;
+gainBL = audioCtx.createGain(); gainBL.gain.value = rv/2;  	
+gainBR = audioCtx.createGain(); gainBR.gain.value = rv/2; 	//*<-0.8**	// ***2.0***	
+gainCL = audioCtx.createGain(); gainCL.gain.value = rv/2; 	//********	// ***2.0***
+gainCR = audioCtx.createGain(); gainCR.gain.value = rv/2;
 
  gainRL = audioCtx.createGain(); gainRL.gain.value = rv; 
  gainRR = audioCtx.createGain(); gainRR.gain.value = rv;
@@ -66,11 +69,11 @@ delayBL = audioCtx.createDelay(); delayBR = audioCtx.createDelay();
 delayRL = audioCtx.createDelay(); delayRR = audioCtx.createDelay(); 
 
 //setDelay() 	
-	analyserL = audioCtx.createAnalyser();	// analizer +++++++++++++++++++++++++++++++++++++++
+	analyserL = audioCtx.createAnalyser();	// analizer
 	analyserL.fftSize = fftSize;
 	analyserL.minDecibels = -100;  // Default -100 dB
 	analyserL.maxDecibels =    -30;  // Default  -30 dB
-	analyserR = audioCtx.createAnalyser();	// analizer +++++++++++++++++++++++++++++++++++++++
+	analyserR = audioCtx.createAnalyser();	// analizer
 	analyserR.fftSize = fftSize;
 	analyserR.minDecibels = -100;  // Default -100 dB
 	analyserR.maxDecibels =    -30;  // Default  -30 dB
@@ -124,7 +127,7 @@ var wX = 400, wY = 400;
 function ini() { 
   initgls(); quarter(); //setPos(xv,yv,zv); //movsp();
 // ------- Jun 2024 -------
-const st='Stop Putin = Trump+Musk and Netanyahu !<br>Unite against the Emperors of the 21c !'
+const st='NO KINGS! Trump admires Putin and Xi, aspiring<br> to follow their path to ascend to imperial power.<br>Let us unite against their global carve-up,<br> against dictatorship and oppression.'
 
 document.getElementById("centered0").innerHTML=st	//&emsp;
 
@@ -153,7 +156,7 @@ function loadfxyz() {
  	fxyz = JSON.parse(localStorage.getItem(fname)); 
 		if ( fxyz==null ) { fxyz = prevf.concat() }
 	//if (fxyz) {	 										// ***2.0***
-	 xv = parseFloat(fxyz[0]); yv = parseFloat(fxyz[1]); zv = parseFloat(fxyz[2]);
+	 xv = parseFloat(fxyz[0]); yv = parseFloat(fxyz[1]); zv = -parseFloat(fxyz[2])
 		document.getElementById("xValue").innerHTML="pos_x = "+ xv;
    		  document.querySelector("#xv").value = xv;
 		document.getElementById("yValue").innerHTML="pos_y = "+ yv;
@@ -190,10 +193,10 @@ function chkLoop() {
 
 function movsp() { 
  var xv2,yv2,zv2;
-  xv2 = xv*2; 	zv2=zv*2; yv2=yv*2;
+  xv2 = xv*2; 	zv2=-zv*2; yv2=yv*2;		//***********************************************************
   cubeL.position.setX(-xv2); cubeL.position.setY(yv); cubeL.position.setZ(zv2); 
   cubeR.position.setX(xv2);  cubeR.position.setY(yv); cubeR.position.setZ(zv2); 	
-    cubeL.rotation.y=Math.atan(-xv2/zv*0.5); cubeR.rotation.y=Math.atan( xv2/zv*0.5);
+    cubeL.rotation.y=Math.atan(-xv2/-zv*0.5); cubeR.rotation.y=Math.atan( xv2/-zv*0.5);
     cubeL.rotation.x=Math.atan(-yv/zv*0.1);  cubeR.rotation.x=Math.atan(-yv/zv*0.1);	
  renderer.render( scene, camera ); 
 //chkLoop();   
@@ -243,11 +246,11 @@ function setPan( sp, x,y,z ) {
   sp.positionX.value = x/3*2; sp.positionY.value = y; sp.positionZ.value = z;
 }
 
-var sx,sy,sz, spv=1.5									//*************
+var sx,sy,sz, spv=1.5				
 function setPos(x,y,z) {				
  var a,b, w,v, lz,dy, zdy; 	
-  a=1.5; lz = 0; listener.positionZ.value = 0; //camera.position.z;
-  dy = y-4; //2/( -z+lz ); //=y/( -z+lz )*a;	 //z=(z-2)*16		// ***2.0***
+  a=3.0; lz = 0; //listener.positionZ.value = 0; // <- a=1.5 (2025 May)	camera.position.z;// <-1.2 Oct
+  dy = y*2-4; // <- y-4  2/( -z+lz ); //=y/( -z+lz )*a; //z=(z-2)*16	// ***2.0***
  //x = x/2;			a=spv;
  w=x*1.5; v=w+2*x; //zdy = (-z+lz)*dy-4;	//*************
  if (fname) { 		//b=50; x=x*b;y=y*b; z=z*b
@@ -265,7 +268,7 @@ function setPos(x,y,z) {
 
 function setDelay() {		// in seconds
   var dr, dv, dw, df, xs,ys,zs, lz, e;
-     lz = 0; //listener.positionZ.value;	lz=0				// ***2.0***
+     lz = 0; //listener.positionZ.value=0;	lz=0				// ***2.0***
   xs = pannerR.positionX.value; ys = pannerR.positionY.value; zs = -pannerR.positionZ.value;
     df = Math.sqrt(xs*xs+ys*ys+(zs+lz)*(zs+lz));
   xs = pannerRR.positionX.value; ys = pannerRR.positionY.value; zs = -pannerRR.positionZ.value;
@@ -275,7 +278,7 @@ function setDelay() {		// in seconds
   xs = pannerCL.positionX.value; ys = pannerCL.positionY.value; zs = -pannerCL.positionZ.value
 	dv=  ( Math.sqrt(xs*xs +ys*ys +(zs+lz)*(zs+lz))-df )/340;	
   
-	dr=dr;dw=dw;dv=dv; // *2 console.log( dr,dw,dv ) //19.1 3.6 27.6
+	//dr=dr*0.5;  			//<-1.5 dw=dw;dv=dv; // (2025 May) *2		// <-1.2 Oct
 	//delayR.delayTime.value = df/340;	in seconds
 	
 	delayRL.delayTime.value = dr; delayRR.delayTime.value = dr; 	//rear
@@ -285,7 +288,7 @@ function setDelay() {		// in seconds
 }
 
 function defpos() {
- xv=5; yv=2; zv=-10;
+ xv=5; yv=2; zv=10;				//*********************************************************
  document.getElementById("xValue").innerHTML="pos_x = "+ xv;
   document.querySelector("#xv").value = xv;
  document.getElementById("yValue").innerHTML="pos_y = "+ yv;
@@ -305,7 +308,7 @@ function changeBass() {
  var bvalue = document.getElementById("bass").valueAsNumber, bvL;
   bv = bvalue; bvL = bv + 2;
   if (fname) {
-	bassL.gain.value = bv; bassR.gain.value = bv;
+	bassL.gain.value = bv-2; bassR.gain.value = bv-2;
   } 
     document.getElementById("bassValue").innerHTML="bass = "+ bvalue;
 }
