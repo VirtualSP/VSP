@@ -127,7 +127,7 @@ var wX = 400, wY = 400;
 function ini() { 
   initgls(); quarter(); //setPos(xv,yv,zv); //movsp();
 // ------- Jun 2024 -------
-const st='NO KINGS! Trump admires Putin and Xi, aspiring<br> to follow their path to ascend to imperial power.<br>Let us unite against their global carve-up,<br> against dictatorship and oppression.'
+const st='NO KINGs! Trump admires Putin and Xi, aspiring<br> to follow their path to ascend to imperial power.<br>Let us unite against their global carve-up,<br> against dictatorship and oppression.'
 
 document.getElementById("centered0").innerHTML=st	//&emsp;
 
@@ -156,7 +156,7 @@ function loadfxyz() {
  	fxyz = JSON.parse(localStorage.getItem(fname)); 
 		if ( fxyz==null ) { fxyz = prevf.concat() }
 	//if (fxyz) {	 										// ***2.0***
-	 xv = parseFloat(fxyz[0]); yv = parseFloat(fxyz[1]); zv = -parseFloat(fxyz[2])
+	 xv = parseFloat(fxyz[0]); yv = parseFloat(fxyz[1]); zv = parseFloat(fxyz[2])	// -------
 		document.getElementById("xValue").innerHTML="pos_x = "+ xv;
    		  document.querySelector("#xv").value = xv;
 		document.getElementById("yValue").innerHTML="pos_y = "+ yv;
@@ -169,7 +169,7 @@ function loadfxyz() {
 		document.getElementById("bassValue").innerHTML="bass = "+ bv;
    		  document.querySelector("#bass").value = bv;
 	//}
-	//else { defpos() }
+	setPos(xv,yv,zv)	//else { defpos() }
 }
 	
 function savefxyz() { 
@@ -193,7 +193,7 @@ function chkLoop() {
 
 function movsp() { 
  var xv2,yv2,zv2;
-  xv2 = xv*2; 	zv2=-zv*2; yv2=yv*2;		//***********************************************************
+  xv2 = xv*2; 	zv2=-zv*2; yv2=yv*2;	//***********************************************************
   cubeL.position.setX(-xv2); cubeL.position.setY(yv); cubeL.position.setZ(zv2); 
   cubeR.position.setX(xv2);  cubeR.position.setY(yv); cubeR.position.setZ(zv2); 	
     cubeL.rotation.y=Math.atan(-xv2/-zv*0.5); cubeR.rotation.y=Math.atan( xv2/-zv*0.5);
@@ -284,7 +284,7 @@ function setDelay() {		// in seconds
 	delayRL.delayTime.value = dr; delayRR.delayTime.value = dr; 	//rear
 	delayBL.delayTime.value = dw; delayBR.delayTime.value = dv;		// dw<dv
 	delayCL.delayTime.value = dv; delayCR.delayTime.value = dw; 	// BR-BL L-R CR-CL
-
+	//console.log( Math.log(dr),dr,dv,dw)
 }
 
 function defpos() {
@@ -340,7 +340,7 @@ function changeZV(z) {
  setPos( xv, yv, zv );
 }
 //function changeSPv() {	
-//	spv = document.getElementById("spv").value; console.log(gainCL.gain.value)
+//	spv = document.getElementById("spv").value;
 //	document.getElementById("spVal").innerHTML=spv; setPos( xv, yv, zv ) }	//*************
 
 //------------------------- init gl ------------------------------------
