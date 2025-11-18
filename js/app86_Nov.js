@@ -148,7 +148,7 @@ document.getElementById("centered0").innerHTML=st	//&emsp;
  
 }		// ---- end of ini ----
 
-var prevf = ['5', '2', '-10', '0.3', '0', '0'];				// ***2.0***
+var prevf = ['5', '2', '10', '0.3', '0', '0'];				// ***2.0***
 //If speaker position, bass, or treble is not specified, the previous settings will be applied.
 function loadfxyz() {
   var fxyz= new Array();
