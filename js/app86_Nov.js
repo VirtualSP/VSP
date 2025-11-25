@@ -127,8 +127,14 @@ var wX = 400, wY = 400;
 function ini() { 
   initgls(); quarter(); //setPos(xv,yv,zv); //movsp();
 // ------- Jun 2024 -------
-const st='NO Emperors! Trump admires Putin and Xi,<br> aspiring to follow their path to ascend to imperial power.Let us unite against their global carve-up,<br> against dictatorship and oppression.'
-
+const st='NO Emperors! Trump admires Putin and Xi,<br> aspiring to follow their path to ascend to imperial power.'
++'Let us unite against their global carve-up,<br> against dictatorship and oppression.'
+/*
++'<font size="2"><font color="white"><pre>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;'
++'Speaker positionZ inversed.'
++'<pre>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;'
++'Use this button if disapeard'
+*/
 document.getElementById("centered0").innerHTML=st	//&emsp;
 
   document.querySelector("#input").addEventListener("change", function () { handleFiles() } );
@@ -148,7 +154,7 @@ document.getElementById("centered0").innerHTML=st	//&emsp;
  
 }		// ---- end of ini ----
 
-var prevf = ['5', '2', '10', '0.3', '0', '0'];				// ***2.0***
+var prevf = ['5', '2', '10', '0.3', '0', '0'];				// ***2.04***
 //If speaker position, bass, or treble is not specified, the previous settings will be applied.
 function loadfxyz() {
   var fxyz= new Array();
@@ -156,7 +162,8 @@ function loadfxyz() {
  	fxyz = JSON.parse(localStorage.getItem(fname)); 
 		if ( fxyz==null ) { fxyz = prevf.concat() }
 	//if (fxyz) {	 										// ***2.0***
-	 xv = parseFloat(fxyz[0]); yv = parseFloat(fxyz[1]); zv = parseFloat(fxyz[2])	// -------
+	
+	 xv = parseFloat(fxyz[0]); yv = parseFloat(fxyz[1]); zv = Math.abs( parseFloat(fxyz[2])	)// -------
 		document.getElementById("xValue").innerHTML="pos_x = "+ xv;
    		  document.querySelector("#xv").value = xv;
 		document.getElementById("yValue").innerHTML="pos_y = "+ yv;
