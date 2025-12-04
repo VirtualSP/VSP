@@ -254,7 +254,7 @@ function setPan( sp, x,y,z ) {
 }
 
 var sx,sy,sz, spv=1.5				
-function setPos(x,y,z) {			x=x*50; y=y*50; z=z*50	//**********L284************************		
+function setPos(x,y,z) {			x=x*30; y=y*30; z=z*30	//**********L284********50****************		
  var a,b, w,v, lz,dy, zdy; 	
   a=3.0; lz = 0; //listener.positionZ.value = 0; // <- a=1.5 (2025 May)	camera.position.z;// <-1.2 Oct
   dy = y*2-4; // <- y-4  2/( -z+lz ); //=y/( -z+lz )*a; //z=(z-2)*16	// ***2.0***
@@ -288,11 +288,11 @@ function setDelay() {		// in seconds
   
 	//dr=dr*0.5;  			//<-1.5 dw=dw;dv=dv; // (2025 May) *2		// <-1.2 Oct
 	//delayR.delayTime.value = df/340;	in seconds
-						dr=dr/50; dv=dv/50; dw=dw/50	//****************L250***********************
+						dr=dr/30; dv=dv/30; dw=dw/30	//****************L250****50*******************
 	delayRL.delayTime.value = dr; delayRR.delayTime.value = dr; 	//rear
 	delayBL.delayTime.value = dw; delayBR.delayTime.value = dv;		// dw<dv
 	delayCL.delayTime.value = dv; delayCR.delayTime.value = dw; 	// BR-BL L-R CR-CL
-	//console.log( Math.sqrt(dr*25),dr,dv,dw)
+	//console.log( zs,Math.sqrt(dr*30),dr,dv,dw)
 }
 
 function defpos() {
@@ -316,7 +316,7 @@ function changeBass() {
  var bvalue = document.getElementById("bass").valueAsNumber, bvL;
   bv = bvalue; bvL = bv + 2;
   if (fname) {
-	bassL.gain.value = bv*2; bassR.gain.value = bv+2;	console.log(bv+2)
+	bassL.gain.value = bv*2; bassR.gain.value = bv+2;	//console.log(bv+2)
   } 
     document.getElementById("bassValue").innerHTML="bass = "+ bvalue;
 }
