@@ -1,16 +1,12 @@
 /* ---------------------------------------------------------------------------------
- *   Virtual Speaker System 		Oct. 2025
+ *   Virtual Speaker System 		Dec. 2025
  *								© 2024 bobie820g@gmail.com 	
  *								Released under the MIT license
  *								https://opensource.org/licenses/mit-license.php 
-		May L230 L38 L48 L55 L56	Oct L10 L279 L43,53 L251
-		Trump, envious of Putin and Xi, follows their lead toward dictatorship. 
-		Let us unite in resistance against tyranny.
  * ----------------------------------------------------------------------------------*/
 
 var xv, yv, zv, vol, rv, tv,tvv, cv, bv;
- vol = 0.7;   rv =0.5;		
- // vol = 0.3;   rv =0.2;						// ***2.0 rv =0.3 ***
+ vol = 0.7;   rv =0.5;		// vol = 0.3;   rv =0.2;						// ***2.0 rv =0.3 ***
  xv = 5.0; yv = 2.0; zv = 10.0;  tv = 0.0; bv = 0.0;
 
 var AudioContext;
@@ -23,7 +19,6 @@ var bassL,trebleL,trebleRL,bassR,trebleR,trebleRR;
 	
 function initCtx() {
  audioCtx = new AudioContext(); 	sampleRate = audioCtx.sampleRate; //48000
- //console.log(audioCtx.destination.maxChannelCount)
  splitter = audioCtx.createChannelSplitter(2);					// ***2.0***
  listener = audioCtx.listener;			
 
@@ -37,24 +32,24 @@ function initCtx() {
  pannerRR = audioCtx.createPanner(); setProperties( pannerRR,1 );
 
  bassL   = audioCtx.createBiquadFilter(); bassL.type   = 'lowshelf'; 
-  bassL.frequency.value = 60	//160;
-  bassL.gain.value = bv+2; 				// bv-0 -40db...40db -> L308
+  bassL.frequency.value = 80		//160;
+  //bassL.gain.value = bv+2; 				// bv-0 -40db...40db -> L308
  trebleL = audioCtx.createBiquadFilter(); trebleL.type   = 'highshelf';
   trebleL.frequency.value = 4000	//8000;
-  trebleL.gain.value = tv;
+  //trebleL.gain.value = tv;
  trebleLH = audioCtx.createBiquadFilter(); trebleLH.type = 'highshelf';
-  trebleLH.frequency.value = 16000	// <-14000;
-  trebleLH.gain.value = tv+2;											// +2
+  trebleLH.frequency.value = 12000	// <-14000;
+  //trebleLH.gain.value = tv+2;
 
  bassR   = audioCtx.createBiquadFilter(); bassR.type   = 'lowshelf';
-  bassR.frequency.value = 60	//160;
-  bassR.gain.value = bv+2;
+  bassR.frequency.value = 80		//160;
+  //bassR.gain.value = bv+2;
  trebleR = audioCtx.createBiquadFilter(); trebleR.type   = 'highshelf';
   trebleR.frequency.value = 4000	//8000;
-  trebleR.gain.value = tv;
+  //trebleR.gain.value = tv;
  trebleRH = audioCtx.createBiquadFilter(); trebleRH.type = 'highshelf';
-  trebleRH.frequency.value = 16000	// <-14000;
-  trebleRH.gain.value = tv+2;											// +2
+  trebleRH.frequency.value = 12000	// <-14000;
+  //trebleRH.gain.value = tv+2;	
 
 gainBL = audioCtx.createGain(); gainBL.gain.value = rv/2;  	
 gainBR = audioCtx.createGain(); gainBR.gain.value = rv/2; 	//*<-0.8**	// ***2.0***	
@@ -166,7 +161,7 @@ function loadfxyz() {
 		document.getElementById("bassValue").innerHTML="bass = "+ bv;
    		  document.querySelector("#bass").value = bv;
 	//}
-	setPos(xv,yv,zv)	//else { defpos() }
+	setPos(xv,yv,zv);	//console.log(xv,yv,zv); //else { defpos() }
 }
 	
 function savefxyz() { 
@@ -175,7 +170,7 @@ function savefxyz() {
 	fxyz[0]=String(xv).substr(0, 5); fxyz[1]=String(yv).substr(0, 5); fxyz[2]=String(zv).substr(0, 5);
 	fxyz[3]=String(vol).substr(0, 5); fxyz[4]=String(bv-20).substr(0, 5); fxyz[5]=String(tv-20).substr(0, 5);	// -8
 	localStorage.setItem(fname, JSON.stringify(fxyz));
-		prevf = fxyz.concat();								// ***2.0***
+		prevf = fxyz.concat();	//console.log(xv,yv,zv)							// ***2.0***
 				//clearInterval( tm );
 //  } catch(e) {
 //    return false; 
@@ -211,9 +206,9 @@ function handleFiles() {
 }
 function loadnext() {
  fc = fc + 1; 
-   if (fc<flen) {loadsrc();}  
+   if (fc<flen) {loadsrc()}  
    else { fc = 0; 
-	if (lp === true) {loadsrc(flen);}
+	if (lp === true) {loadsrc(flen)}
    } 
 }
 
@@ -230,14 +225,13 @@ function loadsrc() {
       if ( fc  < flen ) { 
        audio.onended = function() { loadnext(); }
       }
-
     audio.play(); 		//startPlay();
    };
 }
  
 function setProperties( sp, fl ) {					// ***2.0***
   sp.orientationX.value = 0; 	sp.orientationY.value = 0; 	sp.orientationZ.value = 1;
-  sp.rolloffFactor = 0.2; 	  //sp.maxDistance = 24;	sp.refDistance = 0;	// ************ Dec9 *************
+  sp.rolloffFactor = 0.02; 	  //sp.maxDistance = 24;	sp.refDistance = 0;	// ************ Dec9 *************
   if ( fl==1 ) { sp.panningModel = 'HRTF'; } else { sp.panningModel = 'equalpower' } 
   sp.distanceModel = 'inverse'	//
   //sp.distanceModel = 'linear';	//equalpower HRTF		// ************ Dec9 *************
@@ -248,25 +242,21 @@ function setPan( sp, x,y,z ) {		// The unit is meters.
 }
 
 var sx,sy,sz, spv=1.5				
-function setPos(x,y,z) {			//x=x*30; y=y*30; z=z*30	// ************ Dec9 *************
-							
+function setPos(x,y,z) {			x=x*5; y=y*5; z=z*5;	// ************ Dec9 *************							
  var a,b, w,v, lz,dy, zdy; 	
-  a=1.0; lz = 0; dy = y*2-4;	//listener.positionZ.value = 0; // ****a=1,5******** Dec9 *************
-  dy = y; 	// ***2.0***
+  a=1.5; lz = 0; dy = y*2-20;	//listener.positionZ.value = 0; // ****a=1,5******** Dec9 *************
+  //dy = y; 	// ***2.0***
 
- w=x*1.5; v=w+2*x; //zdy = (-z+lz)*dy-4;	//*************
- if (fname) { 		//b=50; x=x*b;y=y*b; z=z*b
-  setPan( pannerL, -x, dy, z); setPan( pannerRL, -x, dy, z*a ); 	//y*a -4
+ w=x*1.5; v=w+2*x;
+ if (fname) {
+  setPan( pannerL, -x, dy, z); setPan( pannerRL, -x, dy, z*a );
   setPan( pannerR,  x, dy, z); setPan( pannerRR,  x, dy, z*a );
-  //w=8.3; v=4.3
-			setPan( pannerBL,  -w, dy, z);		//y*a
+			setPan( pannerBL,  -w, dy, z);
 			setPan( pannerBR,  -v, dy, z);		
 			setPan( pannerCL,   v, dy, z);
 			setPan( pannerCR,   w, dy, z);		
-  //setDelay();	//b=Math.sqrt(w*w+dy*dy+z*z);
-		//sx=-x*a; sy=y*a; sz=z*a;
   }
-  movsp(); //if (fname) { setDelay(); };
+  movsp(); setDelay(x,y,z*a); //console.log(x,w,v,dy)
 }
 
 function setDelay() {		// in seconds
@@ -283,15 +273,15 @@ function setDelay() {		// in seconds
   
 	//dr=dr*0.5;  			//<-1.5 dw=dw;dv=dv; // (2025 May) *2		// <-1.2 Oct
 	//delayR.delayTime.value = df/340;	in seconds
-						dr=dr/30; dv=dv/30; dw=dw/30	//****************L250****50*******************
+						dr=dr/10; dv=dv/10; dw=dw/10	//****************L250****50*******************
 	delayRL.delayTime.value = dr; delayRR.delayTime.value = dr; 	//rear
 	delayBL.delayTime.value = dw; delayBR.delayTime.value = dv;		// dw<dv
 	delayCL.delayTime.value = dv; delayCR.delayTime.value = dw; 	// BR-BL L-R CR-CL
-	//console.log( zs,Math.sqrt(dr*30),dr,dv,dw)
+	//console.log( zs,dr,dv,dw)
 }
 
 function defpos() {
- xv=5; yv=2; zv=10;				//*********************************************************
+ xv=5; yv=2; zv=10;
  document.getElementById("xValue").innerHTML="pos_x = "+ xv;
   document.querySelector("#xv").value = xv;
  document.getElementById("yValue").innerHTML="pos_y = "+ yv;
@@ -303,26 +293,21 @@ function defpos() {
    		  document.querySelector("#treble").value = tv;
 		document.getElementById("bassValue").innerHTML="bass = "+ bv;
    		  document.querySelector("#bass").value = bv;
-   //if ( fname ) { setDelay() } 	
  setPos(xv,yv,zv); changeBass(); changeTreble();
 }
 
 function changeBass() {
- var bvalue = document.getElementById("bass").valueAsNumber, bvL;
-  bv = bvalue; bv = bv + 20;  //bvL = bv + 2
-	//if ( bv>40 ) { bv = 40 } //else { bv = bv/2 }
-	
+ var bvalue = document.getElementById("bass").valueAsNumber	//, bvL;
+  bv = bvalue; bv = bv + 20;  //bvL = bv + 2	
   if (fname) {
-	bassL.gain.value = bv; bassR.gain.value = bv;	//console.log(bv)
+	bassL.gain.value = bv; bassR.gain.value = bv;
   } 
     document.getElementById("bassValue").innerHTML="bass = "+ bvalue;
 }
 	
 function changeTreble() {
- var tvalue = document.getElementById("treble").valueAsNumber, tvH;	
- tv = tvalue; 	tv=tv+20; tvH = tv/2
-	//if ( tv>40 ) { tv = 40 } //else { tvH = tv/2 } //( 20-tvalue )/5;
-	
+ var tvalue = document.getElementById("treble").valueAsNumber	//, tvH;	
+ tv = tvalue; 	tv=tv+20; tvH = tv/2	
   if (fname) { 
   	trebleL.gain.value = tv;   trebleR.gain.value = tv;
 	trebleLH.gain.value = tvH; trebleRH.gain.value = tvH;
