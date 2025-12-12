@@ -6,7 +6,7 @@
  * ----------------------------------------------------------------------------------*/
 
 var xv, yv, zv, vol, rv, tv,tvv, cv, bv;
- vol = 0.7;   rv =0.5;		// vol = 0.3;   rv =0.2;						// ***2.0 rv =0.3 ***
+ vol = 0.6;   rv =0.4;		// vol = 0.3;   rv =0.2;						// ***2.0 rv =0.3 ***
  xv = 5.0; yv = 2.0; zv = 10.0;  tv = 0.0; bv = 0.0;
 
 var AudioContext;
@@ -35,20 +35,20 @@ function initCtx() {
   bassL.frequency.value = 80		//160;
   //bassL.gain.value = bv+2; 				// bv-0 -40db...40db -> L308
  trebleL = audioCtx.createBiquadFilter(); trebleL.type   = 'highshelf';
-  trebleL.frequency.value = 4000	//8000;
+  trebleL.frequency.value = 6000	//8000;
   //trebleL.gain.value = tv;
  trebleLH = audioCtx.createBiquadFilter(); trebleLH.type = 'highshelf';
-  trebleLH.frequency.value = 12000	// <-14000;
+  trebleLH.frequency.value = 14000	// <-14000;
   //trebleLH.gain.value = tv+2;
 
  bassR   = audioCtx.createBiquadFilter(); bassR.type   = 'lowshelf';
   bassR.frequency.value = 80		//160;
   //bassR.gain.value = bv+2;
  trebleR = audioCtx.createBiquadFilter(); trebleR.type   = 'highshelf';
-  trebleR.frequency.value = 4000	//8000;
+  trebleR.frequency.value = 6000	//8000;
   //trebleR.gain.value = tv;
  trebleRH = audioCtx.createBiquadFilter(); trebleRH.type = 'highshelf';
-  trebleRH.frequency.value = 12000	// <-14000;
+  trebleRH.frequency.value = 14000	// <-14000;
   //trebleRH.gain.value = tv+2;	
 
 gainBL = audioCtx.createGain(); gainBL.gain.value = rv/2;  	
@@ -168,7 +168,7 @@ function savefxyz() {
   var fxyz=new Array();
  //  try {
 	fxyz[0]=String(xv).substr(0, 5); fxyz[1]=String(yv).substr(0, 5); fxyz[2]=String(zv).substr(0, 5);
-	fxyz[3]=String(vol).substr(0, 5); fxyz[4]=String(bv-20).substr(0, 5); fxyz[5]=String(tv-20).substr(0, 5);	// -8
+	fxyz[3]=String(vol).substr(0, 5); fxyz[4]=String(bv-20).substr(0, 5); fxyz[5]=String(tv-10).substr(0, 5);	// -8
 	localStorage.setItem(fname, JSON.stringify(fxyz));
 		prevf = fxyz.concat();	//console.log(xv,yv,zv)							// ***2.0***
 				//clearInterval( tm );
@@ -231,7 +231,7 @@ function loadsrc() {
  
 function setProperties( sp, fl ) {					// ***2.0***
   sp.orientationX.value = 0; 	sp.orientationY.value = 0; 	sp.orientationZ.value = 1;
-  sp.rolloffFactor = 0.02; 	  //sp.maxDistance = 24;	sp.refDistance = 0;	// ************ Dec9 *************
+  sp.rolloffFactor = 0.05; 	  //sp.maxDistance = 24;	sp.refDistance = 0;	// ************ Dec9 *************
   if ( fl==1 ) { sp.panningModel = 'HRTF'; } else { sp.panningModel = 'equalpower' } 
   sp.distanceModel = 'inverse'	//
   //sp.distanceModel = 'linear';	//equalpower HRTF		// ************ Dec9 *************
@@ -242,12 +242,12 @@ function setPan( sp, x,y,z ) {		// The unit is meters.
 }
 
 var sx,sy,sz, spv=1.5				
-function setPos(x,y,z) {			x=x*5; y=y*5; z=z*5;	// ************ Dec9 *************							
+function setPos(x,y,z) {			//x=x*5; y=y*5; z=z*5;	// ************ Dec9 *************							
  var a,b, w,v, lz,dy, zdy; 	
-  a=1.5; lz = 0; dy = y*2-20;	//listener.positionZ.value = 0; // ****a=1,5******** Dec9 *************
-  //dy = y; 	// ***2.0***
+  a=1.5; lz = 0; //dy = y*2-4;	//listener.positionZ.value = 0; // ****a=1,5******** Dec9 *************
+  dy = y; 	// ***2.0***
 
- w=x*1.5; v=w+2*x;
+ w=x*1.5; v=w+2*x; z=-z
  if (fname) {
   setPan( pannerL, -x, dy, z); setPan( pannerRL, -x, dy, z*a );
   setPan( pannerR,  x, dy, z); setPan( pannerRR,  x, dy, z*a );
@@ -256,7 +256,7 @@ function setPos(x,y,z) {			x=x*5; y=y*5; z=z*5;	// ************ Dec9 ***********
 			setPan( pannerCL,   v, dy, z);
 			setPan( pannerCR,   w, dy, z);		
   }
-  movsp(); setDelay(x,y,z*a); //console.log(x,w,v,dy)
+  movsp(); setDelay(x,y,z); //console.log(x,y,z,w,v,dy)
 }
 
 function setDelay() {		// in seconds
@@ -273,11 +273,11 @@ function setDelay() {		// in seconds
   
 	//dr=dr*0.5;  			//<-1.5 dw=dw;dv=dv; // (2025 May) *2		// <-1.2 Oct
 	//delayR.delayTime.value = df/340;	in seconds
-						dr=dr/10; dv=dv/10; dw=dw/10	//****************L250****50*******************
+						//dr=dr/10; dv=dv/10; dw=dw/10	//****************L250****50*******************
 	delayRL.delayTime.value = dr; delayRR.delayTime.value = dr; 	//rear
 	delayBL.delayTime.value = dw; delayBR.delayTime.value = dv;		// dw<dv
 	delayCL.delayTime.value = dv; delayCR.delayTime.value = dw; 	// BR-BL L-R CR-CL
-	//console.log( zs,dr,dv,dw)
+	console.log( zs,dr,dv,dw)
 }
 
 function defpos() {
@@ -292,8 +292,8 @@ function defpos() {
 		document.getElementById("trebleValue").innerHTML="treble = "+ tv;
    		  document.querySelector("#treble").value = tv;
 		document.getElementById("bassValue").innerHTML="bass = "+ bv;
-   		  document.querySelector("#bass").value = bv;
- setPos(xv,yv,zv); changeBass(); changeTreble();
+   		  document.querySelector("#bass").value = bv;	
+ setPos(xv,yv,zv); changeBass(); changeTreble();	savefxyz()
 }
 
 function changeBass() {
@@ -307,7 +307,7 @@ function changeBass() {
 	
 function changeTreble() {
  var tvalue = document.getElementById("treble").valueAsNumber	//, tvH;	
- tv = tvalue; 	tv=tv+20; tvH = tv/2	
+ tv = tvalue; 	tv=tv+10; tvH = tv/2	
   if (fname) { 
   	trebleL.gain.value = tv;   trebleR.gain.value = tv;
 	trebleLH.gain.value = tvH; trebleRH.gain.value = tvH;
