@@ -6,7 +6,7 @@
  * ----------------------------------------------------------------------------------*/
 
 var xv, yv, zv, vol, rv, tv,tvv, cv, bv;
- vol = 0.7;   rv =0.5;		// vol = 0.3;   rv =0.2;						// ***2.0 rv =0.3 ***
+ vol = 0.6;   rv =0.4;		// vol = 0.3;   rv =0.2;						// ***2.0 rv =0.3 ***
  xv = 5.0; yv = 2.0; zv = 10.0;  tv = 0.0; bv = 0.0;
 
 var AudioContext;
@@ -32,23 +32,23 @@ function initCtx() {
  pannerRR = audioCtx.createPanner(); setProperties( pannerRR,1 );
 
  bassL   = audioCtx.createBiquadFilter(); bassL.type   = 'lowshelf'; 
-  bassL.frequency.value = 80		//160;
+  bassL.frequency.value = 120		//160;
   //bassL.gain.value = bv+2; 				// bv-0 -40db...40db -> L308
  trebleL = audioCtx.createBiquadFilter(); trebleL.type   = 'highshelf';
   trebleL.frequency.value = 8000	//8000;
   //trebleL.gain.value = tv;
  trebleLH = audioCtx.createBiquadFilter(); trebleLH.type = 'highshelf';
-  trebleLH.frequency.value = 16000	// <-14000;
+  trebleLH.frequency.value = 14000	// <-14000;
   //trebleLH.gain.value = tv+2;
 
  bassR   = audioCtx.createBiquadFilter(); bassR.type   = 'lowshelf';
-  bassR.frequency.value = 80		//160;
+  bassR.frequency.value = 120		//160;
   //bassR.gain.value = bv+2;
  trebleR = audioCtx.createBiquadFilter(); trebleR.type   = 'highshelf';
   trebleR.frequency.value = 8000	//8000;
   //trebleR.gain.value = tv;
  trebleRH = audioCtx.createBiquadFilter(); trebleRH.type = 'highshelf';
-  trebleRH.frequency.value = 16000	// <-14000;
+  trebleRH.frequency.value = 14000	// <-14000;
   //trebleRH.gain.value = tv+2;	
 
 gainBL = audioCtx.createGain(); gainBL.gain.value = rv/2;  	
@@ -83,8 +83,8 @@ delayRL = audioCtx.createDelay(); delayRR = audioCtx.createDelay();
 //		// ***2.0***
   splitter.connect(pannerL,0).connect(bassL).connect(trebleL).connect(audioCtx.destination); 	//     RL	RR	
   splitter.connect(pannerRL,0).connect(delayRL).connect(trebleLH).connect(audioCtx.destination);				
-  splitter.connect(pannerBL,0).connect(delayBL).connect(audioCtx.destination);	// BR BL L	R CR CL	
-  splitter.connect(pannerCL,0).connect(delayCL).connect(audioCtx.destination);																						//	        o
+  splitter.connect(pannerBL,0).connect(delayBL).connect(audioCtx.destination);						// BR BL L	R CR CL	
+  splitter.connect(pannerCL,0).connect(delayCL).connect(audioCtx.destination);							//	         o
   splitter.connect(pannerR,1).connect(bassR).connect(trebleR).connect(audioCtx.destination);		
   splitter.connect(pannerRR,1).connect(delayRR).connect(trebleRH).connect(audioCtx.destination);			
   splitter.connect(pannerBR,1).connect(delayBR).connect(audioCtx.destination); 
@@ -168,7 +168,7 @@ function savefxyz() {
   var fxyz=new Array();
  //  try {
 	fxyz[0]=String(xv).substr(0, 5); fxyz[1]=String(yv).substr(0, 5); fxyz[2]=String(zv).substr(0, 5);
-	fxyz[3]=String(vol).substr(0, 5); fxyz[4]=String(bv-10).substr(0, 5); fxyz[5]=String(tv-10).substr(0, 5);	// -8
+	fxyz[3]=String(vol).substr(0, 5); fxyz[4]=String(bv-10).substr(0, 5); fxyz[5]=String(tv-20).substr(0, 5);	// -8	< 310 >
 	localStorage.setItem(fname, JSON.stringify(fxyz));
 		prevf = fxyz.concat();	//console.log(xv,yv,zv)							// ***2.0***
 				//clearInterval( tm );
@@ -242,7 +242,7 @@ function setPan( sp, x,y,z ) {		// The unit is meters.
 }
 
 var sx,sy,sz, spv=1.5				
-function setPos(x,y,z) {			x=x*5; y=y*5; z=z*5;	// ************ Dec9 *************							
+function setPos(x,y,z) {			z=z*2;	//x=x*5; y=y*5; z=z*5;	// ************ Dec9 *************							
  var a,b, w,v, lz,dy, zdy; 	
   a=1.5; lz = 0; //dy = y*2-4;	//listener.positionZ.value = 0; // ****a=1,5******** Dec9 *************
   dy = y; 	// ***2.0***
@@ -307,7 +307,7 @@ function changeBass() {
 	
 function changeTreble() {
  var tvalue = document.getElementById("treble").valueAsNumber	//, tvH;	
- tv = tvalue; 	tv=tv+10; tvH = tv/2	
+ tv = tvalue; 	tv=tv+20; tvH = tv/2			// < 171 >
   if (fname) { 
   	trebleL.gain.value = tv;   trebleR.gain.value = tv;
 	trebleLH.gain.value = tvH; trebleRH.gain.value = tvH;
