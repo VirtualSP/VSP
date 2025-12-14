@@ -36,8 +36,8 @@ function initCtx() {
  pannerRR = audioCtx.createPanner(); setProperties( pannerRR,1 );
 
  bassL   = audioCtx.createBiquadFilter(); bassL.type   = 'lowshelf'; 
-  bassL.frequency.value = 800	//160;
-  bassL.gain.value = bv-2; 				// bv-0 -40db...40db -> L308
+  bassL.frequency.value = 80	//160;
+  bassL.gain.value = bv+2; 				// bv-0 -40db...40db -> L308
  trebleL = audioCtx.createBiquadFilter(); trebleL.type   = 'highshelf';
   trebleL.frequency.value = 8000	//6000;
   trebleL.gain.value = tv;
@@ -46,8 +46,8 @@ function initCtx() {
   trebleLH.gain.value = tv+2;											// +2
 
  bassR   = audioCtx.createBiquadFilter(); bassR.type   = 'lowshelf';
-  bassR.frequency.value = 800	//160;
-  bassR.gain.value = bv-2;
+  bassR.frequency.value = 80	//160;
+  bassR.gain.value = bv+2;
  trebleR = audioCtx.createBiquadFilter(); trebleR.type   = 'highshelf';
   trebleR.frequency.value = 8000	//6000;
   trebleR.gain.value = tv;
@@ -259,7 +259,7 @@ function setPos(x,y,z) {			x=x*50; y=y*50; z=z*50	//**********L284**************
   a=3.0; lz = 0; //listener.positionZ.value = 0; // <- a=1.5 (2025 May)	camera.position.z;// <-1.2 Oct
   dy = y*2-4; // <- y-4  2/( -z+lz ); //=y/( -z+lz )*a; //z=(z-2)*16	// ***2.0***
  //x = x/2;			a=spv;
- w=x*1.5; v=w+2*x; //zdy = (-z+lz)*dy-4;	//*************
+ w=x*1.5; v=w+2*x; z=-z		//zdy = (-z+lz)*dy-4;	//*************
  if (fname) { 		//b=50; x=x*b;y=y*b; z=z*b
   setPan( pannerL, -x, dy, z); setPan( pannerRL, -x, dy, z*a ); 	//y*a -4
   setPan( pannerR,  x, dy, z); setPan( pannerRR,  x, dy, z*a );
@@ -271,7 +271,7 @@ function setPos(x,y,z) {			x=x*50; y=y*50; z=z*50	//**********L284**************
   setDelay();	//b=Math.sqrt(w*w+dy*dy+z*z);
 		//sx=-x*a; sy=y*a; sz=z*a;
   }
-  movsp();  //console.log( z,v,w ) //if (fname) { setDelay(); };
+  movsp();  console.log( z,v,w ) //if (fname) { setDelay(); };
 }
 
 function setDelay() {		// in seconds
@@ -316,7 +316,7 @@ function changeBass() {
  var bvalue = document.getElementById("bass").valueAsNumber, bvL;
   bv = bvalue; bvL = bv + 2;
   if (fname) {
-	bassL.gain.value = bv-2; bassR.gain.value = bv-2;
+	bassL.gain.value = bv*2; bassR.gain.value = bv+2;	//console.log(bv+2)
   } 
     document.getElementById("bassValue").innerHTML="bass = "+ bvalue;
 }
