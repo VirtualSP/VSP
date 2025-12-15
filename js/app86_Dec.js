@@ -168,8 +168,8 @@ function savefxyz() {
   var fxyz=new Array();
  //  try {
 	fxyz[0]=String(xv).substr(0, 5); fxyz[1]=String(yv).substr(0, 5); fxyz[2]=String(zv).substr(0, 5);
-	fxyz[3]=String(vol).substr(0, 5); fxyz[4]=String(bv-10).substr(0, 5); fxyz[5]=String(tv-20).substr(0, 5);	// -8	< 310 >
-	localStorage.setItem(fname, JSON.stringify(fxyz));
+	fxyz[3]=String(vol).substr(0, 5); fxyz[4]=String(bv-ofsb).substr(0, 5); fxyz[5]=String(tv-ofst).substr(0, 5);	// -8	< 310 >
+	localStorage.setItem(fname, JSON.stringify(fxyz))
 		prevf = fxyz.concat();	//console.log(xv,yv,zv)							// ***2.0***
 				//clearInterval( tm );
 //  } catch(e) {
@@ -296,18 +296,20 @@ function defpos() {
  setPos(xv,yv,zv); changeBass(); changeTreble();	savefxyz()
 }
 
+var ofsb = 6
 function changeBass() {
  var bvalue = document.getElementById("bass").valueAsNumber	//, bvL;
-  bv = bvalue; bv = bv + 10;  //bvL = bv + 2	
+  bv = bvalue; bv = bv + ofsb	  //bvL = bv + 2		< 171 >
   if (fname) {
 	bassL.gain.value = bv; bassR.gain.value = bv;
   } 
     document.getElementById("bassValue").innerHTML="bass = "+ bvalue;
 }
-	
+
+var ofst = 20	
 function changeTreble() {
  var tvalue = document.getElementById("treble").valueAsNumber	//, tvH;	
- tv = tvalue; 	tv=tv+20; tvH = tv/2			// < 171 >
+ tv = tvalue; 	tv=tv+ofst; tvH = tv/2			// < 171 >
   if (fname) { 
   	trebleL.gain.value = tv;   trebleR.gain.value = tv;
 	trebleLH.gain.value = tvH; trebleRH.gain.value = tvH;
