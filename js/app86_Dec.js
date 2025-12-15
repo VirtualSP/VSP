@@ -296,7 +296,7 @@ function defpos() {
  setPos(xv,yv,zv); changeBass(); changeTreble();	savefxyz()
 }
 
-var ofsb = 6
+var ofsb = 5
 function changeBass() {
  var bvalue = document.getElementById("bass").valueAsNumber	//, bvL;
   bv = bvalue; bv = bv + ofsb	  //bvL = bv + 2		< 171 >
