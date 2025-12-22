@@ -112,8 +112,8 @@ var wX = 400, wY = 400;
 function ini() { 
   initgls(); quarter(); //setPos(xv,yv,zv); //movsp();
 // ------- Jun 2024 -------
-const st='NO Emperors! Trump admires Putin and Xi,<br> aspiring to follow their path to ascend to imperial power.'
-+'Let us unite against their global carve-up,<br> against dictatorship and oppression.'
+const st='NO Emperors! Putin, Trump and Xi compete to divide the world at the expense of peace and democracy.'
++'Let us unite against dictatorship and oppression.'
 
 document.getElementById("centered0").innerHTML=st	//&emsp;
 
