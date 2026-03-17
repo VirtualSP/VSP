@@ -52,9 +52,9 @@ function initCtx() {
   //trebleRH.gain.value = tv+2;	
 
 gainBL = audioCtx.createGain(); gainBL.gain.value = rv/2;  	
-gainBR = audioCtx.createGain(); gainBR.gain.value = rv/2; 	//*<-0.8**	// ***2.0***	
+gainBR = audioCtx.createGain(); gainBR.gain.value = rv; 	//*<-0.8**	// ***2.0***	
 gainCL = audioCtx.createGain(); gainCL.gain.value = rv/2; 	//********	// ***2.0***
-gainCR = audioCtx.createGain(); gainCR.gain.value = rv/2;
+gainCR = audioCtx.createGain(); gainCR.gain.value = rv;
 
  gainRL = audioCtx.createGain(); gainRL.gain.value = rv; 
  gainRR = audioCtx.createGain(); gainRR.gain.value = rv;
@@ -112,8 +112,8 @@ var wX = 400, wY = 400;
 function ini() { 
   initgls(); quarter(); //setPos(xv,yv,zv); //movsp();
 // ------- Jun 2024 -------
-const st='NO Emperors! Putin, Trump and Xi compete to divide the world at the expense of peace and democracy.'
-+'Let us unite against dictatorship and oppression.'
+const st=' Don’t aid Trump and Netanyahu’s war.<br>'
++'Unite against dictatorship and oppression.<br>NO Emperors! NO War!'
 
 document.getElementById("centered0").innerHTML=st	//&emsp;
 
