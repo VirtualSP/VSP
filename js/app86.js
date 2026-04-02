@@ -239,9 +239,9 @@ function setPan( sp, x,y,z ) {		// The unit is meters.
 }
 
 var sx,sy,sz, spv=1.5				
-function setPos(x,y,z) {			z=z*2;	//x=x*5; y=y*5; z=z*5;	// ************ Dec9 *************							
+function setPos(x,y,z) {			//z=z*2;	//x=x*5; y=y*5; z=z*5;	// ************ Dec9 *************							
  var a,b, w,v, lz,dy, zdy; 	
-  a=1.5; lz = 0; //dy = y*2-4;	//listener.positionZ.value = 0; // ****a=1,5******** Dec9 *************
+  a=3.0; lz = 0; //dy = y*2-4;	//listener.positionZ.value = 0; // ****a=1,5******** Dec9 *************
   dy = y; 	// ***2.0***
 
  w=x*1.5; v=w+2*x; z=-z
@@ -253,28 +253,25 @@ function setPos(x,y,z) {			z=z*2;	//x=x*5; y=y*5; z=z*5;	// ************ Dec9 **
 			setPan( pannerCL,   v, dy, z);
 			setPan( pannerCR,   w, dy, z);		
   }
-  movsp(); setDelay(x,y,z); //console.log(x,y,z,w,v,dy)
+  movsp(); setDelay(x,y,z)
 }
 
-function setDelay() {		// in seconds
-  var dr, dv, dw, df, xs,ys,zs, lz, e;
-     lz = 0; //listener.positionZ.value=0;	lz=0				// ***2.0***
+function setDelay() {
+  var dr, dv, dw, df, xs,ys,zs, lz;
+     //lz = 0; //listener.positionZ.value=0;	lz=0				// ***2.0***
   xs = pannerR.positionX.value; ys = pannerR.positionY.value; zs = -pannerR.positionZ.value;
-    df = Math.sqrt(xs*xs+ys*ys+(zs+lz)*(zs+lz));
+    df = Math.sqrt( xs*xs + ys*ys + zs*zs );				// front sp
   xs = pannerRR.positionX.value; ys = pannerRR.positionY.value; zs = -pannerRR.positionZ.value;
-    dr = ( Math.sqrt(xs*xs+ys*ys +(zs+lz)*(zs+lz))-df )/340;	// dr
+    dr = ( Math.sqrt( xs*xs + ys*ys + zs*zs )-df )/340;		// rear sp delayTime in seconds
   xs = pannerCR.positionX.value; ys = pannerCR.positionY.value; zs = -pannerCR.positionZ.value
-	dw = ( Math.sqrt(xs*xs +ys*ys +(zs+lz)*(zs+lz))-df )/340;
+	dw = ( Math.sqrt( xs*xs + ys*ys + zs*zs )-df )/340;		// near side sp
   xs = pannerCL.positionX.value; ys = pannerCL.positionY.value; zs = -pannerCL.positionZ.value
-	dv=  ( Math.sqrt(xs*xs +ys*ys +(zs+lz)*(zs+lz))-df )/340;	
+	dv=  ( Math.sqrt( xs*xs + ys*ys + zs*zs )-df )/340;		// far side sp	
   
-	//dr=dr*0.5;  			//<-1.5 dw=dw;dv=dv; // (2025 May) *2		// <-1.2 Oct
-	//delayR.delayTime.value = df/340;	in seconds
-						dr=dr/5; dv=dv/5; dw=dw/5	//****************L250****50*******************
-	delayRL.delayTime.value = dr; delayRR.delayTime.value = dr; 	//rear
-	delayBL.delayTime.value = dw; delayBR.delayTime.value = dv;		// dw<dv
+	dr=dr/5; dv=dv/5; dw=dw/5	//****************L250****50*******************
+	delayRL.delayTime.value = dr; delayRR.delayTime.value = dr; 	
+	delayBL.delayTime.value = dw; delayBR.delayTime.value = dv;		// 		RL RR
 	delayCL.delayTime.value = dv; delayCR.delayTime.value = dw; 	// BR-BL L-R CR-CL
-	//console.log( zs,dr,dv,dw)
 }
 
 function defpos() {
@@ -293,7 +290,7 @@ function defpos() {
  setPos(xv,yv,zv); changeBass(); changeTreble();	savefxyz()
 }
 
-var ofsb = 2
+var ofsb = 0		// 0<-2 2026 Apr
 function changeBass() {
  var bvalue = document.getElementById("bass").valueAsNumber	//, bvL;
   bv = bvalue; bv = bv + ofsb	  //bvL = bv + 2		< 171 >
@@ -303,7 +300,7 @@ function changeBass() {
     document.getElementById("bassValue").innerHTML="bass = "+ bvalue;
 }
 
-var ofst = 20	
+var ofst = 10		// 10<-20 2026 Apr	
 function changeTreble() {
  var tvalue = document.getElementById("treble").valueAsNumber	//, tvH;	
  tv = tvalue; 	tv=tv+ofst; tvH = tv/2			// < 171 >
