@@ -1,5 +1,5 @@
 /* ---------------------------------------------------------------------------------
- *   Virtual Speaker System 		Dec. 2025
+ *   Virtual Speaker System 		Apr. 2026
  *								© 2024 bobie820g@gmail.com 	
  *								Released under the MIT license
  *								https://opensource.org/licenses/mit-license.php 
@@ -111,9 +111,9 @@ var wX = 400, wY = 400;
 
 function ini() { 
   initgls(); quarter(); //setPos(xv,yv,zv); //movsp();
-// ------- Jun 2024 -------
-const st=' Don’t aid Trump and Netanyahu’s war.<br>'
-+'Unite against dictatorship and oppression.<br>NO Emperors! NO War!'
+// ------- Apr. 2026 -------
+const st=' War criminal states should leave the UN Security Council.'
++' There is no such thing as a wise emperor.<br> *** NO Kings!  NO War! ***'
 
 document.getElementById("centered0").innerHTML=st	//&emsp;
 
