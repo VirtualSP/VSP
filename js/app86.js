@@ -308,7 +308,7 @@ function changeTreble() {
   	trebleL.gain.value = tv;   trebleR.gain.value = tv;
 	trebleLH.gain.value = tvH; trebleRH.gain.value = tvH;
   }
-    document.getElementById("trebleValue").innerHTML="treble = "+ tvalue;	console.log( tv,trebleL,trebleLH )
+    document.getElementById("trebleValue").innerHTML="treble = "+ tvalue;	//console.log( tv,trebleL,trebleLH )
 }
 
 function changeXV(x) {
