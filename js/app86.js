@@ -20,7 +20,7 @@ var bassL,trebleL,trebleRL,bassR,trebleR,trebleRR;
 function initCtx() {
  audioCtx = new AudioContext(); 	sampleRate = audioCtx.sampleRate; //48000
  splitter = audioCtx.createChannelSplitter(2);					// ***2.0***
- listener = audioCtx.listener;			//console.log( listener)
+ listener = audioCtx.listener;			
 
  pannerL  = audioCtx.createPanner(); setProperties( pannerL,1 );
  pannerR  = audioCtx.createPanner(); setProperties( pannerR,1 );
@@ -38,7 +38,7 @@ function initCtx() {
   trebleL.frequency.value = 8000	//8000;
   //trebleL.gain.value = tv;
  trebleLH = audioCtx.createBiquadFilter(); trebleLH.type = 'highshelf';
-  trebleLH.frequency.value = 10000	// <-14000;  26 Apr.
+  trebleLH.frequency.value = 16000	// <-14000;  26 Apr.
   //trebleLH.gain.value = tv+2;
 
  bassR   = audioCtx.createBiquadFilter(); bassR.type   = 'lowshelf';
@@ -48,12 +48,12 @@ function initCtx() {
   trebleR.frequency.value = 8000	//8000;
   //trebleR.gain.value = tv;
  trebleRH = audioCtx.createBiquadFilter(); trebleRH.type = 'highshelf';
-  trebleRH.frequency.value = 10000	// <-14000;
+  trebleRH.frequency.value = 16000	// <-14000;
   //trebleRH.gain.value = tv+2;	
 
 gainBL = audioCtx.createGain(); gainBL.gain.value = rv;  	
-gainBR = audioCtx.createGain(); gainBR.gain.value = rv/2; 	// ***3.0***	
-gainCL = audioCtx.createGain(); gainCL.gain.value = rv/2; 	// ***3.0***
+gainBR = audioCtx.createGain(); gainBR.gain.value = rv/2; 	//*<-0.8**	// ***2.0***	
+gainCL = audioCtx.createGain(); gainCL.gain.value = rv/2; 	//********	// ***2.0***
 gainCR = audioCtx.createGain(); gainCR.gain.value = rv;
 
  gainRL = audioCtx.createGain(); gainRL.gain.value = rv; 
@@ -112,8 +112,8 @@ var wX = 400, wY = 400;
 function ini() { 
   initgls(); quarter(); //setPos(xv,yv,zv); //movsp();
 // ------- Apr. 2026 -------
-const st=' War criminal states should leave the UN Security Council.'
-+' There is no such thing as a wise emperor.<br> *** NO Kings!  NO War! ***'
+const st=' Unite for peace, equality and freedom.<br>'
++' *** NO War! NO Kings!  NO Tyranny! ***'
 
 document.getElementById("centered0").innerHTML=st	//&emsp;
 
@@ -141,7 +141,7 @@ function loadfxyz() {
 	
  	fxyz = JSON.parse(localStorage.getItem(fname)); 
 		if ( fxyz==null ) { fxyz = prevf.concat() }
-	if (fxyz) {	 										// ***3.0***
+	if (fxyz) {	 										// ***2.0***	
 	 xv = parseFloat(fxyz[0]); yv = parseFloat(fxyz[1]); zv = Math.abs( parseFloat(fxyz[2])	)// -------
 		document.getElementById("xValue").innerHTML="pos_x = "+ xv;
    		  document.querySelector("#xv").value = xv;
@@ -154,8 +154,9 @@ function loadfxyz() {
    		  document.querySelector("#treble").value = tv;
 		document.getElementById("bassValue").innerHTML="bass = "+ bv;
    		  document.querySelector("#bass").value = bv;
-	 setPos(xv,yv,zv) }						// ***3.0***
-	else { defpos() }						// ***3.0***
+	  setPos(xv,yv,zv) }
+	else { defpos() }
+	
 }
 	
 function savefxyz() { 
@@ -213,8 +214,7 @@ function loadsrc() {
     src = URL.createObjectURL(document.getElementsByTagName('input')[6].files[fc]); 
     fname = document.getElementsByTagName('input')[6].files[fc].name;
 	loadfxyz();
-		//setPos( xv, yv, zv ); 
-		changeBass(bv); changeTreble(tv);
+		setPos( xv, yv, zv ); changeBass(bv); changeTreble(tv);
     showMetaData(document.getElementsByTagName('input')[6].files[fc]);						
     audio.src=src;	audio.autoplay = true; //tm = setInterval( renderA, 16 );
   
@@ -222,22 +222,20 @@ function loadsrc() {
       if ( fc  < flen ) { 
        audio.onended = function() { loadnext(); }
       }
-    audio.play(); 		//startPlay();
+    audio.play(); 	//console.log( bv,trebleLH,trebleRH );	// panner.positionX,treble,bass,LH
    };
 }
  
 function setProperties( sp, fl ) {					// ***2.0***
   sp.orientationX.value = 0; 	sp.orientationY.value = 0; 	sp.orientationZ.value = 1;
-  sp.rolloffFactor = 0.05; 	  //sp.maxDistance = 24;	sp.refDistance = 0;
+  sp.rolloffFactor = 0.05; 	  //sp.maxDistance = 24;	sp.refDistance = 0;	// ************ Dec9 *************
   if ( fl==1 ) { sp.panningModel = 'HRTF'; } else { sp.panningModel = 'equalpower' } 
   sp.distanceModel = 'inverse'	//
-  //sp.distanceModel = 'linear';	//equalpower HRTF
+  //sp.distanceModel = 'linear';	//equalpower HRTF		// ************ Dec9 *************
 }
 function setPan( sp, x,y,z ) {		// The unit is meters.
-  
-  sp.positionX.value = x;	//						// ***3.0***
-  sp.positionY.value = y-5;	//setValueAtTime(y-5, audioCtx.currentTime); 
-  sp.positionZ.value = z;	//setValueAtTime(z, audioCtx.currentTime); console.log( x,y,z,sp.positionX.value)
+  sp.positionX.value = x;	//sp.positionX.value = x/3*2; 	// ************ Dec9 *************
+  sp.positionY.value = y-5; sp.positionZ.value = z;
 }
 
 var sx,sy,sz, spv=1.5				
@@ -246,7 +244,7 @@ function setPos(x,y,z) {			//z=z*2;	//x=x*5; y=y*5; z=z*5;	// ************ Dec9 
   a=3.0; lz = 0; //dy = y*2-4;	//listener.positionZ.value = 0; // ****a=1,5******** Dec9 *************
   dy = y; 	// ***2.0***
 
- w=x*1.5; v=w+2*x; z=-z	
+ w=x*1.5; v=w+2*x; z=-z
  if (fname) {
   setPan( pannerL, -x, dy, z); setPan( pannerRL, -x, dy, z*a );
   setPan( pannerR,  x, dy, z); setPan( pannerRR,  x, dy, z*a );
@@ -254,31 +252,26 @@ function setPos(x,y,z) {			//z=z*2;	//x=x*5; y=y*5; z=z*5;	// ************ Dec9 
 			setPan( pannerBR,  -v, dy, z);		
 			setPan( pannerCL,   v, dy, z);
 			setPan( pannerCR,   w, dy, z);		
-  };		//console.log(x,y,z,w,v)
-  movsp(); setDelay(x,y,z);				// ***3.0***
+  }
+  movsp(); setDelay(x,y,z)
 }
 
 function setDelay() {
   var dr, dv, dw, df, xs,ys,zs, lz;
      //lz = 0; //listener.positionZ.value=0;	lz=0				// ***2.0***
-  xs = pannerR.positionX.value; ys = pannerR.positionY.value; zs = -pannerR.positionZ.value; 
-    df = Math.sqrt( xs*xs + ys*ys + zs*zs ); 			// front sp
-  xs = pannerRR.positionX.value; ys = pannerRR.positionY.value; zs = -pannerRR.positionZ.value;  // ***3.0***
-    dr = ( Math.sqrt( xs*xs + ys*ys + zs*zs )-df )/340		// rear sp delayTime in seconds
+  xs = pannerR.positionX.value; ys = pannerR.positionY.value; zs = -pannerR.positionZ.value;
+    df = Math.sqrt( xs*xs + ys*ys + zs*zs );				// front sp
+  xs = pannerRR.positionX.value; ys = pannerRR.positionY.value; zs = -pannerRR.positionZ.value;
+    dr = ( Math.sqrt( xs*xs + ys*ys + zs*zs )-df )/340;		// rear sp delayTime in seconds
   xs = pannerCR.positionX.value; ys = pannerCR.positionY.value; zs = -pannerCR.positionZ.value
 	dw = ( Math.sqrt( xs*xs + ys*ys + zs*zs )-df )/340;		// near side sp
   xs = pannerCL.positionX.value; ys = pannerCL.positionY.value; zs = -pannerCL.positionZ.value
 	dv=  ( Math.sqrt( xs*xs + ys*ys + zs*zs )-df )/340;		// far side sp	
   
 	dr=dr/5; dv=dv/5; dw=dw/5	//****************L250****50*******************
-	
-	delayRL.delayTime.value=dr;	//setValueAtTime(dr, audioCtx.currentTime); // ***3.0***
-	delayRR.delayTime.value=dr;	//setValueAtTime(dr, audioCtx.currentTime);	
-	delayBL.delayTime.value=dw;	//.setValueAtTime(dw, audioCtx.currentTime);	
-	delayBR.delayTime.value=dv;	//.setValueAtTime(dv, audioCtx.currentTime);		// 		RL RR
-	delayCL.delayTime.value=dv;	//.setValueAtTime(dv, audioCtx.currentTime);	
-	delayCR.delayTime.value=dw;	//.setValueAtTime(dw, audioCtx.currentTime);	 	// BR-BL L-R CR-CL
-	//console.log(gainCL.gain.value,gainCR.gain.value)
+	delayRL.delayTime.value = dr; delayRR.delayTime.value = dr; 	
+	delayBL.delayTime.value = dw; delayBR.delayTime.value = dv;		// 		RL RR
+	delayCL.delayTime.value = dv; delayCR.delayTime.value = dw; 	// BR-BL L-R CR-CL
 }
 
 function defpos() {
@@ -307,15 +300,15 @@ function changeBass() {
     document.getElementById("bassValue").innerHTML="bass = "+ bvalue;
 }
 
-var ofst = 5		// 10<-20 2026 Apr	
+var ofst = 0		// 5<-10<-20 2026 Aug	
 function changeTreble() {
  var tvalue = document.getElementById("treble").valueAsNumber	//, tvH;	
- tv = tvalue; 	tv=tv+ofst; tvH = tv+15;	//console.log( tv,tvH)	// < 171 >
+ tv = tvalue; 	tv=tv+ofst; tvH = tv*2			// < 171 >
   if (fname) { 
   	trebleL.gain.value = tv;   trebleR.gain.value = tv;
 	trebleLH.gain.value = tvH; trebleRH.gain.value = tvH;
   }
-    document.getElementById("trebleValue").innerHTML="treble = "+ tvalue;
+    document.getElementById("trebleValue").innerHTML="treble = "+ tvalue;	console.log( tv,trebleL,trebleLH )
 }
 
 function changeXV(x) {
