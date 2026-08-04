@@ -112,8 +112,8 @@ var wX = 400, wY = 400;
 function ini() { 
   initgls(); quarter(); //setPos(xv,yv,zv); //movsp();
 // ------- Apr. 2026 -------
-const st=' Unite for peace, equality and freedom.<br>'
-+' *** NO War! NO Kings!  NO Tyranny! ***'
+const st=' Stop the war driven by Putin and Trump-Netanyahu.<br>'
++' -- VSP assists the ability to hear high-frequencies declines with age. See About VSP --'
 
 document.getElementById("centered0").innerHTML=st	//&emsp;
 
