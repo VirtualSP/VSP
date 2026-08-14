@@ -278,11 +278,12 @@ function setDelay() {
   xs = pannerCL.positionX.value; ys = pannerCL.positionY.value; zs = -pannerCL.positionZ.value
 	dv=  ( Math.sqrt( xs*xs + ys*ys + zs*zs )-df )/340;		// far side sp	
   
-	dr=dr/5; dv=dv/5; dw=dw/5;	// **v3 **
+	//dr=dr/5; dv=dv/5; dw=dw/5;	// **v3 **
 	delayRL.delayTime.value = dr; delayRR.delayTime.value = dr; 	
 	delayBL.delayTime.value = dw; delayBR.delayTime.value = dv;		// 		RL RR
 	delayCL.delayTime.value = dv; delayCR.delayTime.value = dw; 	// BR-BL L-R CR-CL
-		//gainBR.value = rv*dr*100;	gainCL.value = rv*dr*100;	console.log(vol,rv,dr )
+		//gainBR.value = rv*dr*100;	gainCL.value = rv*dr*100;	
+	console.log(vol,rv,dr )
 } 
 
 function defpos() {
