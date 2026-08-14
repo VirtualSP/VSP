@@ -64,7 +64,7 @@ delayCL = audioCtx.createDelay(); delayCR = audioCtx.createDelay();
 delayBL = audioCtx.createDelay(); delayBR = audioCtx.createDelay();
 delayRL = audioCtx.createDelay(); delayRR = audioCtx.createDelay(); 
 
-//setDelay() 	
+/*setDelay() 	
 	analyserL = audioCtx.createAnalyser();	// analizer
 	analyserL.fftSize = fftSize;
 	analyserL.minDecibels = -100;  // Default -100 dB
@@ -79,17 +79,28 @@ delayRL = audioCtx.createDelay(); delayRR = audioCtx.createDelay();
 	spectrumsL = new Uint8Array(analyserL.frequencyBinCount);	
 	spectrumsR = new Uint8Array(analyserR.frequencyBinCount);
 	tm = 0; //setInterval( renderA, 16 );	// +++++++++++++++++++++++++++++
- 
-//		// ***2.0***
+*/ 
+/*		// ***2.0***
   splitter.connect(pannerL,0).connect(bassL).connect(trebleL).connect(audioCtx.destination); 	//     RL	RR	
   splitter.connect(pannerRL,0).connect(delayRL).connect(trebleLH).connect(audioCtx.destination);				
   splitter.connect(pannerBL,0).connect(delayBL).connect(audioCtx.destination);					// BR BL L	R CR CL	
-   splitter.connect(pannerCL,0).connect(delayCL).connect(gainCL).connect(audioCtx.destination);					//	       o
-  splitter.connect(pannerR,1).connect(bassR).connect(trebleR).connect(audioCtx.destination);		
+  splitter.connect(pannerCL,0).connect(delayCL).connect(audioCtx.destination);					//	       o
+  
+  splitter.connect(pannerR,1).connect(bassR).connect(trebleR).connect(audioCtx.destination);
   splitter.connect(pannerRR,1).connect(delayRR).connect(trebleRH).connect(audioCtx.destination);			
-   splitter.connect(pannerBR,1).connect(delayBR).connect(gainBR).connect(audioCtx.destination); 
+  splitter.connect(pannerBR,1).connect(delayBR).connect(audioCtx.destination);
   splitter.connect(pannerCR,1).connect(delayCR).connect(audioCtx.destination);
-//  
+*/  
+  splitter.connect(pannerL,0).connect(bassL).connect(trebleL).connect(audioCtx.destination); 	//     RL	RR	
+  splitter.connect(pannerRL,0).connect(delayRL).connect(trebleLH).connect(gainRL).connect(audioCtx.destination);				
+  splitter.connect(pannerBL,0).connect(delayBL).connect(gainBL).connect(audioCtx.destination);					// BR BL L	R CR CL	
+  splitter.connect(pannerCL,0).connect(delayCL).connect(gainCL).connect(audioCtx.destination);	   //	       o
+
+  splitter.connect(pannerR,1).connect(bassR).connect(trebleR).connect(audioCtx.destination);		
+  splitter.connect(pannerRR,1).connect(delayRR).connect(trebleRH).connect(gainRR).connect(audioCtx.destination);			
+  splitter.connect(pannerBR,1).connect(delayBR).connect(gainBR).connect(audioCtx.destination); 
+  splitter.connect(pannerCR,1).connect(delayCR).connect(gainCR).connect(audioCtx.destination);
+//   
 audio = new Audio(src); audio.controls = true; audio.volume = vol; 
 audio.crossOrigin = "anonymous";			// +++ for chrome71- CORS access ++++
 
@@ -154,6 +165,7 @@ function loadfxyz() {
    		  document.querySelector("#treble").value = tv;
 		document.getElementById("bassValue").innerHTML="bass = "+ bv;
    		  document.querySelector("#bass").value = bv;
+			rv = vol*4/6
 	  setPos(xv,yv,zv) }
 	else { defpos() }
 	
@@ -239,28 +251,26 @@ function setPan( sp, x,y,z ) {		// The unit is meters.
 }
 
 var sx,sy,sz, spv=1.5				
-function setPos(x,y,z) {			//z=z*2;	//x=x*5; y=y*5; z=z*5;	// ************ Dec9 *************							
- var a,b, w,v, lz,dy, zdy; 	
-  a=3.0; lz = 0; //dy = y*2-4;	//listener.positionZ.value = 0; // ****a=1,5******** Dec9 *************
-  dy = y; 	// ***2.0***
-
- w=x*1.5; v=w+2*x; z=-z
+function setPos(x,y,z) {			// ************ v3 *************							
+ var a,b, w,v; 	
+ w=x*1.5; v=w+2*x;	z=-z;	a=1.2; b=1-(z+10)/20;	//b=0
  if (fname) {
-  setPan( pannerL, -x, dy, z); setPan( pannerRL, -x, dy, z*a );
-  setPan( pannerR,  x, dy, z); setPan( pannerRR,  x, dy, z*a );
-			setPan( pannerBL,  -w, dy, z);
-			setPan( pannerBR,  -v, dy, z);		
-			setPan( pannerCL,   v, dy, z);
-			setPan( pannerCR,   w, dy, z);		
+  setPan( pannerL, -x, y, z); setPan( pannerRR, -x, y, z*a ); gainRR.value = rv*b	//**v3**
+  setPan( pannerR,  x, y, z); setPan( pannerRL,  x, y, z*a ); gainRL.value = rv*b
+			setPan( pannerBL,  -w, y, z);	gainBL.value = -rv*b
+			setPan( pannerBR,  -v, y, z);	gainBR.value = -rv/2*b		
+			setPan( pannerCL,   v, y, z);	gainCL.value = -rv/2*b
+			setPan( pannerCR,   w, y, z);	gainCR.value = -rv*b	; console.log(z,vol,rv,gainRR.value)
   }
   movsp(); setDelay(x,y,z)
 }
 
 function setDelay() {
-  var dr, dv, dw, df, xs,ys,zs, lz;
+  var dr, dv, dw, df, xs,ys,zs, lz, thL,thR,ITD;
      //lz = 0; //listener.positionZ.value=0;	lz=0				// ***2.0***
   xs = pannerR.positionX.value; ys = pannerR.positionY.value; zs = -pannerR.positionZ.value;
     df = Math.sqrt( xs*xs + ys*ys + zs*zs );				// front sp
+		//thR = Math.atan(xs/zs); ITD = 0.09*(thR+Math.sin(thR))/340; dr=ITD; //console.log(ITD)
   xs = pannerRR.positionX.value; ys = pannerRR.positionY.value; zs = -pannerRR.positionZ.value;
     dr = ( Math.sqrt( xs*xs + ys*ys + zs*zs )-df )/340;		// rear sp delayTime in seconds
   xs = pannerCR.positionX.value; ys = pannerCR.positionY.value; zs = -pannerCR.positionZ.value
@@ -268,11 +278,11 @@ function setDelay() {
   xs = pannerCL.positionX.value; ys = pannerCL.positionY.value; zs = -pannerCL.positionZ.value
 	dv=  ( Math.sqrt( xs*xs + ys*ys + zs*zs )-df )/340;		// far side sp	
   
-	dr=dr/5; dv=dv/5; dw=dw/5	//****************L250****50*******************
+	dr=dr/5; dv=dv/5; dw=dw/5;	// **v3 **
 	delayRL.delayTime.value = dr; delayRR.delayTime.value = dr; 	
 	delayBL.delayTime.value = dw; delayBR.delayTime.value = dv;		// 		RL RR
 	delayCL.delayTime.value = dv; delayCR.delayTime.value = dw; 	// BR-BL L-R CR-CL
-		gainBR.value = rv*dr*100;	gainCL.value = rv*dr*100;	//console.log(vol,rv,gainBR.value )
+		//gainBR.value = rv*dr*100;	gainCL.value = rv*dr*100;	console.log(vol,rv,dr )
 } 
 
 function defpos() {
@@ -291,7 +301,7 @@ function defpos() {
  setPos(xv,yv,zv); changeBass(); changeTreble();	savefxyz()
 }
 
-function changeVol() {
+function changeVol() {										// **v3**
 	vol = audio.volume; rv = vol*2/3; console.log(vol,rv)
 }	
 	
