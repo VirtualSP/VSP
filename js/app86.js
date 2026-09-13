@@ -54,7 +54,7 @@ function initCtx() {
 gainBL = audioCtx.createGain(); gainBL.gain.value = rv;  	
 gainBR = audioCtx.createGain(); gainBR.gain.value = rv/2; 	//*<-0.8**	// ***2.0***	
 gainCL = audioCtx.createGain(); gainCL.gain.value = rv/2; 	//********	// ***2.0***
-gainCR = audioCtx.createGain(); gainCR.gain.value = rv;
+gainCR = audioCtx.createGain(); gainCR.gain.value = rv;		//console.log(gainCR.gain.value)
 
  gainRL = audioCtx.createGain(); gainRL.gain.value = rv; 
  gainRR = audioCtx.createGain(); gainRR.gain.value = rv;
@@ -84,13 +84,13 @@ delayRL = audioCtx.createDelay(); delayRR = audioCtx.createDelay();
   splitter.connect(pannerL,0).connect(bassL).connect(trebleL).connect(audioCtx.destination); 	//     RL	RR	
   splitter.connect(pannerRL,0).connect(delayRL).connect(trebleLH).connect(audioCtx.destination);				
   splitter.connect(pannerBL,0).connect(delayBL).connect(audioCtx.destination);					// BR BL L	R CR CL	
-  splitter.connect(pannerCL,0).connect(delayCL).connect(audioCtx.destination);					//	       o
+   splitter.connect(pannerCL,0).connect(delayCL).connect(gainCL).connect(audioCtx.destination);					//	       o
   splitter.connect(pannerR,1).connect(bassR).connect(trebleR).connect(audioCtx.destination);		
   splitter.connect(pannerRR,1).connect(delayRR).connect(trebleRH).connect(audioCtx.destination);			
-  splitter.connect(pannerBR,1).connect(delayBR).connect(audioCtx.destination); 
+   splitter.connect(pannerBR,1).connect(delayBR).connect(gainBR).connect(audioCtx.destination); 
   splitter.connect(pannerCR,1).connect(delayCR).connect(audioCtx.destination);
 //  
-audio = new Audio(src); audio.controls = true; audio.volume=vol;	//audio.clientWidth=50;
+audio = new Audio(src); audio.controls = true; audio.volume = vol; 
 audio.crossOrigin = "anonymous";			// +++ for chrome71- CORS access ++++
 
  var ip= document.getElementById("vals"); ip.append(audio);
@@ -101,7 +101,7 @@ audio.crossOrigin = "anonymous";			// +++ for chrome71- CORS access ++++
  audio.addEventListener('ended', savefxyz,false);
  audio.addEventListener('pause', savefxyz,false);
  //audio.addEventListener('pause', function() { tm = setInterval( renderA, 16 ) },false);
- audio.addEventListener('volumechange', function() { vol=audio.volume },false);
+ audio.addEventListener('volumechange', changeVol,false);
 }			// ---- end of initCtx() ----
 
 var camera, scene, renderer, canvas,ctx,geometry,material;	
@@ -112,8 +112,8 @@ var wX = 400, wY = 400;
 function ini() { 
   initgls(); quarter(); //setPos(xv,yv,zv); //movsp();
 // ------- Apr. 2026 -------
-const st=' Stop the war driven by Putin and Trump-Netanyahu.<br>'
-+' -- VSP assists the ability to hear high-frequencies declines with age. See About VSP --'
+const st=' Stop the war by Putin and Trump-Netanyahu.<br>'
++' -- Eliminate all nuclear weapons—before<br> AI agents wipe out all of humanity! --'
 
 document.getElementById("centered0").innerHTML=st	//&emsp;
 
@@ -272,7 +272,8 @@ function setDelay() {
 	delayRL.delayTime.value = dr; delayRR.delayTime.value = dr; 	
 	delayBL.delayTime.value = dw; delayBR.delayTime.value = dv;		// 		RL RR
 	delayCL.delayTime.value = dv; delayCR.delayTime.value = dw; 	// BR-BL L-R CR-CL
-}
+		gainBR.value = rv*dr*100;	gainCL.value = rv*dr*100;	//console.log(vol,rv,gainBR.value )
+} 
 
 function defpos() {
  xv=5; yv=2; zv=10;
@@ -290,6 +291,10 @@ function defpos() {
  setPos(xv,yv,zv); changeBass(); changeTreble();	savefxyz()
 }
 
+function changeVol() {
+	vol = audio.volume; rv = vol*2/3; console.log(vol,rv)
+}	
+	
 var ofsb = 0		// 0<-2 2026 Apr
 function changeBass() {
  var bvalue = document.getElementById("bass").valueAsNumber	//, bvL;
