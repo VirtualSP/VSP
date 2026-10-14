@@ -306,7 +306,7 @@ function changeVol() {
 	vol = audio.volume; rv = vol*2/3; //console.log(vol,rv)
 }	
 	
-var ofsb = 0		// 0<-2 2026 Apr
+	var ofsb = 0		// 0<-2 2026 Apr
 function changeBass() {
  var bvalue = document.getElementById("bass").valueAsNumber	//, bvL;
   bv = bvalue; bv = bv + ofsb	  //bvL = bv + 2		< 171 >
@@ -344,15 +344,15 @@ function changeZV(z) {
  setPos( xv, yv, zv );
 }
 function setGain() {	//vol = 0.7;   rv = 0.2;	sv = 0.1
-  let fv,bv,sv
+  let fv,gv,sv
   fv = vol/2 - (zv-10)/200; 
-  bv = -(rv/2 + (zv-10)/300); sv = bv/2
+  gv = -(rv/2 + (zv-10)/300); sv = gv/2
 	gainL.gain.value = fv; gainR.gain.value = fv; 	// 0.35...0.25
-	gainRL.gain.value = bv; gainRR.gain.value = bv;	// 0.1...0.15
+	gainRL.gain.value = gv; gainRR.gain.value = gv;	// 0.1...0.15
 		gainBL.gain.value = sv/2; gainBR.gain.value = sv;
 		gainCL.gain.value = sv; gainCR.gain.value = sv/2;
 	trebleRH.gain.value = trebleRH.gain.value - (zv-10)*0.04	
-				//console.log(fv,bv,sv, (fv-bv-sv)*2)
+				console.log(fv,gv,sv, (fv-gv-sv)*2,bv)
 }
 
 //------------------------- init gl ------------------------------------
