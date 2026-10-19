@@ -8,7 +8,7 @@
 var xv, yv, zv, vol, rv, sv, tv,tvv, cv, bv;
  //vol = 0.6;   rv =0.4;		// vol = 0.3;   rv =0.2;						// ***2.0 rv =0.3 ***
  vol = 0.7;   rv =0.2;	sv = 0.1
- xv = 5.0; yv = 2.0; zv = 10.0;  tv = 0.0; bv = 0.0;
+ xv = 5.0; yv = 2.0; zv = 10.0;  tv = 0.0; bv = 0.0; tvH = 0
 
 var AudioContext;
 var audioCtx, listener, src, source, splitter, audio, fname, fc,flen, lz; 
@@ -120,8 +120,8 @@ var wX = 400, wY = 400;
 function ini() { 
   initgls(); quarter(); //setPos(xv,yv,zv); //movsp();
 // ------- Apr. 2026 -------
-const st=' Prevent Putin, Trump and Xi from joining forces<br> for making thier Kingdum.'
-+' +++ Stop AI Agents <br>from bringing disaster upon humanity. +++'
+const st=' Prevent Putin, Trump and Xi from joining forces for making thier Kingdum.'
++' +++ Stop AI Agents from bringing disaster upon humanity. +++'
 
 document.getElementById("centered0").innerHTML=st	//&emsp;
 
@@ -261,7 +261,7 @@ function setPos(x,y,z) {			//z=z*2;	//x=x*5; y=y*5; z=z*5;	// ************ Dec9 
 			setPan( pannerBL,  -w, dy, z);
 			setPan( pannerBR,  -v, dy, z);
 			setPan( pannerCL,   v, dy, z);
-			setPan( pannerCR,   w, dy, z);		
+			setPan( pannerCR,   w, dy, z);		//console.log(z)
   }
   movsp(); setDelay(x,y,z); setGain()
 }
@@ -350,8 +350,9 @@ function setGain() {	//vol = 0.7;   rv = 0.2;	sv = 0.1
 	gainRL.gain.value = gv; gainRR.gain.value = gv;	// 0.1...0.15
 		gainBL.gain.value = sv/2; gainBR.gain.value = sv;
 		gainCL.gain.value = sv; gainCR.gain.value = sv/2;
-	trebleRH.gain.value = trebleRH.gain.value - (zv-10)*0.04	
-				console.log(fv,gv,sv, (fv-gv-sv)*2,bv)
+	//trebleRH.gain.value = trebleRH.gain.value - (zv-10)*0.04
+		trebleLH.gain.value = tv*2; trebleRH.gain.value = tv*2;
+				//console.log(fv,gv,sv, (fv-gv-sv)*2,bv)
 }
 
 //------------------------- init gl ------------------------------------
